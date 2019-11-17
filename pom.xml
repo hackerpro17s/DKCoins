@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ (C) Copyright 2019 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+  ~
+  ~ @author Philipp Elvin Friedhoff
+  ~ @since 17.11.19, 14:19
+  ~ @website %web%
+  ~
+  ~ %license%
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.pretronic.dkcoins</groupId>
+    <artifactId>DKCoins</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0</version>
+    <modules>
+        <module>dkcoins-api</module>
+    </modules>
+
+    <properties>
+        <dependency.pretronic.libraries>1.0.0</dependency.pretronic.libraries>
+        <dependency.mcnative.version>1.0.0</dependency.mcnative.version>
+    </properties>
+
+</project>
