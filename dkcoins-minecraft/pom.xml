@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ (C) Copyright 2019 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+  ~
+  ~ @author Philipp Elvin Friedhoff
+  ~ @since 17.11.19, 16:05
+  ~ @website %web%
+  ~
+  ~ %license%
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>DKCoins</artifactId>
+        <groupId>net.pretronic.dkcoins</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>dkcoins-minecraft</artifactId>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>pretronic</id>
+            <url>https://repository.prematic.net/repository/pretronic/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.mcnative</groupId>
+                <artifactId>mcnative-buildtool-maven</artifactId>
+                <version>${dependency.mcnative.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>McNative-Build</goal>
+                            <goal>McNative-Package</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mcnative.loader.version>1.0.0</mcnative.loader.version>
+                    <resource.loader.version>1.0.0</resource.loader.version>
+
+                    <manifest>
+                        <name>DKCoins</name>
+                        <category>Network Management</category>
+                        <version>
+                            <name>${project.version}</name>
+                            <build>1</build>
+                        </version>
+                        <main>net.pretronic.dkcoins.minecraft.DKCoinsPlugin</main>
+                        <description>McNative demo plugin</description>
+                        <website>https://mcnative.org/</website>
+                        <author>Philipp Elvin Friedhoff</author>
+                        <messageModule>DKCoins</messageModule>
+                    </manifest>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.pretronic.dkcoins</groupId>
+            <artifactId>dkcoins-api</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mcnative</groupId>
+            <artifactId>mcnative-build</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>

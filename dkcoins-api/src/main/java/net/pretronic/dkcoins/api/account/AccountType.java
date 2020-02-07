@@ -10,6 +10,10 @@
 
 package net.pretronic.dkcoins.api.account;
 
+/*
+- User
+- Bank
+ */
 public interface AccountType {
 
     int getId();

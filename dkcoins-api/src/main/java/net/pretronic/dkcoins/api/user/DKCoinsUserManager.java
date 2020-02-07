@@ -14,6 +14,4 @@ public interface DKCoinsUserManager {
 
     DKCoinsUser getUser(int id);
 
-    DKCoinsUser loadUser(int id);
-
 }

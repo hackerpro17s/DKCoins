@@ -11,20 +11,23 @@
 package net.pretronic.dkcoins.api.account;
 
 import net.prematic.libraries.utility.annonations.Nullable;
+import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
 public interface AccountLimitation {
 
     int getId();
 
-    Account getAccount();
+    BankAccount getAccount();
 
     @Nullable
-    DKCoinsUser getUser();
+    AccountMember getMember();
 
     @Nullable
-    Currency getCurrency();
+    AccountMemberRole getMemberRole();
+
+    Currency getComparativeCurrency();
 
     double getAmount();
 

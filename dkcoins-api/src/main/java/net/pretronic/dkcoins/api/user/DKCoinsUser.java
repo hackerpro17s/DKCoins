@@ -10,18 +10,14 @@
 
 package net.pretronic.dkcoins.api.user;
 
-import net.pretronic.dkcoins.api.account.Account;
+import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
-
-import java.util.Collection;
 
 public interface DKCoinsUser {
 
     int getId();
 
-    Collection<Account> getAccounts();
+    BankAccount getDefaultAccount();
 
-    Account getDefaultAccount();
-
-    AccountMember getAsMember(Account account);
+    AccountMember getAsMember(BankAccount account);
 }

@@ -20,11 +20,25 @@
     <version>1.0.0</version>
     <modules>
         <module>dkcoins-api</module>
+        <module>dkcoins-minecraft</module>
     </modules>
+
+    <distributionManagement>
+        <repository>
+            <id>pretronic</id>
+            <url>https://repository.prematic.net/repository/pretronic/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <dependency.pretronic.libraries>1.0.0</dependency.pretronic.libraries>
         <dependency.mcnative.version>1.0.0</dependency.mcnative.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>pretronic</id>
+            <url>https://repository.prematic.net/repository/pretronic/</url>
+        </repository>
+    </repositories>
 </project>

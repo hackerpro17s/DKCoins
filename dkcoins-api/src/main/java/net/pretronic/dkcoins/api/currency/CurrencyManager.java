@@ -20,11 +20,22 @@ public interface CurrencyManager {
 
     Currency getCurrency(AccountCredit credit);
 
+    Currency searchCurrency(Object identifier);
+
     Currency createCurrency(String name, String symbol);
 
-    void removeCurrency(Currency currency);
+    void updateCurrencyName(Currency currency);
 
-    CurrencyExchangeRate createCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount);
+    void updateCurrencySymbol(Currency currency);
 
-    void removeCurrencyExchangeRate(CurrencyExchangeRate exchangeRate);
+    void deleteCurrency(Currency currency);
+
+
+    CurrencyExchangeRate getCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency);
+
+    CurrencyExchangeRate addCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount);
+
+    void updateCurrencyExchangeRateAmount(CurrencyExchangeRate currencyExchangeRate);
+
+    void deleteCurrencyExchangeRate(CurrencyExchangeRate exchangeRate);
 }

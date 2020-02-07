@@ -13,7 +13,6 @@ package net.pretronic.dkcoins.api;
 import net.prematic.libraries.logging.PrematicLogger;
 import net.pretronic.dkcoins.api.account.AccountManager;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
-import net.pretronic.dkcoins.api.storage.DKCoinsStorage;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 
 public interface DKCoins {

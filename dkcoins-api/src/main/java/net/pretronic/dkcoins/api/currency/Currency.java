@@ -10,8 +10,6 @@
 
 package net.pretronic.dkcoins.api.currency;
 
-import java.util.Collection;
-
 public interface Currency {
 
     int getId();
@@ -20,9 +18,13 @@ public interface Currency {
 
     String getSymbol();
 
-    void setName();
+    void setName(String name);
 
-    void setSymbol();
+    void setSymbol(String name);
 
-    Collection<CurrencyExchangeRate> getExchangeRates();
+    CurrencyExchangeRate getExchangeRate(Currency targetCurrency);
+
+    void addExchangeRate(Currency targetCurrency, double exchangeAmount);
+
+    double exchange(double amount, Currency target);
 }

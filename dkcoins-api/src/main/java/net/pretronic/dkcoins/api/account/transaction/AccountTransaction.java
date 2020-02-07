@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Philipp Elvin Friedhoff
- * @since 17.11.19, 14:29
+ * @since 31.01.20, 22:01
  * @website %web%
  *
  * %license%
@@ -14,13 +14,15 @@ import net.prematic.libraries.document.Document;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 
+import java.util.Collection;
+
 public interface AccountTransaction {
 
     int getId();
 
-    AccountMember getExecutor();
+    AccountCredit getSource();
 
-    AccountCredit getSender();
+    AccountMember getSender();
 
     AccountCredit getReceiver();
 
@@ -30,11 +32,11 @@ public interface AccountTransaction {
 
     String getReason();
 
-    String getServer();
-
-    String getWorld();
+    String getCause();
 
     long getTime();
 
-    Document getProperties();
+    Collection<AccountTransactionProperty> getProperties();
+
+    AccountTransactionProperty getProperty(String key);
 }

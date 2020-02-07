@@ -14,13 +14,13 @@ public interface CurrencyExchangeRate {
 
     int getId();
 
-    Currency getSelectedCurrency();
+    Currency getCurrency();
 
     Currency getTargetCurrency();
 
     double getExchangeAmount();
 
-    void setExchangeAmount();
+    void setExchangeAmount(double amount);
 
     void incrementExchangeAmount(double amount);
 
