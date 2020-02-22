@@ -19,6 +19,7 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class DefaultDKCoinsUserManager implements DKCoinsUserManager {
@@ -30,24 +31,24 @@ public class DefaultDKCoinsUserManager implements DKCoinsUserManager {
                 .registerQuery("getOrLoad", new CacheQuery<DKCoinsUser>() {
                     @Override
                     public boolean check(DKCoinsUser user, Object... identifiers) {
-                        return user.getId() == (int) identifiers[0];
+                        return user.getUniqueId() == identifiers[0];
                     }
 
                     @Override
                     public void validate(Object... identifiers) {
-                        Validate.isTrue(identifiers.length == 1 && identifiers[0] instanceof Integer,
+                        Validate.isTrue(identifiers.length == 1 && identifiers[0] instanceof UUID,
                                 "UserCache: Wrong identifiers: %s", Arrays.toString(identifiers));
                     }
 
                     @Override
                     public DKCoinsUser load(Object... identifiers) {
-                        return DKCoins.getInstance().getStorage().getUser((int) identifiers[0]);
+                        return DKCoins.getInstance().getStorage().getUser((UUID) identifiers[0]);
                     }
                 });
     }
 
     @Override
-    public DKCoinsUser getUser(int id) {
+    public DKCoinsUser getUser(UUID uniqueId) {
         return this.coinsUserCache.get("getOrLoad");
     }
 }

@@ -15,12 +15,15 @@ import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
+import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 public interface DKCoinsStorage {
 
@@ -45,9 +48,9 @@ public interface DKCoinsStorage {
 
     MasterBankAccount getSubMasterAccount(int masterAccountId, int id);
 
-    BankAccount createAccount(String name, int typeId, boolean disabled, int parentId, int creatorId);
+    BankAccount createAccount(String name, int typeId, boolean disabled, int parentId, UUID creator);
 
-    MasterBankAccount createMasterAccount(String name, int typeId, boolean disabled, int parentId, int creatorId);
+    MasterBankAccount createMasterAccount(String name, int typeId, boolean disabled, int parentId, UUID creator);
 
     void updateAccountName(int id, String name);
 
@@ -76,9 +79,9 @@ public interface DKCoinsStorage {
 
     AccountMember getAccountMember(int id);
 
-    AccountMember getAccountMember(int userId, int accountId);
+    AccountMember getAccountMember(UUID userId, int accountId);
 
-    AccountMember addAccountMember(int accountId, int userId, AccountMemberRole role);
+    AccountMember addAccountMember(int accountId, UUID userId, AccountMemberRole role);
 
     void deleteAccountMember(int id);
 
@@ -110,5 +113,7 @@ public interface DKCoinsStorage {
 
 
 
-    DKCoinsUser getUser(int id);
+    DKCoinsUser getUser(UUID uniqueId);
+
+    List<AccountTransaction> filterAccountTransactions(TransactionFilter filter);
 }

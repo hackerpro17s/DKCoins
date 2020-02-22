@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2019 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Philipp Elvin Friedhoff
- * @since 20.11.19, 15:30
+ * @since 15.02.20, 21:35
  * @website %web%
  *
  * %license%
  */
 
-package net.pretronic.dkcoins.minecraft.account;
+package net.pretronic.dkcoins.minecraft.account.transaction;
 
-import net.prematic.libraries.document.Document;
 import net.prematic.libraries.utility.Iterators;
 import net.pretronic.dkcoins.api.account.AccountCredit;
-import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 
 import java.util.Collection;

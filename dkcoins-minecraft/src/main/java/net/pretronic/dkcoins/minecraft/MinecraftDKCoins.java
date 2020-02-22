@@ -13,10 +13,13 @@ package net.pretronic.dkcoins.minecraft;
 import net.prematic.libraries.logging.PrematicLogger;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountManager;
+import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
+import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
 import net.pretronic.dkcoins.api.DKCoinsStorage;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 import net.pretronic.dkcoins.minecraft.account.DefaultAccountManager;
+import net.pretronic.dkcoins.minecraft.account.transaction.DefaultTransactionFilter;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrencyManager;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUserManager;
 import org.mcnative.common.McNative;
@@ -28,13 +31,15 @@ public class MinecraftDKCoins implements DKCoins {
     private final CurrencyManager currencyManager;
     private final DKCoinsUserManager userManager;
     private final DKCoinsStorage storage;
+    private final TransactionPropertyBuilder transactionPropertyBuilder;
 
-    MinecraftDKCoins() {
+    MinecraftDKCoins(TransactionPropertyBuilder transactionPropertyBuilder) {
         this.logger = McNative.getInstance().getLogger();
         this.accountManager = new DefaultAccountManager();
         this.currencyManager = new DefaultCurrencyManager();
         this.userManager = new DefaultDKCoinsUserManager();
         this.storage = new DefaultDKCoinsStorage(null);
+        this.transactionPropertyBuilder = transactionPropertyBuilder;
     }
 
     @Override
@@ -60,5 +65,15 @@ public class MinecraftDKCoins implements DKCoins {
     @Override
     public DKCoinsStorage getStorage() {
         return this.storage;
+    }
+
+    @Override
+    public TransactionPropertyBuilder getTransactionPropertyBuilder() {
+        return this.transactionPropertyBuilder;
+    }
+
+    @Override
+    public TransactionFilter newTransactionFilter() {
+        return new DefaultTransactionFilter();
     }
 }

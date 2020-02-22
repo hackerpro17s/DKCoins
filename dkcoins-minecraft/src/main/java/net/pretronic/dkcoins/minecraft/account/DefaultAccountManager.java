@@ -21,11 +21,13 @@ import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
+import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class DefaultAccountManager implements AccountManager {
 
@@ -57,6 +59,11 @@ public class DefaultAccountManager implements AccountManager {
         return this.accountTypeCache.get("byId", id);
     }
 
+    @Override
+    public AccountType searchAccountType(Object identifier) {
+        return null;
+    }
+
 
     @Override
     public BankAccount getAccount(int id) {
@@ -86,13 +93,13 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public BankAccount createAccount(String name, AccountType type, boolean disabled, MasterBankAccount parent, DKCoinsUser creator) {
         return DKCoins.getInstance().getStorage()
-                .createAccount(name, type.getId(), disabled, parent.getId(), creator.getId());
+                .createAccount(name, type.getId(), disabled, parent.getId(), creator.getUniqueId());
     }
 
     @Override
     public MasterBankAccount createMasterAccount(String name, AccountType type, boolean disabled, MasterBankAccount parent, DKCoinsUser creator) {
         return DKCoins.getInstance().getStorage()
-                .createMasterAccount(name, type.getId(), disabled, parent.getId(), creator.getId());
+                .createMasterAccount(name, type.getId(), disabled, parent.getId(), creator.getUniqueId());
     }
 
     @Override
@@ -135,12 +142,12 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public AccountMember getAccountMember(DKCoinsUser user, BankAccount account) {
-        return DKCoins.getInstance().getStorage().getAccountMember(user.getId(), account.getId());
+        return DKCoins.getInstance().getStorage().getAccountMember(user.getUniqueId(), account.getId());
     }
 
     @Override
     public AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMemberRole memberRole) {
-        return DKCoins.getInstance().getStorage().addAccountMember(account.getId(), user.getId(), memberRole);
+        return DKCoins.getInstance().getStorage().addAccountMember(account.getId(), user.getUniqueId(), memberRole);
     }
 
     @Override
@@ -189,5 +196,10 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public void deleteAccountLimitation(AccountLimitation accountLimitation) {
         DKCoins.getInstance().getStorage().deleteAccountLimitation(accountLimitation.getId());
+    }
+
+    @Override
+    public List<AccountTransaction> filterAccountTransactions(TransactionFilter filter) {
+        return DKCoins.getInstance().getStorage().filterAccountTransactions(filter);
     }
 }

@@ -19,6 +19,8 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
 import java.util.ArrayList;
@@ -26,17 +28,17 @@ import java.util.ArrayList;
 public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
 
     public AccountExchangeCommand(ObjectOwner owner) {
-        super(owner, CommandConfiguration.newBuilder().name("exchange").create());
+        super(owner, CommandConfiguration.name("exchange"));
     }
 
     @Override
     public void execute(CommandSender commandSender, BankAccount account, String[] args) {
         if(!(commandSender instanceof OnlineMinecraftPlayer)) {
-
+            commandSender.sendMessage(Messages.ERROR_NOT_FROM_CONSOLE);
             return;
         }
         if(args.length < 3) {
-
+            commandSender.sendMessage(Messages.COMMAND_EXCHANGE_HELP);
             return;
         }
         String sourceCurrency0 = args[0];
@@ -45,39 +47,29 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
 
         Currency sourceCurrency = DKCoins.getInstance().getCurrencyManager().searchCurrency(sourceCurrency0);
         if(sourceCurrency == null) {
-
+            commandSender.sendMessage(Messages.COMMAND_EXCHANGE_HELP);
             return;
         }
         Currency destinationCurrency = DKCoins.getInstance().getCurrencyManager().searchCurrency(destinationCurrency0);
         if(destinationCurrency == null) {
-
+            commandSender.sendMessage(Messages.COMMAND_EXCHANGE_HELP);
             return;
         }
         if(!GeneralUtil.isNumber(amount0)) {
-
+            commandSender.sendMessage(Messages.COMMAND_EXCHANGE_HELP);
             return;
         }
         double amount = Double.parseDouble(amount0);
 
         OnlineMinecraftPlayer player = (OnlineMinecraftPlayer)commandSender;
-        //AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getId()));
-        AccountMember member = null;
-        StringBuilder reasonBuilder = new StringBuilder();
-        if(args.length > 3) {
-            for (int i = 3; i < args.length; i++) {
-                reasonBuilder.append(args[i]);
-            }
-        } else {
-            reasonBuilder = new StringBuilder("none");
-        }
+        AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
 
-        //@Todo property
         boolean success = account.exchangeAccountCredit(member, sourceCurrency, destinationCurrency, amount,
-                reasonBuilder.toString(), new ArrayList<>());
+                CommandUtil.buildReason(args, 3), DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
         if(success) {
-
+            player.sendMessage(Messages.COMMAND_EXCHANGE_SUCCESS);
         } else {
-
+            player.sendMessage(Messages.COMMAND_EXCHANGE_FAILURE);
         }
     }
 }

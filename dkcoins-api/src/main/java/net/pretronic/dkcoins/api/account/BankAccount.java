@@ -10,7 +10,6 @@
 
 package net.pretronic.dkcoins.api.account;
 
-import net.prematic.libraries.document.Document;
 import net.prematic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;

@@ -10,22 +10,48 @@
 
 package net.pretronic.dkcoins.api.account.member;
 
+import net.pretronic.dkcoins.api.account.access.AccessRight;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
 public enum AccountMemberRole {
 
-    OWNER(1), //Admin setzen, entfernen
-    ADMIN(2), //Manager setzen, entfernen
-    MANAGER(3), //Member hinzufügen, entfernen
-    USER(4), //abheben, einzahlen
-    GUEST(5); //ansehen
+    GUEST(5, null, AccessRight.VIEW),
+    USER(4, GUEST, AccessRight.WITHDRAW, AccessRight.DEPOSIT),
+    MANAGER(3, USER, AccessRight.MEMBER_ADD, AccessRight.MEMBER_REMOVE),
+    ADMIN(2, MANAGER, AccessRight.MANAGER_ADD, AccessRight.MANAGER_REMOVE),
+    OWNER(1, ADMIN, AccessRight.ADMIN_ADD, AccessRight.ADMIN_REMOVE, AccessRight.DELETE); //ansehen
 
     private final int id;
+    private final AccountMemberRole childRole;
+    private final AccessRight[] accessRights;
 
-    AccountMemberRole(int id) {
+    AccountMemberRole(int id, AccountMemberRole childRole, AccessRight... accessRights) {
         this.id = id;
+        this.childRole = childRole;
+        this.accessRights = initAccessRights(accessRights);;
+
     }
 
     public int getId() {
         return id;
+    }
+
+    public AccountMemberRole getChildRole() {
+        return childRole;
+    }
+
+    public AccessRight[] getAccessRights() {
+        return accessRights;
+    }
+
+    public boolean canAccess(AccessRight accessRight) {
+        for (AccessRight right : getAccessRights()) {
+            if(right == accessRight) return true;
+        }
+        return false;
     }
 
     public static AccountMemberRole byId(int id) {
@@ -40,5 +66,18 @@ public enum AccountMemberRole {
             if(role.getId() == id) return role;
         }
         return null;
+    }
+
+    private AccessRight[] initAccessRights(AccessRight[] accessRights0) {
+        Collection<AccessRight> accessRights = new ArrayList<>();
+        accessRights.addAll(Arrays.asList(accessRights0));
+        if(this.childRole != null) {
+            AccountMemberRole role = this.childRole;
+            while (role != null) {
+                accessRights.addAll(Arrays.asList(role.accessRights));
+                role = role.childRole;
+            }
+        }
+        return accessRights.toArray(new AccessRight[0]);
     }
 }

@@ -15,17 +15,19 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
+import java.util.UUID;
+
 public class DefaultDKCoinsUser implements DKCoinsUser {
 
-    private final int id;
+    private final UUID uniqueId;
 
-    public DefaultDKCoinsUser(int id) {
-        this.id = id;
+    public DefaultDKCoinsUser(UUID uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     @Override
-    public int getId() {
-        return this.id;
+    public UUID getUniqueId() {
+        return this.uniqueId;
     }
 
     @Override

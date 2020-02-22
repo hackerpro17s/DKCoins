@@ -18,6 +18,7 @@ import net.prematic.databasequery.api.query.ForeignKey;
 import net.prematic.databasequery.api.query.SearchOrder;
 import net.prematic.databasequery.api.query.result.QueryResult;
 import net.prematic.databasequery.api.query.result.QueryResultEntry;
+import net.prematic.databasequery.api.query.type.FindQuery;
 import net.prematic.databasequery.api.query.type.InsertQuery;
 import net.prematic.libraries.utility.Validate;
 import net.pretronic.dkcoins.api.DKCoins;
@@ -27,17 +28,19 @@ import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
+import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.account.*;
 import net.pretronic.dkcoins.minecraft.account.DefaultBankAccount;
+import net.pretronic.dkcoins.minecraft.account.transaction.DefaultAccountTransaction;
+import net.pretronic.dkcoins.minecraft.account.transaction.DefaultTransactionFilter;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrency;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrencyExchangeRate;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUser;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
@@ -157,16 +160,16 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
-    public BankAccount createAccount(String name, int typeId, boolean disabled, int parentId, int creatorId) {
-        return createAccount(name, typeId, disabled, parentId, creatorId, false);
+    public BankAccount createAccount(String name, int typeId, boolean disabled, int parentId, UUID creator) {
+        return createAccount(name, typeId, disabled, parentId, creator, false);
     }
 
     @Override
-    public MasterBankAccount createMasterAccount(String name, int typeId, boolean disabled, int parentId, int creatorId) {
-        return (MasterBankAccount) createAccount(name, typeId, disabled, parentId, creatorId, true);
+    public MasterBankAccount createMasterAccount(String name, int typeId, boolean disabled, int parentId, UUID creator) {
+        return (MasterBankAccount) createAccount(name, typeId, disabled, parentId, creator, true);
     }
 
-    private BankAccount createAccount(String name, int typeId, boolean disabled, int parentId, int creatorId, boolean master) {
+    private BankAccount createAccount(String name, int typeId, boolean disabled, int parentId, UUID creator, boolean master) {
         int id = this.account.insert().set("name", name).set("typeId", typeId).set("disabled", disabled)
                 .set("parentId", parentId).set("master", master).executeAndGetGeneratedKeyAsInt("id");
         DefaultBankAccount account;
@@ -177,7 +180,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
             account = new DefaultBankAccount(id, name, DKCoins.getInstance().getAccountManager().getAccountType(typeId),
                     disabled, DKCoins.getInstance().getAccountManager().getMasterAccount(parentId));
         }
-        DKCoins.getInstance().getAccountManager().addAccountMember(account, DKCoins.getInstance().getUserManager().getUser(creatorId), AccountMemberRole.OWNER);
+        DKCoins.getInstance().getAccountManager().addAccountMember(account, DKCoins.getInstance().getUserManager().getUser(creator), AccountMemberRole.OWNER);
         return account;
     }
 
@@ -247,7 +250,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
-    public AccountMember getAccountMember(int userId, int accountId) {
+    public AccountMember getAccountMember(UUID userId, int accountId) {
         return getAccountMember("{"+userId+","+accountId+"}", this.accountMember.find().where("userId", userId).where("accountId", accountId).execute().firstOrNull());
     }
 
@@ -257,7 +260,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
         DefaultAccountMember member = new DefaultAccountMember(id, DKCoins.getInstance().getAccountManager()
                 .getAccount(result.getInt("accountId")),
-                DKCoins.getInstance().getUserManager().getUser(result.getInt("userId")),
+                DKCoins.getInstance().getUserManager().getUser(result.getUniqueId("userId")),
                 AccountMemberRole.byId(result.getInt("id")));
 
         for (QueryResultEntry entry : this.accountLimitation.find().where("accountId",
@@ -271,7 +274,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
-    public AccountMember addAccountMember(int accountId, int userId, AccountMemberRole role) {
+    public AccountMember addAccountMember(int accountId, UUID userId, AccountMemberRole role) {
         int id = this.accountMember.insert().set("accountId", accountId).set("userId", userId).set("roleId", role.getId()).executeAndGetGeneratedKeyAsInt("id");
         return new DefaultAccountMember(id, DKCoins.getInstance().getAccountManager().getAccount(accountId),
                 DKCoins.getInstance().getUserManager().getUser(userId), role);
@@ -364,8 +367,64 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
-    public DKCoinsUser getUser(int id) {
-        return new DefaultDKCoinsUser(id);
+    public DKCoinsUser getUser(UUID uniqueId) {
+        return new DefaultDKCoinsUser(uniqueId);
+    }
+
+    @Override
+    public List<AccountTransaction> filterAccountTransactions(TransactionFilter filter0) {
+        Validate.isTrue(filter0 instanceof DefaultTransactionFilter);
+        DefaultTransactionFilter filter = (DefaultTransactionFilter) filter0;
+        Validate.notNull(filter.getAccount());
+        FindQuery query = this.accountTransaction
+                .find()
+                .get("id", "sourceId", "senderId","receiverId", "amount", "exchangeRate", "reason", "cause", "time")
+                .join(this.accountCredit).on("sourceId", "dkcoins_account_credit.id")
+                .where("accountId", filter.getAccount().getId())
+                .join(this.accountTransactionProperty).on("dkcoins_account_transaction.id", "transactionId");
+        if(filter.getWorld() != null) {
+            query.and(subQuery ->
+                    subQuery.where("dkcoins_account_transaction_property.key", "world")
+                            .where("dkcoins_account_transaction_property.value", filter.getWorld()));
+        }
+        if(filter.getServer() != null) {
+            query.and(subQuery ->
+                    subQuery.where("dkcoins_account_transaction_property.key", "server")
+                            .where("dkcoins_account_transaction_property.value", filter.getServer()));
+        }
+        if(filter.getTime() != -1) {
+            query.where("time", filter.getTime());
+        }
+        if(filter.getReceiver() != null) {
+            query.where("receiverId", filter.getReceiver().getId());
+        }
+        if(filter.getCurrency() != null) {
+            query.where("sourceId", filter.getAccount().getCredit(filter.getCurrency()).getId());
+        }
+        if(filter.getReason() != null) {
+            query.where("reason", filter.getReason());
+        }
+        if(filter.getCause() != null) {
+            query.where("cause", filter.getCause());
+        }
+        int page = filter.getPage() > 0 ? filter.getPage() : 1;
+        query.page(page, 10);
+
+        List<AccountTransaction> transactions = new ArrayList<>();
+        QueryResult result = query.execute();
+        for (QueryResultEntry entry : result) {
+            AccountCredit credit = DKCoins.getInstance().getAccountManager().getAccountCredit(entry.getInt("sourceId"));
+            transactions.add(new DefaultAccountTransaction(entry.getInt("id"), credit,
+                    DKCoins.getInstance().getAccountManager().getAccountMember(entry.getInt("senderId")),
+                    DKCoins.getInstance().getAccountManager().getAccountCredit(entry.getInt("receiverId")),
+                    entry.getDouble("amount"),
+                    entry.getDouble("exchangeRate"),
+                    entry.getString("reason"),
+                    entry.getString("cause"),
+                    entry.getLong("time"),
+                    new ArrayList<>()));
+        }
+        return transactions;
     }
 
     private DatabaseCollection createAccountTypeDatabaseCollection() {
@@ -400,7 +459,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
         return this.database.createCollection("dkcoins_account_member")
                 .field("id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
                 .field("accountId", DataType.INTEGER, FieldOption.NOT_NULL)
-                .field("userId", DataType.INTEGER, FieldOption.NOT_NULL)
+                .field("userId", DataType.UUID, FieldOption.NOT_NULL)
                 .field("roleId", DataType.INTEGER, FieldOption.NOT_NULL)
                 .create();
     }

@@ -12,6 +12,7 @@ package net.pretronic.dkcoins.api.account.member;
 
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.AccountLimitation;
+import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
@@ -26,6 +27,10 @@ public interface AccountMember {
     DKCoinsUser getUser();
 
     AccountMemberRole getRole();
+
+    default boolean canAccess(AccessRight right) {
+        return getRole().canAccess(right);
+    }
 
     Collection<AccountLimitation> getLimitations();
 

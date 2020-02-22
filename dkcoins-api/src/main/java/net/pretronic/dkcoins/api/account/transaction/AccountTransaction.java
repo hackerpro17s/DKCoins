@@ -10,7 +10,6 @@
 
 package net.pretronic.dkcoins.api.account.transaction;
 
-import net.prematic.libraries.document.Document;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 

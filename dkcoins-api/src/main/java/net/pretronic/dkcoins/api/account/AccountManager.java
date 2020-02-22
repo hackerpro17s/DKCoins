@@ -10,20 +10,23 @@
 
 package net.pretronic.dkcoins.api.account;
 
-import net.prematic.libraries.document.Document;
 import net.prematic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
+import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface AccountManager {
 
     AccountType getAccountType(int id);
+
+    AccountType searchAccountType(Object identifier);
 
 
     BankAccount getAccount(int id);
@@ -80,4 +83,7 @@ public interface AccountManager {
                                            Currency comparativeCurrency, double amount, long interval);
 
     void deleteAccountLimitation(AccountLimitation accountLimitation);
+
+
+    List<AccountTransaction> filterAccountTransactions(TransactionFilter filter);
 }

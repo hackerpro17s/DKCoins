@@ -10,8 +10,10 @@
 
 package net.pretronic.dkcoins.api.user;
 
+import java.util.UUID;
+
 public interface DKCoinsUserManager {
 
-    DKCoinsUser getUser(int id);
+    DKCoinsUser getUser(UUID uniqueId);
 
 }
