@@ -70,17 +70,12 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
-            when { equals expected: false, actual: SKIP }
-            steps {
-                sh 'mvn -B clean install'
-            }
-        }
-        stage('Deploy') {
+
+        stage('Build and deploy') {
             when { equals expected: false, actual: SKIP }
             steps {
                 configFileProvider([configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
-                    sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
+                    sh 'mvn -B -gs $MAVEN_GLOBAL_SETTINGS deploy'
                 }
             }
         }
