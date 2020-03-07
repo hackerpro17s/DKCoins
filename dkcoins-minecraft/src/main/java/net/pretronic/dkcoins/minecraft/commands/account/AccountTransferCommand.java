@@ -74,7 +74,7 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
                 commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, VariableSet.create()
                         .add("amount", amount)
                         .add("currency", currency.getName())
-                        .add("receiver", receiver.getName()));
+                        .add("receiver", receiver.getName())); 
             } else {
                 CommandUtil.handleTransferFailCauses(result, commandSender);
             }
