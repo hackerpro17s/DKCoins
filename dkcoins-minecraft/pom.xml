@@ -85,8 +85,8 @@
 
                     <loader>
                         <version>${project.version}</version>
-                        <versionUrl>https://localhost:44367/v1/resource/{plugin.id}/versions/latest?plain=true</versionUrl>
-                        <downloadUrl>https://localhost:44367/v1/resource/{plugin.id}/versions/{version.build}/download</downloadUrl>
+                        <versionUrl>https://mirror.prematic.net/v1/{plugin.id}/versions/latest?plain=true</versionUrl>
+                        <downloadUrl>https://mirror.prematic.net/v1/{plugin.id}/versions/{version.build}/download</downloadUrl>
                     </loader>
 
                 </configuration>
