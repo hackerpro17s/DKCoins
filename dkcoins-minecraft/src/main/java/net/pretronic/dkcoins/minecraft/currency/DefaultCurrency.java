@@ -65,19 +65,39 @@ public class DefaultCurrency implements Currency {
         CurrencyExchangeRate currencyExchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate -> exchangeRate.getTargetCurrency().equals(targetCurrency));
         if(currencyExchangeRate == null) {
             currencyExchangeRate = DKCoins.getInstance().getCurrencyManager().getCurrencyExchangeRate(this, targetCurrency);
-            if(currencyExchangeRate != null) this.exchangeRates.add(currencyExchangeRate);
+            if(currencyExchangeRate == null) {
+                currencyExchangeRate = DKCoins.getInstance().getCurrencyManager().createCurrencyExchangeRate(this, targetCurrency, 1);
+            }
+            this.exchangeRates.add(currencyExchangeRate);
         }
         return currencyExchangeRate;
     }
 
     @Override
-    public void addExchangeRate(Currency targetCurrency, double exchangeAmount) {
-        this.exchangeRates.add(DKCoins.getInstance().getCurrencyManager().addCurrencyExchangeRate(this, targetCurrency, exchangeAmount));
+    public CurrencyExchangeRate setExchangeRate(Currency targetCurrency, double exchangeAmount) {
+        CurrencyExchangeRate exchangeRate = getExchangeRate(targetCurrency);
+        exchangeRate.setExchangeAmount(exchangeAmount);
+        return exchangeRate;
+    }
+
+    @Override
+    public boolean isTransferDisabled(Currency target) {
+        return getExchangeRate(target).getExchangeAmount() == -1;
     }
 
     @Override
     public double exchange(double amount, Currency target) {
         CurrencyExchangeRate exchangeRate = getExchangeRate(target);
         return exchangeRate == null ? 1 : amount*exchangeRate.getExchangeAmount();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Currency && ((Currency)obj).getId() == getId();
+    }
+
+    @Internal
+    public void addInternalExchangeRate(CurrencyExchangeRate exchangeRate) {
+        this.exchangeRates.add(exchangeRate);
     }
 }

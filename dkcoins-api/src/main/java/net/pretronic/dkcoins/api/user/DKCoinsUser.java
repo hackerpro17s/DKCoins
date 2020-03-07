@@ -13,11 +13,14 @@ package net.pretronic.dkcoins.api.user;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public interface DKCoinsUser {
 
     UUID getUniqueId();
+
+    Collection<BankAccount> getAccounts();
 
     BankAccount getDefaultAccount();
 

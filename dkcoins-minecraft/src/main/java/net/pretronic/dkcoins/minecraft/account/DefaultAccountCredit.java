@@ -10,9 +10,12 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
+import net.prematic.libraries.utility.Validate;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.TransferResult;
+import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
@@ -28,6 +31,9 @@ public class DefaultAccountCredit implements AccountCredit {
     private double amount;
 
     public DefaultAccountCredit(int id, BankAccount account, Currency currency, double amount) {
+        Validate.isTrue(id > 0);
+        Validate.notNull(account);
+        Validate.notNull(currency);
         this.id = id;
         this.account = account;
         this.currency = currency;
@@ -60,53 +66,60 @@ public class DefaultAccountCredit implements AccountCredit {
     }
 
     @Override
+    public void setAmount(AccountMember member, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
+        DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
+        getAccount().addTransaction(this, member, this, amount, reason, cause, properties);
+        this.amount = amount;
+    }
+
+    @Override
     public void setAmount(double amount) {
         DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
         this.amount = amount;
     }
 
     @Override
-    public void addAmount(double amount) {
-        double amount0 = this.amount+amount;
-        setAmount(amount0);
+    public TransferResult canTransfer(AccountMember member, AccountCredit target, double amount) {
+        if(getCurrency().isTransferDisabled(target.getCurrency())) {
+            return new DefaultTransferResult(TransferResult.FailCause.TRANSFER_DISABLED);
+        }
+        if(getAmount() < amount) {
+            return new DefaultTransferResult(TransferResult.FailCause.NOT_ENOUGH_AMOUNT);
+        }
+        if(!member.canAccess(AccessRight.WITHDRAW)) {
+            return new DefaultTransferResult(TransferResult.FailCause.NOT_ENOUGH_ACCESS_RIGHTS);
+        }
+        if(getAccount().isMasterAccount() && getAccount().asMasterAccount().getCredit(getCurrency()).getAmount() < amount) {
+            return new DefaultTransferResult(TransferResult.FailCause.MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
+        }
+        if(member.hasLimitation(getCurrency(), amount)) {
+            return new DefaultTransferResult(TransferResult.FailCause.LIMIT);
+        }
+        return new DefaultTransferResult(null);
     }
 
     @Override
-    public void removeAmount(double amount) {
-        double amount0 = this.amount-amount;
-        setAmount(amount0);
-    }
-
-    @Override
-    public boolean canTransfer(AccountMember member, double amount) {
-        return getAmount() >= amount
-                && member.getRole() != AccountMemberRole.GUEST
-                && (!getAccount().isMasterAccount() || getAccount().asMasterAccount().getCredit(getCurrency()).getAmount() >= amount)
-                && !member.hasLimitation(getCurrency(), amount);
-    }
-
-    @Override
-    public boolean deposit(AccountMember member, double amount, String reason, Collection<AccountTransactionProperty> properties) {
+    public TransferResult deposit(AccountMember member, double amount, String reason, Collection<AccountTransactionProperty> properties) {
         BankAccount account = member.getUser().getDefaultAccount();
         AccountMember accountMember = account.getMember(member.getUser());
         return account.getCredit(getCurrency()).transfer(accountMember, amount, this, reason, TransferCause.DEPOSIT, properties);
     }
 
     @Override
-    public boolean withdraw(AccountMember member, double amount, String reason, Collection<AccountTransactionProperty> properties) {
+    public TransferResult withdraw(AccountMember member, double amount, String reason, Collection<AccountTransactionProperty> properties) {
         return transfer(member, amount, member.getUser().getDefaultAccount()
                 .getCredit(getCurrency()), reason, TransferCause.WITHDRAW, properties);
     }
 
     @Override
-    public boolean transfer(AccountMember member, double amount, AccountCredit credit, String reason, String cause,
-                            Collection<AccountTransactionProperty> properties) {
-        if(canTransfer(member, amount)) {
+    public TransferResult transfer(AccountMember member, double amount0, AccountCredit credit, String reason, String cause, Collection<AccountTransactionProperty> properties) {
+        TransferResult result = canTransfer(member, credit, amount0);
+        if(result.isSuccess()) {
+            double amount = getCurrency().exchange(amount0, credit.getCurrency());
             credit.addAmount(amount);
-            removeAmount(amount);
-            member.getAccount().addTransaction(this, member, credit, amount, reason, cause, properties);
-            return true;
+            removeAmount(amount0);
+            account.addTransaction(this, member, credit, amount0, reason, cause, properties);
         }
-        return false;
+        return result;
     }
 }

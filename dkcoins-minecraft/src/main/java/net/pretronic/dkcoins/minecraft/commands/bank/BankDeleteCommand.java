@@ -10,21 +10,22 @@
 
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
-import net.prematic.libraries.command.command.ObjectCommand;
 import net.prematic.libraries.command.command.configuration.CommandConfiguration;
+import net.prematic.libraries.command.command.object.ObjectCommand;
 import net.prematic.libraries.command.sender.CommandSender;
+import net.prematic.libraries.message.bml.variable.VariableSet;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
-import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
 public class BankDeleteCommand extends ObjectCommand<BankAccount> {
 
     public BankDeleteCommand(ObjectOwner owner) {
-        super(owner, CommandConfiguration.newBuilder().name("delete").permission("dkcoins.command.account.delete").create());
+        super(owner, CommandConfiguration.name("delete"));
     }
 
     @Override
@@ -33,12 +34,13 @@ public class BankDeleteCommand extends ObjectCommand<BankAccount> {
             commandSender.sendMessage(Messages.ERROR_NOT_FROM_CONSOLE);
             return;
         }
-        OnlineMinecraftPlayer player = (OnlineMinecraftPlayer)commandSender;
-        AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
-        if(!member.canAccess(AccessRight.DELETE)) {
-            commandSender.sendMessage(Messages.ACCOUNT_ACCESS_DENY_DELETE);
-            return;
+        if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.DELETE)) {
+            if(!account.getType().getName().equalsIgnoreCase("User")) {
+                DKCoins.getInstance().getAccountManager().deleteAccount(account);
+                commandSender.sendMessage(Messages.COMMAND_BANK_DELETE_DONE, VariableSet.create().add("name", account.getName()));
+            } else {
+                commandSender.sendMessage(Messages.ERROR_ACCOUNT_USER_DELETE_NOT_POSSIBLE);
+            }
         }
-        DKCoins.getInstance().getAccountManager().deleteAccount(account);
     }
 }

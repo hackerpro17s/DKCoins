@@ -17,6 +17,8 @@ import net.prematic.libraries.utility.Validate;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
+import org.mcnative.common.McNative;
+import org.mcnative.common.player.MinecraftPlayer;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -42,13 +44,22 @@ public class DefaultDKCoinsUserManager implements DKCoinsUserManager {
 
                     @Override
                     public DKCoinsUser load(Object... identifiers) {
-                        return DKCoins.getInstance().getStorage().getUser((UUID) identifiers[0]);
+                        return new DefaultDKCoinsUser((UUID) identifiers[0]);
                     }
                 });
     }
 
     @Override
     public DKCoinsUser getUser(UUID uniqueId) {
-        return this.coinsUserCache.get("getOrLoad");
+        return this.coinsUserCache.get("getOrLoad", uniqueId);
+    }
+
+    @Override
+    public DKCoinsUser getUser(String name) {
+        MinecraftPlayer player = McNative.getInstance().getPlayerManager().getPlayer(name);
+        if(player != null) {
+            return getUser(player.getUniqueId());
+        }
+        return null;
     }
 }

@@ -10,69 +10,39 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
-import net.prematic.libraries.caching.ArrayCache;
-import net.prematic.libraries.caching.Cache;
-import net.prematic.libraries.caching.CacheQuery;
-import net.prematic.libraries.utility.Validate;
+import net.prematic.libraries.utility.Iterators;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
+import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
 
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class DefaultCurrencyManager implements CurrencyManager {
 
-    private final Cache<Currency> currencyCache;
+    private final Collection<Currency> currencies;
 
     public DefaultCurrencyManager() {
-        this.currencyCache = new ArrayCache<Currency>().setExpireAfterAccess(1, TimeUnit.HOURS).setMaxSize(1000)
-                .registerQuery("byId", new CacheQuery<Currency>() {
-                    @Override
-                    public boolean check(Currency currency, Object[] identifiers) {
-                        return currency.getId() == (int) identifiers[0];
-                    }
+        this.currencies = new ArrayList<>();
+        this.currencies.addAll(DKCoins.getInstance().getStorage().getCurrencies());
+    }
 
-                    @Override
-                    public void validate(Object[] identifiers) {
-                        Validate.isTrue(identifiers.length == 1 && identifiers[0] instanceof Integer,
-                                "CurrencyCache: Wrong identifiers: %s", Arrays.toString(identifiers));
-                    }
-
-                    @Override
-                    public Currency load(Object[] identifiers) {
-                        return DKCoins.getInstance().getStorage().getCurrency((int) identifiers[0]);
-                    }
-                })
-                .registerQuery("byName", new CacheQuery<Currency>() {
-                    @Override
-                    public boolean check(Currency currency, Object[] identifiers) {
-                        return currency.getName().equalsIgnoreCase((String) identifiers[0]);
-                    }
-
-                    @Override
-                    public void validate(Object[] identifiers) {
-                        Validate.isTrue(identifiers.length == 1 && identifiers[0] instanceof String,
-                                "CurrencyCache: Wrong identifiers: %s", Arrays.toString(identifiers));
-                    }
-
-                    @Override
-                    public Currency load(Object[] identifiers) {
-                        return DKCoins.getInstance().getStorage().getCurrency((String) identifiers[0]);
-                    }
-                });
+    @Override
+    public Collection<Currency> getCurrencies() {
+        return this.currencies;
     }
 
     @Override
     public Currency getCurrency(int id) {
-        return this.currencyCache.get("byId", id);
+        return Iterators.findOne(this.currencies, currency -> currency.getId() == id);
     }
 
     @Override
     public Currency getCurrency(String name) {
-        return this.currencyCache.get("byName", name);
+        return Iterators.findOne(this.currencies, currency -> currency.getName().equalsIgnoreCase(name));
     }
 
     @Override
@@ -82,13 +52,20 @@ public class DefaultCurrencyManager implements CurrencyManager {
 
     @Override
     public Currency searchCurrency(Object identifier) {
-        return null;
+        return Iterators.findOne(this.currencies, currency -> {
+            if(identifier instanceof Integer) return currency.getId() == (int) identifier;
+            return identifier instanceof String && (currency.getName().equalsIgnoreCase((String) identifier) ||
+                    currency.getSymbol().equalsIgnoreCase((String) identifier));
+        });
     }
 
     @Override
     public Currency createCurrency(String name, String symbol) {
         Currency currency = DKCoins.getInstance().getStorage().createCurrency(name, symbol);
-        this.currencyCache.insert(currency);
+        this.currencies.add(currency);
+        for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
+            account.addCredit(currency, 0);
+        }
         return currency;
     }
 
@@ -105,22 +82,26 @@ public class DefaultCurrencyManager implements CurrencyManager {
     @Override
     public void deleteCurrency(Currency currency) {
         DKCoins.getInstance().getStorage().deleteCurrency(currency.getId());
-        this.currencyCache.remove(currency);
+        this.currencies.remove(currency);
+        for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
+            account.deleteCredit(currency);
+        }
     }
 
     @Override
     public CurrencyExchangeRate getCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency) {
-        return null;
+        return DKCoins.getInstance().getStorage().getCurrencyExchangeRate(selectedCurrency.getId(), targetCurrency.getId());
     }
 
     @Override
-    public CurrencyExchangeRate addCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount) {
-        return DKCoins.getInstance().getStorage().addCurrencyExchangeRate(selectedCurrency.getId(), targetCurrency.getId(), exchangeAmount);
+    public CurrencyExchangeRate createCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount) {
+        return DKCoins.getInstance().getStorage().createCurrencyExchangeRate(selectedCurrency.getId(), targetCurrency.getId(), exchangeAmount);
     }
 
     @Override
     public void updateCurrencyExchangeRateAmount(CurrencyExchangeRate currencyExchangeRate) {
-
+        DKCoins.getInstance().getStorage().updateCurrencyExchangeAmount(currencyExchangeRate.getCurrency().getId(),
+                currencyExchangeRate.getTargetCurrency().getId(), currencyExchangeRate.getExchangeAmount());
     }
 
     @Override

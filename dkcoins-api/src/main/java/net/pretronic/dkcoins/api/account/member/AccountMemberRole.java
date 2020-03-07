@@ -20,9 +20,9 @@ public enum AccountMemberRole {
 
     GUEST(5, null, AccessRight.VIEW),
     USER(4, GUEST, AccessRight.WITHDRAW, AccessRight.DEPOSIT),
-    MANAGER(3, USER, AccessRight.MEMBER_ADD, AccessRight.MEMBER_REMOVE),
-    ADMIN(2, MANAGER, AccessRight.MANAGER_ADD, AccessRight.MANAGER_REMOVE),
-    OWNER(1, ADMIN, AccessRight.ADMIN_ADD, AccessRight.ADMIN_REMOVE, AccessRight.DELETE); //ansehen
+    MANAGER(3, USER, AccessRight.MEMBER_MANAGEMENT),
+    ADMIN(2, MANAGER, AccessRight.LIMIT_MANAGEMENT, AccessRight.ROLE_MANAGEMENT),
+    OWNER(1, ADMIN, AccessRight.ADMIN_MANAGEMENT, AccessRight.DELETE);
 
     private final int id;
     private final AccountMemberRole childRole;
@@ -54,6 +54,10 @@ public enum AccountMemberRole {
         return false;
     }
 
+    public boolean isHigher(AccountMemberRole role) {
+        return this.id < role.getId();
+    }
+
     public static AccountMemberRole byId(int id) {
         for (AccountMemberRole role : AccountMemberRole.values()) {
             if(role.getId() == id) return role;
@@ -64,6 +68,13 @@ public enum AccountMemberRole {
     public static AccountMemberRole byIdOrNull(int id) {
         for (AccountMemberRole role : AccountMemberRole.values()) {
             if(role.getId() == id) return role;
+        }
+        return null;
+    }
+
+    public static AccountMemberRole byName(String name) {
+        for (AccountMemberRole value : AccountMemberRole.values()) {
+            if(value.name().equalsIgnoreCase(name)) return value;
         }
         return null;
     }

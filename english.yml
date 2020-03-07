@@ -1,0 +1,24 @@
+meta:
+  name: 'DKCoins English'
+  bml: true
+  module: 'DKCoins'
+  language:
+    name: 'English'
+    localizedName: 'English'
+    code: 'en'
+messages:
+  dkcoins.prefix: '&8» &6DKCoins &8|&f'
+  dkcoins.error.notFromConsole: '${dkperms.prefix} &cYou can not execute &9{command} &ccommand from console.'
+  dkcoins.error.notPermission: '${dkperms.prefix} &cYou do not have enough permission.'
+  dkcoins.error.account.alreadyExists: '${dkperms.prefix} &cAn account with the name &e{name} &calready exists.'
+  dkcoins.error.account.type.notExists: '${dkperms.prefix} &cAn account type with the name &e{name} &cdoes not exist.'
+  dkcoins.account.access.deny.delete: '${dkperms.prefix} &cYou do not have enough access rights for &e{access}&c.'
+  dkcoins.command.exchange.help: '${dkperms.prefix} &cUse '
+  dkcoins.command.exchange.success: '${dkperms.prefix} &aYou have exchanged &e{amount} from &c{source} to &a{destination}'
+  dkcoins.command.exchange.failure: '${dkperms.prefix} &cYou are not able to exchange.'
+  dkcoins.command.transfer.help: '${dkperms.prefix} &cUse'
+  dkcoins.command.transfer.success: '${dkperms.prefix} &aYou have payed &e{amount}{currency} &ato &e{receiver}'
+  dkcoins.command.transfer.failure: '${dkperms.prefix} &cYou are not able to pay.'
+  dkcoins.command.bank.help: '${dkperms.prefix} &cUse'
+  dkcoins.command.coins.display.header: '${dkperms.prefix} &6Credits overview'
+  dkcoins.command.coins.display.credits: '${dkperms.prefix} &7{currency}:&e{amount}'

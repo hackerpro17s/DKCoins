@@ -1,0 +1,90 @@
+/*
+ * (C) Copyright 2020 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ *
+ * @author Philipp Elvin Friedhoff
+ * @since 16.02.20, 16:51
+ * @website %web%
+ *
+ * %license%
+ */
+
+package net.pretronic.dkcoins.minecraft.commands.bank;
+
+import net.prematic.libraries.command.NotFindable;
+import net.prematic.libraries.command.command.Command;
+import net.prematic.libraries.command.command.configuration.CommandConfiguration;
+import net.prematic.libraries.command.command.object.MainObjectCommand;
+import net.prematic.libraries.command.command.object.ObjectCommand;
+import net.prematic.libraries.command.command.object.ObjectNotFindable;
+import net.prematic.libraries.command.sender.CommandSender;
+import net.prematic.libraries.message.bml.variable.VariableSet;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
+import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.account.AccountCredit;
+import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.dkcoins.minecraft.commands.account.AccountExchangeCommand;
+import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
+import net.pretronic.dkcoins.minecraft.commands.bank.member.BankMemberCommand;
+
+import java.util.Arrays;
+
+public class BankCommand extends MainObjectCommand<BankAccount> implements NotFindable, ObjectNotFindable {
+
+    private final ObjectCommand<String> createCommand;
+    private final Command listCommand;
+
+    public BankCommand(ObjectOwner owner) {
+        super(owner, CommandConfiguration.newBuilder().name("bank").permission("dkcoins.command.bank").create());
+        registerCommand(new AccountTransferCommand(owner));
+        registerCommand(new AccountExchangeCommand(owner));
+        this.createCommand = new BankCreateCommand(owner);
+        registerCommand(new BankDeleteCommand(owner));
+        this.listCommand = new BankListCommand(owner);
+        registerCommand(new BankMemberCommand(owner));
+        registerCommand(new BankAdminCommand(owner));
+    }
+
+    @Override
+    public BankAccount getObject(String name) {
+        return DKCoins.getInstance().getAccountManager().searchAccount(name);
+    }
+
+    @Override
+    public void commandNotFound(CommandSender commandSender, String command, String[] args) {
+        if(command == null || command.equals("")) {
+            listCommand.execute(commandSender, args);
+        } else {
+            BankAccount account = getObject(command);
+            if(account != null) {
+                if(CommandUtil.hasAccountAccessAndSendMessage(commandSender, account)) {
+                    commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS_HEADER);
+                    for (AccountCredit credit : account.getCredits()) {
+                        commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS_LIST, VariableSet.create()
+                                .add("currency", credit.getCurrency().getName()).add("amount", credit.getAmount()));
+                    }
+                }
+            } else {
+                commandSender.sendMessage(Messages.COMMAND_BANK_HELP);
+            }
+        }
+    }
+
+    @Override
+    public void objectNotFound(CommandSender commandSender, String command, String[] args) {
+        if(command.equalsIgnoreCase("list")) {
+            this.listCommand.execute(commandSender, args);
+            return;
+        } else if(command.equalsIgnoreCase("help")) {
+            commandSender.sendMessage(Messages.COMMAND_BANK_HELP);
+            return;
+        } else if(args.length > 0) {
+            if(args[0].equalsIgnoreCase("create")) {
+                createCommand.execute(commandSender, command, Arrays.copyOfRange(args, 1, args.length));
+                return;
+            }
+        }
+        commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", command));
+    }
+}

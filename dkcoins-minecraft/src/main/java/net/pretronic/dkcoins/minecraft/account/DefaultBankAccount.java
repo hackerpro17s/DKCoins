@@ -10,7 +10,6 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.prematic.libraries.document.Document;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.Validate;
 import net.prematic.libraries.utility.annonations.Internal;
@@ -20,11 +19,10 @@ import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
-import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.account.MasterBankAccount;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +41,8 @@ public class DefaultBankAccount implements BankAccount {
     private final List<AccountTransaction> transactions;
 
     public DefaultBankAccount(int id, String name, AccountType type, boolean disabled, MasterBankAccount parent) {
+        Validate.isTrue(id > 0);
+        Validate.notNull(name, type);
         this.id = id;
         this.name = name;
         this.type = type;
@@ -107,12 +107,43 @@ public class DefaultBankAccount implements BankAccount {
 
     @Override
     public AccountCredit getCredit(Currency currency) {
-        return Iterators.findOne(this.credits, credit -> credit.getCurrency().equals(currency));
+        if(currency == null) return null;
+        AccountCredit credit = Iterators.findOne(this.credits, credit0 -> credit0.getCurrency().equals(currency));
+        if(credit == null) {
+            double amount = 0;
+            if(currency.equals(DKCoinsConfig.DEFAULT_CURRENCY)) {
+                amount = DKCoinsConfig.ACCOUNT_USER_START_AMOUNT;
+            }
+            credit = addCredit(currency, amount);
+        }
+        return credit;
     }
 
     @Override
     public Collection<AccountLimitation> getLimitations() {
         return this.limitations;
+    }
+
+    @Override
+    public AccountLimitation getLimitation(AccountMember member, AccountMemberRole role, Currency comparativeCurrency, double amount, long interval) {
+        return Iterators.findOne(this.limitations, limitation -> {
+            if(!(member == null || member.equals(limitation.getMember()))) {
+                return false;
+            }
+            if(!(role == null || role.equals(limitation.getMemberRole()))) {
+                return false;
+            }
+            if(!comparativeCurrency.equals(limitation.getComparativeCurrency())) {
+                return false;
+            }
+            if(amount != limitation.getAmount()) {
+                return false;
+            }
+            if(interval != limitation.getInterval()) {
+                return false;
+            }
+            return true;
+        });
     }
 
     //@Todo caching
@@ -132,13 +163,13 @@ public class DefaultBankAccount implements BankAccount {
     }
 
     @Override
+    public Collection<AccountMember> getMembers() {
+        return this.members;
+    }
+
+    @Override
     public AccountMember getMember(DKCoinsUser user) {
-        AccountMember accountMember = Iterators.findOne(this.members, member -> member.getUser().equals(user));
-        if(accountMember == null) {
-            accountMember = DKCoins.getInstance().getAccountManager().getAccountMember(user, this);
-        }
-        if(accountMember != null) this.members.add(accountMember);
-        return accountMember;
+        return Iterators.findOne(this.members, member -> member.getUser().equals(user));
     }
 
     @Override
@@ -154,9 +185,17 @@ public class DefaultBankAccount implements BankAccount {
     }
 
     @Override
-    public void addCredit(Currency currency, double amount) {
+    public AccountCredit addCredit(Currency currency, double amount) {
         AccountCredit accountCredit = DKCoins.getInstance().getAccountManager().addAccountCredit(this, currency, amount);
         this.credits.add(accountCredit);
+        return accountCredit;
+    }
+
+    @Override
+    public void deleteCredit(Currency currency) {
+        AccountCredit credit = getCredit(currency);
+        DKCoins.getInstance().getAccountManager().deleteAccountCredit(credit);
+        this.credits.remove(credit);
     }
 
     @Override
@@ -168,9 +207,11 @@ public class DefaultBankAccount implements BankAccount {
     }
 
     @Override
-    public void deleteLimitation(AccountLimitation limitation) {
-        DKCoins.getInstance().getAccountManager().deleteAccountLimitation(limitation);
+    public boolean removeLimitation(AccountLimitation limitation) {
+        if(limitation == null) return false;
+        DKCoins.getInstance().getAccountManager().removeAccountLimitation(limitation);
         this.limitations.remove(limitation);
+        return true;
     }
 
     @Override
@@ -181,22 +222,21 @@ public class DefaultBankAccount implements BankAccount {
 
     @Override
     public void removeMember(AccountMember member) {
-        DKCoins.getInstance().getAccountManager().deleteAccountMember(member);
+        DKCoins.getInstance().getAccountManager().removeAccountMember(member);
         this.members.remove(member);
     }
 
     @Override
     public void addTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver, double amount,
                                String reason, String cause, Collection<AccountTransactionProperty> properties) {
-        double exchangeRate = DKCoins.getInstance().getCurrencyManager().getCurrencyExchangeRate(source.getCurrency(),
-                receiver.getCurrency()).getExchangeAmount();
+        double exchangeRate = source.getCurrency().getExchangeRate(receiver.getCurrency()).getExchangeAmount();
         AccountTransaction transaction = DKCoins.getInstance().getAccountManager()
                 .addAccountTransaction(source, sender, receiver, amount, exchangeRate, reason, cause, System.currentTimeMillis(), properties);
         this.transactions.add(transaction);
     }
 
     @Override
-    public boolean exchangeAccountCredit(AccountMember member, Currency from, Currency to, double amount,
+    public TransferResult exchangeAccountCredit(AccountMember member, Currency from, Currency to, double amount,
                                          String reason, Collection<AccountTransactionProperty> properties) {
         return getCredit(from).transfer(member, amount, getCredit(to), reason, TransferCause.EXCHANGE, properties);
     }
@@ -209,5 +249,10 @@ public class DefaultBankAccount implements BankAccount {
     @Internal
     public void addLoadedLimitation(AccountLimitation limitation) {
         this.limitations.add(limitation);
+    }
+
+    @Internal
+    public void addLoadedMember(AccountMember member) {
+        this.members.add(member);
     }
 }

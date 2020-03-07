@@ -24,7 +24,9 @@ public interface Currency {
 
     CurrencyExchangeRate getExchangeRate(Currency targetCurrency);
 
-    void addExchangeRate(Currency targetCurrency, double exchangeAmount);
+    CurrencyExchangeRate setExchangeRate(Currency targetCurrency, double exchangeAmount);
+
+    boolean isTransferDisabled(Currency target);
 
     double exchange(double amount, Currency target);
 }

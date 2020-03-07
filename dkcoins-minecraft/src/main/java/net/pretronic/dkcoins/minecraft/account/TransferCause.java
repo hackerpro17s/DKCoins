@@ -16,4 +16,5 @@ public final class TransferCause {
     public static final String DEPOSIT = "deposit";
     public static final String WITHDRAW = "withdraw";
     public static final String TRANSFER = "transfer";
+    public static final String API = "api";
 }

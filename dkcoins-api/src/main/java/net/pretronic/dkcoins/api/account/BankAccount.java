@@ -54,10 +54,15 @@ public interface BankAccount {
 
     AccountCredit getCredit(Currency currency);
 
-    void addCredit(Currency currency, double amount);
+    AccountCredit addCredit(Currency currency, double amount);
+
+    void deleteCredit(Currency currency);
 
 
     Collection<AccountLimitation> getLimitations();
+
+    AccountLimitation getLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
+                                    double amount, long interval);
 
     boolean hasLimitation(AccountMemberRole memberRole, Currency currency, double amount);
 
@@ -66,10 +71,17 @@ public interface BankAccount {
     void addLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
                        double amount, long interval);
 
-    void deleteLimitation(AccountLimitation limitation);
+    boolean removeLimitation(AccountLimitation limitation);
+
+    default boolean removeLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
+                          double amount, long interval) {
+        return removeLimitation(getLimitation(member, role, comparativeCurrency, amount, interval));
+    }
 
 
     boolean isMember(DKCoinsUser user);
+
+    Collection<AccountMember> getMembers();
 
     AccountMember getMember(DKCoinsUser user);
 
@@ -81,5 +93,5 @@ public interface BankAccount {
     void addTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver, double amount, String reason,
                         String cause, Collection<AccountTransactionProperty> properties);
 
-    boolean exchangeAccountCredit(AccountMember member, Currency from, Currency to, double amount, String reason, Collection<AccountTransactionProperty> properties);
+    TransferResult exchangeAccountCredit(AccountMember member, Currency from, Currency to, double amount, String reason, Collection<AccountTransactionProperty> properties);
 }

@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.api.account.member;
 
+import net.prematic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.AccountLimitation;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
@@ -28,6 +29,8 @@ public interface AccountMember {
 
     AccountMemberRole getRole();
 
+    void setRole(AccountMemberRole role);
+
     default boolean canAccess(AccessRight right) {
         return getRole().canAccess(right);
     }
@@ -35,4 +38,14 @@ public interface AccountMember {
     Collection<AccountLimitation> getLimitations();
 
     boolean hasLimitation(Currency currency, double amount);
+
+    AccountLimitation getLimitation(Currency comparativeCurrency, double amount, long interval);
+
+    void addLimitation(Currency comparativeCurrency, double amount, long interval);
+
+    boolean removeLimitation(AccountLimitation limitation);
+
+    default boolean removeLimitation(Currency comparativeCurrency, double amount, long interval) {
+        return removeLimitation(getLimitation(comparativeCurrency, amount, interval));
+    }
 }

@@ -11,6 +11,7 @@
 package net.pretronic.dkcoins.api.account;
 
 import net.prematic.libraries.utility.annonations.Nullable;
+import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
@@ -28,6 +29,12 @@ public interface AccountManager {
 
     AccountType searchAccountType(Object identifier);
 
+    AccountType createAccountType(String name, String symbol);
+
+
+    Collection<BankAccount> getCachedAccounts();
+
+    Collection<BankAccount> getAccounts(DKCoinsUser user);
 
     BankAccount getAccount(int id);
 
@@ -54,6 +61,8 @@ public interface AccountManager {
 
     AccountCredit addAccountCredit(BankAccount account, Currency currency, double amount);
 
+    void deleteAccountCredit(AccountCredit credit);
+
     void setAccountCreditAmount(AccountCredit credit, double amount);
 
 
@@ -63,7 +72,9 @@ public interface AccountManager {
 
     AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMemberRole memberRole);
 
-    void deleteAccountMember(AccountMember member);
+    void updateAccountMemberRole(AccountMember member);
+
+    void removeAccountMember(AccountMember member);
 
 
     Collection<AccountTransaction> getAccountTransactions(AccountMember member, int start, int end);
@@ -82,7 +93,7 @@ public interface AccountManager {
     AccountLimitation addAccountLimitation(BankAccount account, @Nullable AccountMember member, @Nullable AccountMemberRole memberRole,
                                            Currency comparativeCurrency, double amount, long interval);
 
-    void deleteAccountLimitation(AccountLimitation accountLimitation);
+    void removeAccountLimitation(AccountLimitation accountLimitation);
 
 
     List<AccountTransaction> filterAccountTransactions(TransactionFilter filter);

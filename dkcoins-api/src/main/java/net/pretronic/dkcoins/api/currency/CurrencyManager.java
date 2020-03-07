@@ -12,7 +12,11 @@ package net.pretronic.dkcoins.api.currency;
 
 import net.pretronic.dkcoins.api.account.AccountCredit;
 
+import java.util.Collection;
+
 public interface CurrencyManager {
+
+    Collection<Currency> getCurrencies();
 
     Currency getCurrency(int id);
 
@@ -33,7 +37,7 @@ public interface CurrencyManager {
 
     CurrencyExchangeRate getCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency);
 
-    CurrencyExchangeRate addCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount);
+    CurrencyExchangeRate createCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount);
 
     void updateCurrencyExchangeRateAmount(CurrencyExchangeRate currencyExchangeRate);
 

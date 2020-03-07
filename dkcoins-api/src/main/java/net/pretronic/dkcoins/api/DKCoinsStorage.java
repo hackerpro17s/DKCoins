@@ -10,14 +10,13 @@
 
 package net.pretronic.dkcoins.api;
 
-import net.prematic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
@@ -29,6 +28,8 @@ public interface DKCoinsStorage {
 
     AccountType getAccountType(int id);
 
+    AccountType searchAccountType(Object identifier);
+
     AccountType createAccountType(String name, String symbol);
 
     void updateAccountTypeName(int id, String name);
@@ -38,7 +39,11 @@ public interface DKCoinsStorage {
     void deleteAccountType(int id);
 
 
+    Collection<Integer> getAccountIds(UUID userId);
+
     BankAccount getAccount(int id);
+
+    BankAccount searchAccount(Object identifier);
 
     BankAccount getAccountByCredit(int creditId);
 
@@ -48,9 +53,9 @@ public interface DKCoinsStorage {
 
     MasterBankAccount getSubMasterAccount(int masterAccountId, int id);
 
-    BankAccount createAccount(String name, int typeId, boolean disabled, int parentId, UUID creator);
+    BankAccount createAccount(String name, AccountType type, boolean disabled, MasterBankAccount parent, DKCoinsUser creator);
 
-    MasterBankAccount createMasterAccount(String name, int typeId, boolean disabled, int parentId, UUID creator);
+    MasterBankAccount createMasterAccount(String name, AccountType type, boolean disabled, MasterBankAccount parent, DKCoinsUser creator);
 
     void updateAccountName(int id, String name);
 
@@ -63,7 +68,7 @@ public interface DKCoinsStorage {
     void deleteAccount(int id);
 
 
-    AccountCredit addAccountCredit(int accountId, int currencyId, double amount);
+    AccountCredit addAccountCredit(BankAccount account, Currency currency, double amount);
 
     void setAccountCreditAmount(int id, double amount);
 
@@ -71,31 +76,38 @@ public interface DKCoinsStorage {
 
 
 
-    AccountLimitation addAccountLimitation(int accountId, @Nullable int memberId, int memberRoleId,
-                                           int comparativeCurrencyId, double amount, long interval);
+    AccountLimitation addAccountLimitation(BankAccount account, AccountMember accountMember, AccountMemberRole memberRole,
+                                           Currency comparativeCurrency, double amount, long interval);
 
-    void deleteAccountLimitation(int id);
+    void removeAccountLimitation(int id);
 
 
-    AccountMember getAccountMember(int id);
+    //Returns bank id to get by bank
+    int getAccountMember(int id);
 
-    AccountMember getAccountMember(UUID userId, int accountId);
+    AccountMember getAccountMember(DKCoinsUser user, BankAccount account);
 
-    AccountMember addAccountMember(int accountId, UUID userId, AccountMemberRole role);
+    AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMemberRole role);
 
-    void deleteAccountMember(int id);
+    void updateAccountMemberRole(AccountMember member);
+
+    void removeAccountMember(int id);
 
 
     Collection<AccountTransaction> getAccountTransactions(int senderId, int start, int end);
 
-    AccountTransaction addAccountTransaction(int sourceId, int senderId, int receiverId, double amount,
-                                             double exchangeRate, String reason, String cause, long time,
-                                             Collection<AccountTransactionProperty> properties);
+    AccountTransaction addAccountTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver,
+                                             double amount, double exchangeRate, String reason, String cause,
+                                             long time, Collection<AccountTransactionProperty> properties);
 
+
+    Collection<Currency> getCurrencies();
 
     Currency getCurrency(int id);
 
     Currency getCurrency(String name);
+
+    Currency searchCurrency(Object identifier);
 
     Currency createCurrency(String name, String symbol);
 
@@ -106,8 +118,11 @@ public interface DKCoinsStorage {
     void deleteCurrency(int id);
 
 
+    CurrencyExchangeRate getCurrencyExchangeRate(int currencyId, int targetCurrencyId);
 
-    CurrencyExchangeRate addCurrencyExchangeRate(int selectedCurrencyId, int targetCurrencyId, double exchangeAmount);
+    CurrencyExchangeRate createCurrencyExchangeRate(int selectedCurrencyId, int targetCurrencyId, double exchangeAmount);
+
+    void updateCurrencyExchangeAmount(int selectedId, int targetId, double exchangeAmount);
 
     void deleteCurrencyExchangeRate(int id);
 

@@ -10,9 +10,10 @@
 
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
-import net.prematic.libraries.command.command.ObjectCommand;
 import net.prematic.libraries.command.command.configuration.CommandConfiguration;
+import net.prematic.libraries.command.command.object.ObjectCommand;
 import net.prematic.libraries.command.sender.CommandSender;
+import net.prematic.libraries.message.bml.variable.VariableSet;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountType;
@@ -37,21 +38,22 @@ public class BankCreateCommand extends ObjectCommand<String> {
             return;
         }
         String accountType0 = args[0];
-        String requiredPermission = "dkcoins.account.type.permission"+accountType0;
-        if(!commandSender.hasPermission(requiredPermission)) {
-            commandSender.sendMessage(Messages.ERROR_NO_PERMISSION);
-            return;
-        }
         if(DKCoins.getInstance().getAccountManager().searchAccount(bankName) != null) {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_ALREADY_EXISTS);
             return;
         }
         AccountType accountType = DKCoins.getInstance().getAccountManager().searchAccountType(accountType0);
         if(accountType == null) {
-            commandSender.sendMessage(Messages.ERROR_ACCOUNT_TYPE_NOT_EXISTS);
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_TYPE_NOT_EXISTS, VariableSet.create().add("name", accountType0));
+            return;
+        }
+        String requiredPermission = "dkcoins.account.type.permission."+accountType0;
+        if(!commandSender.hasPermission(requiredPermission)) {
+            commandSender.sendMessage(Messages.ERROR_NO_PERMISSION);
             return;
         }
         DKCoins.getInstance().getAccountManager().createAccount(bankName, accountType, false, null,
                 DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
+        player.sendMessage(Messages.COMMAND_BANK_CREATE_DONE, VariableSet.create().add("name", bankName).add("type", accountType.getName()));
     }
 }

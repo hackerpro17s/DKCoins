@@ -16,4 +16,5 @@ public interface DKCoinsUserManager {
 
     DKCoinsUser getUser(UUID uniqueId);
 
+    DKCoinsUser getUser(String name);
 }
