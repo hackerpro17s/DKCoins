@@ -3,7 +3,7 @@
   <parent>
     <artifactId>DKCoins</artifactId>
     <groupId>net.pretronic.dkcoins</groupId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>dkcoins-minecraft</artifactId>
@@ -60,8 +60,8 @@
           </manifest>
           <loader>
             <version>${project.version}</version>
-            <versionUrl>https://localhost:44367/v1/resource/{plugin.id}/versions/latest?plain=true</versionUrl>
-            <downloadUrl>https://localhost:44367/v1/resource/{plugin.id}/versions/{version.build}/download</downloadUrl>
+            <versionUrl>https://mirror.prematic.net/v1/{plugin.id}/versions/latest?plain=true</versionUrl>
+            <downloadUrl>https://mirror.prematic.net/v1/{plugin.id}/versions/{version.build}/download</downloadUrl>
           </loader>
         </configuration>
       </plugin>
@@ -84,7 +84,7 @@
     <dependency>
       <groupId>org.mcnative</groupId>
       <artifactId>mcnative-build</artifactId>
-      <version>1.0.51-SNAPSHOT</version>
+      <version>1.0.52-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
