@@ -65,11 +65,12 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mcnative-loader-version>1.0.0</mcnative-loader-version>
-                    <resource-loader-version>1.0.13-SNAPSHOT</resource-loader-version>
+                    <mcnative-loader-version>${dependency.mcnative.version}</mcnative-loader-version>
+                    <resource-loader-version>${dependency.pretronic.libraries}</resource-loader-version>
 
                     <manifest>
                         <name>DKCoins</name>
+                        <id>0249f842-de95-42df-b611-7ad390d90086</id>
                         <category>Network Management</category>
                         <version>
                             <name>${project.version}</name>
@@ -81,6 +82,13 @@
                         <author>Philipp Elvin Friedhoff</author>
                         <messageModule>DKCoins</messageModule>
                     </manifest>
+
+                    <loader>
+                        <version>${project.version}</version>
+                        <versionUrl>https://localhost:44367/v1/resource/{plugin.id}/versions/latest?plain=true</versionUrl>
+                        <downloadUrl>https://localhost:44367/v1/resource/{plugin.id}/versions/{version.build}/download</downloadUrl>
+                    </loader>
+
                 </configuration>
             </plugin>
             <plugin>
@@ -99,6 +107,7 @@
             <groupId>net.pretronic.dkcoins</groupId>
             <artifactId>dkcoins-api-minecraft</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mcnative</groupId>
