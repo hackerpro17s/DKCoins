@@ -7,7 +7,7 @@ meta:
     localizedName: 'English'
     code: 'en'
 messages:
-  dkcoins.prefix: '&8» &6DKCoins &8|&f'
+  dkcoins.prefix: '&8Â» &6DKCoins &8|&f'
   dkcoins.error.notFromConsole: '${dkperms.prefix} &cYou can not execute &9{command} &ccommand from console.'
   dkcoins.error.notPermission: '${dkperms.prefix} &cYou do not have enough permission.'
   dkcoins.error.account.alreadyExists: '${dkperms.prefix} &cAn account with the name &e{name} &calready exists.'
