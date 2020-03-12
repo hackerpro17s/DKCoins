@@ -10,16 +10,18 @@
 
 package net.pretronic.dkcoins.api.account;
 
-import net.prematic.libraries.utility.annonations.Nullable;
+import net.pretronic.libraries.utility.annonations.Nullable;
+import net.pretronic.libraries.synchronisation.Synchronizable;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
 import java.util.Collection;
 
-public interface BankAccount {
+public interface BankAccount extends Synchronizable {
 
     int getId();
 
@@ -85,13 +87,15 @@ public interface BankAccount {
 
     AccountMember getMember(DKCoinsUser user);
 
-    void addMember(DKCoinsUser user, AccountMemberRole role);
+    AccountMember getMember(int id);
 
-    void removeMember(AccountMember member);
+    void addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role);
+
+    void removeMember(AccountMember member, AccountMember remover);
 
 
-    void addTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver, double amount, String reason,
-                        String cause, Collection<AccountTransactionProperty> properties);
+    AccountTransaction addTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver, double amount, String reason,
+                                      String cause, Collection<AccountTransactionProperty> properties);
 
     TransferResult exchangeAccountCredit(AccountMember member, Currency from, Currency to, double amount, String reason, Collection<AccountTransactionProperty> properties);
 }

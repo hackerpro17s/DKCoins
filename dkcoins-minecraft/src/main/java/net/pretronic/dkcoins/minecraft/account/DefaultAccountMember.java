@@ -10,8 +10,8 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.prematic.libraries.utility.Iterators;
-import net.prematic.libraries.utility.annonations.Internal;
+import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.AccountLimitation;
@@ -73,7 +73,7 @@ public class DefaultAccountMember implements AccountMember {
     //@Todo caching
     @Override
     public boolean hasLimitation(Currency currency, double amount) {
-        return DKCoins.getInstance().getAccountManager().hasLimitation(this, currency, amount);
+        return DKCoins.getInstance().getAccountManager().hasAccountLimitation(this, currency, amount);
     }
 
     @Override
@@ -104,6 +104,11 @@ public class DefaultAccountMember implements AccountMember {
     @Internal
     public void addLoadedLimitation(AccountLimitation limitation) {
         this.limitations.add(limitation);
+    }
+
+    @Internal
+    public void updateRole(AccountMemberRole role) {
+        this.role = role;
     }
 
     @Override

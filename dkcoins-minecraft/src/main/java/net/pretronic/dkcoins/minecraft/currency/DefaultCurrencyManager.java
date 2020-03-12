@@ -10,7 +10,14 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
-import net.prematic.libraries.utility.Iterators;
+import net.pretronic.libraries.caching.CacheQuery;
+import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
+import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
+import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.synchronisation.map.HashSynchronizableMap;
+import net.pretronic.libraries.synchronisation.map.SynchronizableMap;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
@@ -23,26 +30,29 @@ import java.util.Collection;
 
 public class DefaultCurrencyManager implements CurrencyManager {
 
-    private final Collection<Currency> currencies;
+    private final SynchronizableCache<Currency, Integer> currencyCache;
 
     public DefaultCurrencyManager() {
-        this.currencies = new ArrayList<>();
-        this.currencies.addAll(DKCoins.getInstance().getStorage().getCurrencies());
+        this.currencyCache = new ArraySynchronizableCache<>();
+        for (Currency currency : DKCoins.getInstance().getStorage().getCurrencies()) {
+            this.currencyCache.insert(currency);
+        }
+        registerCurrencyQueries();
     }
 
     @Override
     public Collection<Currency> getCurrencies() {
-        return this.currencies;
+        return this.currencyCache.getCachedObjects();
     }
 
     @Override
     public Currency getCurrency(int id) {
-        return Iterators.findOne(this.currencies, currency -> currency.getId() == id);
+        return this.currencyCache.get("byId", id);
     }
 
     @Override
     public Currency getCurrency(String name) {
-        return Iterators.findOne(this.currencies, currency -> currency.getName().equalsIgnoreCase(name));
+        return this.currencyCache.get("search", name);
     }
 
     @Override
@@ -52,40 +62,40 @@ public class DefaultCurrencyManager implements CurrencyManager {
 
     @Override
     public Currency searchCurrency(Object identifier) {
-        return Iterators.findOne(this.currencies, currency -> {
-            if(identifier instanceof Integer) return currency.getId() == (int) identifier;
-            return identifier instanceof String && (currency.getName().equalsIgnoreCase((String) identifier) ||
-                    currency.getSymbol().equalsIgnoreCase((String) identifier));
-        });
+        return this.currencyCache.get("search", identifier);
     }
 
     @Override
     public Currency createCurrency(String name, String symbol) {
         Currency currency = DKCoins.getInstance().getStorage().createCurrency(name, symbol);
-        this.currencies.add(currency);
+        this.currencyCache.insert(currency);
         for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
             account.addCredit(currency, 0);
         }
+        this.currencyCache.getCaller().create(currency.getId(), Document.newDocument());
         return currency;
     }
 
     @Override
     public void updateCurrencyName(Currency currency) {
         DKCoins.getInstance().getStorage().updateCurrencyName(currency.getId(), currency.getName());
+        this.currencyCache.getCaller().update(currency.getId(), Document.newDocument().add("name", currency.getName()));
     }
 
     @Override
     public void updateCurrencySymbol(Currency currency) {
         DKCoins.getInstance().getStorage().updateCurrencySymbol(currency.getId(), currency.getSymbol());
+        this.currencyCache.getCaller().update(currency.getId(), Document.newDocument().add("symbol", currency.getSymbol()));
     }
 
     @Override
     public void deleteCurrency(Currency currency) {
         DKCoins.getInstance().getStorage().deleteCurrency(currency.getId());
-        this.currencies.remove(currency);
+        this.currencyCache.remove(currency);
         for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
             account.deleteCredit(currency);
         }
+        this.currencyCache.getCaller().delete(currency.getId(), Document.newDocument());
     }
 
     @Override
@@ -95,17 +105,56 @@ public class DefaultCurrencyManager implements CurrencyManager {
 
     @Override
     public CurrencyExchangeRate createCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount) {
-        return DKCoins.getInstance().getStorage().createCurrencyExchangeRate(selectedCurrency.getId(), targetCurrency.getId(), exchangeAmount);
+        CurrencyExchangeRate exchangeRate = DKCoins.getInstance().getStorage()
+                .createCurrencyExchangeRate(selectedCurrency.getId(), targetCurrency.getId(), exchangeAmount);
+        this.currencyCache.getCaller().update(selectedCurrency.getId(), Document.newDocument()
+                .add("newExchangeRate", exchangeRate.getId()));
+        return exchangeRate;
     }
 
     @Override
     public void updateCurrencyExchangeRateAmount(CurrencyExchangeRate currencyExchangeRate) {
         DKCoins.getInstance().getStorage().updateCurrencyExchangeAmount(currencyExchangeRate.getCurrency().getId(),
                 currencyExchangeRate.getTargetCurrency().getId(), currencyExchangeRate.getExchangeAmount());
+        this.currencyCache.getCaller().update(currencyExchangeRate.getCurrency().getId(), Document.newDocument("updateExchangeRateAmount")
+                .add("exchangeRateId", currencyExchangeRate.getId())
+                .add("exchangeAmount", currencyExchangeRate.getExchangeAmount()));
     }
 
     @Override
     public void deleteCurrencyExchangeRate(CurrencyExchangeRate exchangeRate) {
         DKCoins.getInstance().getStorage().deleteCurrencyExchangeRate(exchangeRate.getId());
+        this.currencyCache.getCaller().update(exchangeRate.getCurrency().getId(), Document.newDocument()
+                .add("removeExchangeRate", exchangeRate.getId()));
+    }
+
+    private void registerCurrencyQueries() {
+        this.currencyCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getCurrency(id));
+        this.currencyCache.registerQuery("search", new CacheQuery<Currency>() {
+            @Override
+            public boolean check(Currency currency, Object[] identifiers) {
+                Object identifier = identifiers[0];
+                if(identifier instanceof Integer) {
+                    return currency.getId() == (int) identifier;
+                }
+                return identifier instanceof String && currency.getName().equalsIgnoreCase((String) identifier);
+            }
+
+            @Override
+            public void validate(Object[] identifiers) {
+                Validate.isTrue(identifiers.length == 1, "(Currency cache) Wrong identifier length");
+            }
+        }).registerQuery("byId", new CacheQuery<Currency>() {
+            @Override
+            public boolean check(Currency currency, Object[] identifier) {
+                return currency.getId() == (int) identifier[0];
+            }
+
+            @Override
+            public void validate(Object[] identifiers) {
+                Validate.isTrue(identifiers.length == 1 && identifiers[0] instanceof Integer,
+                        "(Currency cache) Wrong identifier length or wrong identifier type");
+            }
+        });
     }
 }

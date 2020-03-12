@@ -1,6 +1,6 @@
 package net.pretronic.dkcoins.api.account;
 
-import net.prematic.libraries.utility.map.caseintensive.CaseIntensiveMap;
+import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveMap;
 
 public interface TransferResult {
 

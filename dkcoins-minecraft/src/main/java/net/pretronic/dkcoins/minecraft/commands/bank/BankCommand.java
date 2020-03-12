@@ -10,15 +10,15 @@
 
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
-import net.prematic.libraries.command.NotFindable;
-import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.command.command.configuration.CommandConfiguration;
-import net.prematic.libraries.command.command.object.MainObjectCommand;
-import net.prematic.libraries.command.command.object.ObjectCommand;
-import net.prematic.libraries.command.command.object.ObjectNotFindable;
-import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.message.bml.variable.VariableSet;
-import net.prematic.libraries.utility.interfaces.ObjectOwner;
+import net.pretronic.libraries.command.NotFindable;
+import net.pretronic.libraries.command.command.Command;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.MainObjectCommand;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.command.object.ObjectNotFindable;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;

@@ -10,9 +10,9 @@
 
 package net.pretronic.dkcoins.minecraft;
 
-import net.prematic.libraries.logging.level.LogLevel;
-import net.prematic.libraries.plugin.lifecycle.Lifecycle;
-import net.prematic.libraries.plugin.lifecycle.LifecycleState;
+import net.pretronic.libraries.logging.level.LogLevel;
+import net.pretronic.libraries.plugin.lifecycle.Lifecycle;
+import net.pretronic.libraries.plugin.lifecycle.LifecycleState;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;

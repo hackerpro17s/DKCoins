@@ -1,11 +1,22 @@
 package net.pretronic.dkcoins.api.minecraft.events;
 
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import org.mcnative.common.event.MinecraftEvent;
 
-public interface DKCoinsAccountDeleteEvent extends MinecraftEvent {
+public class DKCoinsAccountDeleteEvent extends DKCoinsEvent {
 
-    DKCoinsUser getDeleter();
+    private final int bankAccountId;
+    private final DKCoinsUser deleter;
 
-    int getBankAccountId();
+    public DKCoinsAccountDeleteEvent(int bankAccountId, DKCoinsUser deleter) {
+        this.deleter = deleter;
+        this.bankAccountId = bankAccountId;
+    }
+
+    public int getBankAccountId() {
+        return bankAccountId;
+    }
+
+    public DKCoinsUser getDeleter() {
+        return deleter;
+    }
 }

@@ -1,11 +1,23 @@
 package net.pretronic.dkcoins.api.minecraft.events;
 
 import net.pretronic.dkcoins.api.account.member.AccountMember;
-import org.mcnative.common.event.MinecraftEvent;
 
-public interface DKCoinsAccountMemberAddEvent extends MinecraftEvent {
+public class DKCoinsAccountMemberAddEvent extends DKCoinsAccountEvent {
 
-    AccountMember getMember();
+    private final AccountMember addedMember;
+    private final AccountMember adder;
 
-    AccountMember getAdder();
+    public DKCoinsAccountMemberAddEvent(AccountMember addedMember, AccountMember adder) {
+        super(addedMember.getAccount());
+        this.addedMember = addedMember;
+        this.adder = adder;
+    }
+
+    public AccountMember getAddedMember() {
+        return addedMember;
+    }
+
+    public AccountMember getAdder() {
+        return adder;
+    }
 }

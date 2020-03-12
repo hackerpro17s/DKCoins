@@ -10,7 +10,7 @@
 
 package net.pretronic.dkcoins.api.account;
 
-import net.prematic.libraries.utility.annonations.Nullable;
+import net.pretronic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
@@ -50,7 +50,7 @@ public interface AccountManager {
 
     MasterBankAccount createMasterAccount(String name, AccountType type, boolean disabled, MasterBankAccount parent, DKCoinsUser creator);
 
-    void deleteAccount(BankAccount account);
+    void deleteAccount(BankAccount account, DKCoinsUser user);
 
     void updateAccountName(BankAccount account);
 
@@ -70,11 +70,11 @@ public interface AccountManager {
 
     AccountMember getAccountMember(DKCoinsUser user, BankAccount account);
 
-    AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMemberRole memberRole);
+    AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMember adder, AccountMemberRole memberRole);
 
     void updateAccountMemberRole(AccountMember member);
 
-    void removeAccountMember(AccountMember member);
+    void removeAccountMember(AccountMember member, AccountMember remover);
 
 
     Collection<AccountTransaction> getAccountTransactions(AccountMember member, int start, int end);
@@ -84,11 +84,13 @@ public interface AccountManager {
                                              long time, Collection<AccountTransactionProperty> properties);
 
 
-    boolean hasLimitation(BankAccount account, Currency currency, double amount);
+    AccountLimitation getAccountLimitation(int id);
 
-    boolean hasLimitation(BankAccount account, AccountMemberRole memberRole, Currency currency, double amount);
+    boolean hasAccountLimitation(BankAccount account, Currency currency, double amount);
 
-    boolean hasLimitation(AccountMember member, Currency currency, double amount);
+    boolean hasAccountLimitation(BankAccount account, AccountMemberRole memberRole, Currency currency, double amount);
+
+    boolean hasAccountLimitation(AccountMember member, Currency currency, double amount);
 
     AccountLimitation addAccountLimitation(BankAccount account, @Nullable AccountMember member, @Nullable AccountMemberRole memberRole,
                                            Currency comparativeCurrency, double amount, long interval);

@@ -10,11 +10,11 @@
 
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
-import net.prematic.libraries.command.command.configuration.CommandConfiguration;
-import net.prematic.libraries.command.command.object.ObjectCommand;
-import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.message.bml.variable.VariableSet;
-import net.prematic.libraries.utility.interfaces.ObjectOwner;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
@@ -36,7 +36,7 @@ public class BankDeleteCommand extends ObjectCommand<BankAccount> {
         }
         if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.DELETE)) {
             if(!account.getType().getName().equalsIgnoreCase("User")) {
-                DKCoins.getInstance().getAccountManager().deleteAccount(account);
+                DKCoins.getInstance().getAccountManager().deleteAccount(account, CommandUtil.getUserByCommandSender(commandSender));
                 commandSender.sendMessage(Messages.COMMAND_BANK_DELETE_DONE, VariableSet.create().add("name", account.getName()));
             } else {
                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_USER_DELETE_NOT_POSSIBLE);

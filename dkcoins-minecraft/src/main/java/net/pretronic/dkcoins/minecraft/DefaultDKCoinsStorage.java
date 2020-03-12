@@ -10,17 +10,17 @@
 
 package net.pretronic.dkcoins.minecraft;
 
-import net.prematic.databasequery.api.Database;
-import net.prematic.databasequery.api.collection.DatabaseCollection;
-import net.prematic.databasequery.api.collection.field.FieldOption;
-import net.prematic.databasequery.api.datatype.DataType;
-import net.prematic.databasequery.api.query.ForeignKey;
-import net.prematic.databasequery.api.query.SearchOrder;
-import net.prematic.databasequery.api.query.result.QueryResult;
-import net.prematic.databasequery.api.query.result.QueryResultEntry;
-import net.prematic.databasequery.api.query.type.FindQuery;
-import net.prematic.databasequery.api.query.type.InsertQuery;
-import net.prematic.libraries.utility.Validate;
+import net.pretronic.databasequery.api.Database;
+import net.pretronic.databasequery.api.collection.DatabaseCollection;
+import net.pretronic.databasequery.api.collection.field.FieldOption;
+import net.pretronic.databasequery.api.datatype.DataType;
+import net.pretronic.databasequery.api.query.ForeignKey;
+import net.pretronic.databasequery.api.query.SearchOrder;
+import net.pretronic.databasequery.api.query.result.QueryResult;
+import net.pretronic.databasequery.api.query.result.QueryResultEntry;
+import net.pretronic.databasequery.api.query.type.FindQuery;
+import net.pretronic.databasequery.api.query.type.InsertQuery;
+import net.pretronic.libraries.utility.Validate;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.DKCoinsStorage;
 import net.pretronic.dkcoins.api.account.*;
@@ -208,7 +208,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
             account = new DefaultBankAccount(id, name, type,
                     disabled, parent);
         }
-        account.addMember(user, AccountMemberRole.OWNER);
+        account.addMember(user, null, AccountMemberRole.OWNER);
         return account;
     }
 
@@ -385,7 +385,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
         if(result == null) return null;
         DefaultCurrency currency = new DefaultCurrency(result.getInt("id"), result.getString("name"), result.getString("symbol"));
         for (QueryResultEntry entry : this.currencyExchangeRate.find().where("currencyId", result.getInt("id")).execute()) {
-            currency.addInternalExchangeRate(new DefaultCurrencyExchangeRate(entry.getInt("id"), currency,
+            currency.addLoadedExchangeRate(new DefaultCurrencyExchangeRate(entry.getInt("id"), currency,
                     DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("targetCurrencyId")), entry.getDouble("exchangeAmount")));
         }
         return currency;
@@ -410,6 +410,11 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     @Override
     public void deleteCurrency(int id) {
         this.currency.delete().where("id", id).execute();
+    }
+
+    @Override
+    public CurrencyExchangeRate getCurrencyExchangeRate(int id) {
+        return null;
     }
 
     @Override

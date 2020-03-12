@@ -1,6 +1,6 @@
 package net.pretronic.dkcoins.minecraft.listener;
 
-import net.prematic.libraries.event.Listener;
+import net.pretronic.libraries.event.Listener;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUser;

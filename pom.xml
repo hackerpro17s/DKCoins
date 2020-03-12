@@ -27,7 +27,7 @@
     <distributionManagement>
         <repository>
             <id>pretronic</id>
-            <url>https://repository.prematic.net/repository/pretronic/</url>
+            <url>https://repository.pretronic.net/repository/pretronic/</url>
         </repository>
     </distributionManagement>
 
@@ -37,14 +37,14 @@
         <plugin.maven.shade>3.2.2</plugin.maven.shade>
         <plugin.maven.deploy>3.0.0-M1</plugin.maven.deploy>
 
-        <dependency.pretronic.libraries>1.0.26-SNAPSHOT</dependency.pretronic.libraries>
-        <dependency.mcnative.version>1.0.54-SNAPSHOT</dependency.mcnative.version>
+        <dependency.pretronic.libraries>1.0.33-SNAPSHOT</dependency.pretronic.libraries>
+        <dependency.mcnative.version>1.0.69-SNAPSHOT</dependency.mcnative.version>
     </properties>
 
     <repositories>
         <repository>
             <id>pretronic</id>
-            <url>https://repository.prematic.net/repository/pretronic/</url>
+            <url>https://repository.pretronic.net/repository/pretronic/</url>
         </repository>
     </repositories>
 </project>

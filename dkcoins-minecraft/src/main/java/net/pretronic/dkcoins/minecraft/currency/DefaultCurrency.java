@@ -10,11 +10,14 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
-import net.prematic.libraries.utility.Iterators;
-import net.prematic.libraries.utility.annonations.Internal;
+import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.document.entry.DocumentEntry;
+import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
+import net.pretronic.libraries.document.Document;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,6 +64,11 @@ public class DefaultCurrency implements Currency {
     }
 
     @Override
+    public CurrencyExchangeRate getExchangeRate(int id) {
+        return Iterators.findOne(this.exchangeRates, exchangeRate -> exchangeRate.getId() == id);
+    }
+
+    @Override
     public CurrencyExchangeRate getExchangeRate(Currency targetCurrency) {
         CurrencyExchangeRate currencyExchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate -> exchangeRate.getTargetCurrency().equals(targetCurrency));
         if(currencyExchangeRate == null) {
@@ -97,7 +105,37 @@ public class DefaultCurrency implements Currency {
     }
 
     @Internal
-    public void addInternalExchangeRate(CurrencyExchangeRate exchangeRate) {
+    public void addLoadedExchangeRate(CurrencyExchangeRate exchangeRate) {
         this.exchangeRates.add(exchangeRate);
+    }
+
+    @Override
+    public void onUpdate(Document data) {
+        for (DocumentEntry entry : data) {
+            switch (entry.getKey()) {
+                case "name": {
+                    this.name = entry.toPrimitive().getAsString();
+                    break;
+                }
+                case "symbol": {
+                    this.symbol = entry.toPrimitive().getAsString();
+                    break;
+                }
+                case "newExchangeRate": {
+                    addLoadedExchangeRate(DKCoins.getInstance().getStorage().getCurrencyExchangeRate(entry.toPrimitive().getAsInt()));
+                    break;
+                }
+                case "removeExchangeRate": {
+                    Iterators.removeOne(this.exchangeRates, exchangeRate -> exchangeRate.getId() == entry.toPrimitive().getAsInt());
+                    break;
+                }
+                case "updateExchangeRateAmount": {
+                    DefaultCurrencyExchangeRate exchangeRate = (DefaultCurrencyExchangeRate) getExchangeRate(entry.toDocument()
+                            .getInt("exchangeRateId"));
+                    exchangeRate.updateExchangeAmount(entry.toDocument().getDouble("exchangeAmount"));
+                    break;
+                }
+            }
+        }
     }
 }
