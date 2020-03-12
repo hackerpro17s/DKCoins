@@ -39,7 +39,7 @@
         <plugin.maven.deploy>3.0.0-M1</plugin.maven.deploy>
 
         <dependency.pretronic.libraries>1.0.33-SNAPSHOT</dependency.pretronic.libraries>
-        <dependency.mcnative.version>1.0.69-SNAPSHOT</dependency.mcnative.version>
+        <dependency.mcnative.version>1.0.70-SNAPSHOT</dependency.mcnative.version>
     </properties>
 
     <repositories>
