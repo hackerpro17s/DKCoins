@@ -1,9 +1,17 @@
 package net.pretronic.dkcoins.api.minecraft.events;
 
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
-import org.mcnative.common.event.MinecraftEvent;
 
-public interface DKCoinsAccountTransactEvent extends MinecraftEvent {
+public class DKCoinsAccountTransactEvent extends DKCoinsAccountEvent {
 
-    AccountTransaction getTransaction();
+    private final AccountTransaction transaction;
+
+    public DKCoinsAccountTransactEvent(AccountTransaction transaction) {
+        super(transaction.getSource().getAccount());
+        this.transaction = transaction;
+    }
+
+    public AccountTransaction getTransaction() {
+        return transaction;
+    }
 }

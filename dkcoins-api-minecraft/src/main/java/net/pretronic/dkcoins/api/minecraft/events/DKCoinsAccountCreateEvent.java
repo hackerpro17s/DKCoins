@@ -2,11 +2,17 @@ package net.pretronic.dkcoins.api.minecraft.events;
 
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import org.mcnative.common.event.MinecraftEvent;
 
-public interface DKCoinsAccountCreateEvent extends MinecraftEvent {
+public class DKCoinsAccountCreateEvent extends DKCoinsAccountEvent {
 
-    DKCoinsUser getCreator();
+    private final DKCoinsUser creator;
 
-    BankAccount getAccount();
+    public DKCoinsAccountCreateEvent(BankAccount account, DKCoinsUser creator) {
+        super(account);
+        this.creator = creator;
+    }
+
+    public DKCoinsUser getCreator() {
+        return creator;
+    }
 }

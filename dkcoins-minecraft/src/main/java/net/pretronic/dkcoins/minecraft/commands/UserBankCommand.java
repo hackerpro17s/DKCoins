@@ -1,12 +1,12 @@
 package net.pretronic.dkcoins.minecraft.commands;
 
-import net.prematic.libraries.command.command.BasicCommand;
-import net.prematic.libraries.command.command.MainCommand;
-import net.prematic.libraries.command.command.configuration.CommandConfiguration;
-import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.message.bml.variable.VariableSet;
-import net.prematic.libraries.utility.GeneralUtil;
-import net.prematic.libraries.utility.interfaces.ObjectOwner;
+import net.pretronic.libraries.command.command.BasicCommand;
+import net.pretronic.libraries.command.command.MainCommand;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;

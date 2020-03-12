@@ -10,7 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft;
 
-import net.prematic.libraries.logging.PrematicLogger;
+import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountManager;
 import net.pretronic.dkcoins.api.account.AccountType;
@@ -28,7 +28,7 @@ import org.mcnative.common.plugin.configuration.ConfigurationProvider;
 
 public class MinecraftDKCoins implements DKCoins {
 
-    private final PrematicLogger logger;
+    private final PretronicLogger logger;
     private final DKCoinsStorage storage;
     private final AccountManager accountManager;
     private final CurrencyManager currencyManager;
@@ -38,7 +38,8 @@ public class MinecraftDKCoins implements DKCoins {
     MinecraftDKCoins(TransactionPropertyBuilder transactionPropertyBuilder) {
         DKCoins.setInstance(this);
         this.logger = McNative.getInstance().getLogger();
-        this.storage = new DefaultDKCoinsStorage(McNative.getInstance().getPluginManager().getService(ConfigurationProvider.class).getDatabase(DKCoinsPlugin.getInstance()));
+        this.storage = new DefaultDKCoinsStorage(McNative.getInstance().getPluginManager().getService(ConfigurationProvider.class)
+                .getDatabase(DKCoinsPlugin.getInstance(), "default", true));
         this.accountManager = new DefaultAccountManager();
         this.currencyManager = new DefaultCurrencyManager();
         this.userManager = new DefaultDKCoinsUserManager();
@@ -49,7 +50,7 @@ public class MinecraftDKCoins implements DKCoins {
     }
 
     @Override
-    public PrematicLogger getLogger() {
+    public PretronicLogger getLogger() {
         return this.logger;
     }
 

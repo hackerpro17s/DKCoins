@@ -10,7 +10,8 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.prematic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
@@ -18,8 +19,12 @@ import net.pretronic.dkcoins.api.account.TransferResult;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.minecraft.events.DKCoinsAccountMemberAddEvent;
+import net.pretronic.dkcoins.api.minecraft.events.DKCoinsAccountTransactEvent;
+import org.mcnative.common.McNative;
 
 import java.util.Collection;
 
@@ -118,8 +123,14 @@ public class DefaultAccountCredit implements AccountCredit {
             double amount = getCurrency().exchange(amount0, credit.getCurrency());
             credit.addAmount(amount);
             removeAmount(amount0);
-            account.addTransaction(this, member, credit, amount0, reason, cause, properties);
+            AccountTransaction transaction = account.addTransaction(this, member, credit, amount0, reason, cause, properties);
+            McNative.getInstance().getLocal().getEventBus().callEvent(new DKCoinsAccountTransactEvent(transaction));
         }
         return result;
+    }
+
+    @Internal
+    public void updateAmount(double amount) {
+        this.amount = amount;
     }
 }

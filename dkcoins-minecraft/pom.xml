@@ -15,7 +15,7 @@
     <parent>
         <artifactId>DKCoins</artifactId>
         <groupId>net.pretronic.dkcoins</groupId>
-        <version>1.0.6-BETA</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -24,7 +24,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>pretronic</id>
-            <url>https://repository.prematic.net/repository/pretronic/</url>
+            <url>https://repository.pretronic.net/repository/pretronic/</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -43,6 +43,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>${plugin.maven.shade}</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>

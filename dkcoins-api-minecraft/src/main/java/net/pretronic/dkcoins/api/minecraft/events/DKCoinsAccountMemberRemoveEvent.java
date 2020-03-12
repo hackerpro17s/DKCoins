@@ -2,11 +2,23 @@ package net.pretronic.dkcoins.api.minecraft.events;
 
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import org.mcnative.common.event.MinecraftEvent;
 
-public interface DKCoinsAccountMemberRemoveEvent extends MinecraftEvent {
+public class DKCoinsAccountMemberRemoveEvent extends DKCoinsAccountEvent {
 
-    DKCoinsUser getRemovedUser();
+    private final DKCoinsUser removedUser;
+    private final AccountMember remover;
 
-    AccountMember getRemover();
+    public DKCoinsAccountMemberRemoveEvent(DKCoinsUser removedUser, AccountMember remover) {
+        super(remover.getAccount());
+        this.removedUser = removedUser;
+        this.remover = remover;
+    }
+
+    public DKCoinsUser getRemovedUser() {
+        return removedUser;
+    }
+
+    public AccountMember getRemover() {
+        return remover;
+    }
 }

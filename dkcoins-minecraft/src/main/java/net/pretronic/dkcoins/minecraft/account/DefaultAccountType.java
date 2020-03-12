@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
+import net.pretronic.libraries.document.Document;
 import net.pretronic.dkcoins.api.account.AccountType;
 
 public class DefaultAccountType implements AccountType {

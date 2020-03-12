@@ -10,8 +10,8 @@
 
 package net.pretronic.dkcoins.minecraft;
 
-import net.prematic.libraries.command.command.configuration.CommandConfiguration;
-import net.prematic.libraries.document.annotations.DocumentIgnored;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.document.annotations.DocumentIgnored;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.commands.UserBankCommand;

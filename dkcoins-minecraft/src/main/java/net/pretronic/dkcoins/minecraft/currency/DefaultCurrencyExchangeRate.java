@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
+import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
@@ -62,5 +63,10 @@ public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
     @Override
     public void decrementExchangeAmount(double amount) {
         setExchangeAmount(this.exchangeAmount-amount);
+    }
+
+    @Internal
+    public void updateExchangeAmount(double amount) {
+        this.exchangeAmount = amount;
     }
 }

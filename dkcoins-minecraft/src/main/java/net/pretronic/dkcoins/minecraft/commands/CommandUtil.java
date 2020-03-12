@@ -10,9 +10,9 @@
 
 package net.pretronic.dkcoins.minecraft.commands;
 
-import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.command.sender.ConsoleCommandSender;
-import net.prematic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.command.sender.ConsoleCommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.TransferResult;
@@ -126,5 +126,12 @@ public final class CommandUtil {
                 break;
             }
         }
+    }
+
+    public static DKCoinsUser getUserByCommandSender(CommandSender commandSender) {
+        if(commandSender instanceof MinecraftPlayer) {
+            return DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer) commandSender).getUniqueId());
+        }
+        return null;
     }
 }

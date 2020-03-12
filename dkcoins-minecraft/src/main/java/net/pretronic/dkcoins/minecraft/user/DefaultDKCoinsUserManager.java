@@ -10,10 +10,10 @@
 
 package net.pretronic.dkcoins.minecraft.user;
 
-import net.prematic.libraries.caching.ArrayCache;
-import net.prematic.libraries.caching.Cache;
-import net.prematic.libraries.caching.CacheQuery;
-import net.prematic.libraries.utility.Validate;
+import net.pretronic.libraries.caching.ArrayCache;
+import net.pretronic.libraries.caching.Cache;
+import net.pretronic.libraries.caching.CacheQuery;
+import net.pretronic.libraries.utility.Validate;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;

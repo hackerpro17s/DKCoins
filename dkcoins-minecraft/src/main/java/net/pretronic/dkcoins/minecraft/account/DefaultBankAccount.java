@@ -10,10 +10,12 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.prematic.libraries.utility.Iterators;
-import net.prematic.libraries.utility.Validate;
-import net.prematic.libraries.utility.annonations.Internal;
-import net.prematic.libraries.utility.annonations.Nullable;
+import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.document.entry.DocumentEntry;
+import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.annonations.Internal;
+import net.pretronic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
@@ -149,7 +151,7 @@ public class DefaultBankAccount implements BankAccount {
     //@Todo caching
     @Override
     public boolean hasLimitation(AccountMemberRole memberRole, Currency currency, double amount) {
-        return DKCoins.getInstance().getAccountManager().hasLimitation(this, currency, amount);
+        return DKCoins.getInstance().getAccountManager().hasAccountLimitation(this, currency, amount);
     }
 
     @Override
@@ -170,6 +172,11 @@ public class DefaultBankAccount implements BankAccount {
     @Override
     public AccountMember getMember(DKCoinsUser user) {
         return Iterators.findOne(this.members, member -> member.getUser().equals(user));
+    }
+
+    @Override
+    public AccountMember getMember(int id) {
+        return Iterators.findOne(this.members, member -> member.getId() == id);
     }
 
     @Override
@@ -215,24 +222,25 @@ public class DefaultBankAccount implements BankAccount {
     }
 
     @Override
-    public void addMember(DKCoinsUser user, AccountMemberRole role) {
-        AccountMember member = DKCoins.getInstance().getAccountManager().addAccountMember(this, user, role);
+    public void addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role) {
+        AccountMember member = DKCoins.getInstance().getAccountManager().addAccountMember(this, user, adder, role);
         this.members.add(member);
     }
 
     @Override
-    public void removeMember(AccountMember member) {
-        DKCoins.getInstance().getAccountManager().removeAccountMember(member);
+    public void removeMember(AccountMember member, AccountMember remover) {
+        DKCoins.getInstance().getAccountManager().removeAccountMember(member, remover);
         this.members.remove(member);
     }
 
     @Override
-    public void addTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver, double amount,
+    public AccountTransaction addTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver, double amount,
                                String reason, String cause, Collection<AccountTransactionProperty> properties) {
         double exchangeRate = source.getCurrency().getExchangeRate(receiver.getCurrency()).getExchangeAmount();
         AccountTransaction transaction = DKCoins.getInstance().getAccountManager()
                 .addAccountTransaction(source, sender, receiver, amount, exchangeRate, reason, cause, System.currentTimeMillis(), properties);
         this.transactions.add(transaction);
+        return transaction;
     }
 
     @Override
@@ -254,5 +262,59 @@ public class DefaultBankAccount implements BankAccount {
     @Internal
     public void addLoadedMember(AccountMember member) {
         this.members.add(member);
+    }
+
+    @Override
+    public void onUpdate(Document data) {
+        for (DocumentEntry entry : data) {
+            switch (entry.getKey()) {
+                case "name": {
+                    this.name = entry.toPrimitive().getAsString();
+                    break;
+                }
+                case "disabled": {
+                    this.disabled = entry.toPrimitive().getAsBoolean();
+                    break;
+                }
+                case "newCredit": {
+                    int id = entry.toPrimitive().getAsInt();
+                    if(getCredit(id) == null) {
+                        addLoadedAccountCredit(DKCoins.getInstance().getAccountManager().getAccountCredit(id));
+                    }
+                    break;
+                }
+                case "removeCredit": {
+                    Iterators.removeOne(this.credits, credit -> credit.getId() == entry.toPrimitive().getAsInt());
+                    break;
+                }
+                case "updateCreditAmount": {
+                    DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(entry.toDocument().getInt("creditId"));
+                    credit.updateAmount(entry.toDocument().getDouble("amount"));
+                    break;
+                }
+                case "newLimitation": {
+                    addLoadedLimitation(DKCoins.getInstance().getAccountManager().getAccountLimitation(entry.toPrimitive().getAsInt()));
+                    break;
+                }
+                case "removeLimitation": {
+                    Iterators.removeOne(this.limitations, limitation -> limitation.getId() == entry.toPrimitive().getAsInt());
+                    break;
+                }
+                case "newMember": {
+                    addLoadedMember(DKCoins.getInstance().getAccountManager().getAccountMember(entry.toPrimitive().getAsInt()));
+                    break;
+                }
+                case "removeMember": {
+                    Iterators.removeOne(this.members, member -> member.getId() == entry.toPrimitive().getAsInt());
+                }
+                case "updateMemberRole": {
+                    DefaultAccountMember member = (DefaultAccountMember) getMember(entry.toDocument().getInt("memberId"));
+                    member.updateRole(AccountMemberRole.byId(entry.toDocument().getInt("roleId")));
+                }
+                default: {
+                    DKCoins.getInstance().getLogger().warn("Account (id={}) update without action", getId());
+                }
+            }
+        }
     }
 }

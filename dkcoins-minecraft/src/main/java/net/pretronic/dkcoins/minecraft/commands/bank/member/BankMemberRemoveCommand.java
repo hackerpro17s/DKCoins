@@ -1,10 +1,11 @@
 package net.pretronic.dkcoins.minecraft.commands.bank.member;
 
-import net.prematic.libraries.command.command.configuration.CommandConfiguration;
-import net.prematic.libraries.command.command.object.ObjectCommand;
-import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.message.bml.variable.VariableSet;
-import net.prematic.libraries.utility.interfaces.ObjectOwner;
+import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.minecraft.Messages;
@@ -24,7 +25,7 @@ public class BankMemberRemoveCommand extends ObjectCommand<AccountMember> {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_YOURSELF);
             return;
         }
-        member.getAccount().removeMember(member);
+        member.getAccount().removeMember(member, CommandUtil.getAccountMemberByCommandSender(commandSender, member.getAccount()));
         commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_REMOVE, VariableSet.create()
                 .add("name", McNative.getInstance().getPlayerManager().getPlayer(member.getUser().getUniqueId()).getName()));
     }

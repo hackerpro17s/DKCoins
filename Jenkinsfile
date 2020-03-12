@@ -176,7 +176,7 @@ pipeline {
                                 httpMode: 'POST', ignoreSslErrors: true,timeout: 3000,
                                 responseHandle: 'NONE',
                                 customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
-                                url: "https://mirror.prematic.net/v1/$RESOURCE_ID/versions/create?name=$OLD_VERSION&qualifier=$QUALIFIER&buildNumber=$buildNumber")
+                                url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/create?name=$OLD_VERSION&qualifier=$QUALIFIER&buildNumber=$buildNumber")
 
                         httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_OCTETSTREAM',
                                 httpMode: 'POST', ignoreSslErrors: true, timeout: 3000,
@@ -184,7 +184,7 @@ pipeline {
                                 responseHandle: 'NONE',
                                 uploadFile: "dkcoins-minecraft/target/dkcoins-minecraft-${OLD_VERSION}.jar",
                                 customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
-                                url: "https://mirror.prematic.net/v1/$RESOURCE_ID/versions/$buildNumber/publish?edition=default")
+                                url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/$buildNumber/publish?edition=default")
                     }
                 }
             }

@@ -10,7 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.prematic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.BankAccount;
@@ -56,7 +56,8 @@ public class DefaultMasterBankAccount extends DefaultBankAccount implements Mast
     @Override
     public void deleteSubAccount(BankAccount account) {
         if(getSubAccount(account.getId()) != null) {
-            DKCoins.getInstance().getAccountManager().deleteAccount(account);
+            //@Todo deleter
+            DKCoins.getInstance().getAccountManager().deleteAccount(account, null);
             this.subAccounts.remove(account);
         } else {
             throw new IllegalArgumentException(String.format("Bank account [%s] is not a sub account of [%s]",
