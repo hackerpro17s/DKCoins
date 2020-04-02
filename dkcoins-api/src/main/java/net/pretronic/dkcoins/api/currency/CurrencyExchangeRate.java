@@ -20,6 +20,8 @@ public interface CurrencyExchangeRate {
 
     double getExchangeAmount();
 
+    String getFormattedExchangeAmount();
+
     void setExchangeAmount(double amount);
 
     void incrementExchangeAmount(double amount);

@@ -5,6 +5,7 @@ import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
@@ -39,11 +40,6 @@ public class BankMemberRoleCommand extends ObjectCommand<AccountMember> {
                     .getUser(((MinecraftPlayer)commandSender).getUniqueId())).getRole().isHigher(member.getRole()))) {
                 AccountMember self = CommandUtil.getAccountMemberByCommandSender(commandSender, member.getAccount());
                 if(commandSender instanceof MinecraftPlayer && member.equals(self)) {
-                    System.out.println(member.getUser().getUniqueId().toString());
-                    System.out.println(self.getUser().getUniqueId().toString());
-                    System.out.println(member.getId());
-                    System.out.println(self.getId());
-                    System.out.println(member.equals(self));
                     commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_YOURSELF);
                     return;
                 }
@@ -56,7 +52,8 @@ public class BankMemberRoleCommand extends ObjectCommand<AccountMember> {
                     }
                 }
             } else {
-                commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER, VariableSet.create().add("targetRole", member.getRole()));
+                commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER,
+                        new ReflectVariableSet().add("targetRole", member.getRole()));
             }
         }
     }

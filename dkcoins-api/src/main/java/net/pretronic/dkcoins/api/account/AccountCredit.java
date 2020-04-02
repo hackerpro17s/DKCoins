@@ -11,6 +11,7 @@
 package net.pretronic.dkcoins.api.account;
 
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
 
@@ -27,27 +28,38 @@ public interface AccountCredit {
 
     boolean hasAmount(double amount);
 
+
+    String getFormattedAmount();
+
     double getAmount();
 
-    void setAmount(AccountMember member, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties);
+    AccountTransaction setAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties);
 
-    default void addAmount(AccountMember member, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
-        setAmount(member, getAmount()+amount, reason, cause, properties);
+    default AccountTransaction setAmount(double amount, String cause, Collection<AccountTransactionProperty> properties) {
+        return setAmount(null, amount, null, cause, properties);
     }
 
-    default void removeAmount(AccountMember member, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
-        setAmount(member, getAmount()-amount, reason, cause, properties);
+    default AccountTransaction addAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
+        return setAmount(executor, getAmount()+amount, reason, cause, properties);
     }
 
+    default AccountTransaction removeAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
+        return setAmount(executor, getAmount()-amount, reason, cause, properties);
+    }
+
+    //Without transaction add
     void setAmount(double amount);
 
+    //Without transaction add
     default void addAmount(double amount) {
         setAmount(getAmount()+amount);
     }
 
+    //Without transaction add
     default void removeAmount(double amount) {
         setAmount(getAmount()-amount);
     }
+
 
     TransferResult canTransfer(AccountMember member, AccountCredit target, double amount);
 

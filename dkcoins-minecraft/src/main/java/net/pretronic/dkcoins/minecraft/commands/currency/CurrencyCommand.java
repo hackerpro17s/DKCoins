@@ -1,5 +1,6 @@
 package net.pretronic.dkcoins.minecraft.commands.currency;
 
+import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.libraries.command.NotFindable;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
@@ -22,7 +23,7 @@ public class CurrencyCommand extends MainObjectCommand<Currency> implements NotF
     private final ObjectCommand<Currency> infoCommand;
 
     public CurrencyCommand(ObjectOwner owner) {
-        super(owner, CommandConfiguration.newBuilder().name("currency").permission("dkcoins.command.currency").create());
+        super(owner, DKCoinsConfig.COMMAND_CURRENCY);
         this.createCommand = new CurrencyCreateCommand(owner);
         this.listCommand = new CurrencyListCommand(owner);
         this.infoCommand = new CurrencyInfoCommand(owner);
@@ -32,16 +33,17 @@ public class CurrencyCommand extends MainObjectCommand<Currency> implements NotF
     }
 
     @Override
-    public Currency getObject(String currency) {
+    public Currency getObject(CommandSender sender, String currency) {
         return DKCoins.getInstance().getCurrencyManager().getCurrency(currency);
     }
 
     @Override
     public void commandNotFound(CommandSender commandSender, String command, String[] args) {
+        System.out.println("not found");
         if(command == null || command.equals("")) {
             listCommand.execute(commandSender, args);
         } else {
-            Currency currency = getObject(command);
+            Currency currency = getObject(commandSender, command);
             if(currency != null) {
                 infoCommand.execute(commandSender, currency, args);
             } else {
@@ -52,6 +54,7 @@ public class CurrencyCommand extends MainObjectCommand<Currency> implements NotF
 
     @Override
     public void objectNotFound(CommandSender commandSender, String command, String[] args) {
+        System.out.println("obj not fond");
         if(command.equalsIgnoreCase("list")) {
             listCommand.execute(commandSender, args);
         } else if(command.equalsIgnoreCase("help")) {

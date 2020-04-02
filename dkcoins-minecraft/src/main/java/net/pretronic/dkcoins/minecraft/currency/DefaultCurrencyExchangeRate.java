@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
+import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
@@ -47,6 +48,11 @@ public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
     @Override
     public double getExchangeAmount() {
         return this.exchangeAmount;
+    }
+
+    @Override
+    public String getFormattedExchangeAmount() {
+        return DKCoinsConfig.formatCurrencyAmount(getExchangeAmount());
     }
 
     @Override

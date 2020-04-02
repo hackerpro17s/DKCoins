@@ -10,10 +10,12 @@
 
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
+import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountType;
@@ -38,8 +40,9 @@ public class BankCreateCommand extends ObjectCommand<String> {
             return;
         }
         String accountType0 = args[0];
-        if(DKCoins.getInstance().getAccountManager().searchAccount(bankName) != null) {
-            commandSender.sendMessage(Messages.ERROR_ACCOUNT_ALREADY_EXISTS);
+        BankAccount account = DKCoins.getInstance().getAccountManager().searchAccount(bankName);
+        if(account != null) {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_ALREADY_EXISTS, new ReflectVariableSet().add("account", account));
             return;
         }
         AccountType accountType = DKCoins.getInstance().getAccountManager().searchAccountType(accountType0);
@@ -54,6 +57,7 @@ public class BankCreateCommand extends ObjectCommand<String> {
         }
         DKCoins.getInstance().getAccountManager().createAccount(bankName, accountType, false, null,
                 DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
-        player.sendMessage(Messages.COMMAND_BANK_CREATE_DONE, VariableSet.create().add("name", bankName).add("type", accountType.getName()));
+        player.sendMessage(Messages.COMMAND_BANK_CREATE_DONE, VariableSet.create().add("name", bankName)
+                .add("type", accountType.getName()));
     }
 }

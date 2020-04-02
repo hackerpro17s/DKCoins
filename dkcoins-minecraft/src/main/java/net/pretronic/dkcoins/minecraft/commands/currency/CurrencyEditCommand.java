@@ -1,5 +1,6 @@
 package net.pretronic.dkcoins.minecraft.commands.currency;
 
+import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
@@ -36,6 +37,7 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
                         .add("oldName", oldName).add("name", name));
                 return;
             } else if(action.equalsIgnoreCase("symbol")) {
+                final String oldSymbol = currency.getSymbol();
                 String symbol = args[1];
                 currency.setSymbol(symbol);
                 commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_SYMBOL, VariableSet.create()
@@ -64,12 +66,13 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
             double amount = Double.parseDouble(argument);
             if(amount <= 0) {
                 commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_EXCHANGE_RATE_AMOUNT_NOT_VALID, VariableSet.create()
-                        .add("amount", amount));
+                        .add("value", DKCoinsConfig.formatCurrencyAmount(amount)));
                 return;
             }
             currency.setExchangeRate(targetCurrency, amount);
             commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_EXCHANGE_RATE, VariableSet.create()
-                    .add("name", currency.getName()).add("target", targetCurrency.getName()).add("amount", amount));
+                    .add("name", currency.getName()).add("target", targetCurrency.getName())
+                    .add("amount", DKCoinsConfig.formatCurrencyAmount(amount)));
             return;
         }
         commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_HELP);

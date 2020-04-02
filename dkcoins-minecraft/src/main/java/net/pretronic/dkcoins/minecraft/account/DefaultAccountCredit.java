@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
+import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
@@ -66,15 +67,21 @@ public class DefaultAccountCredit implements AccountCredit {
     }
 
     @Override
+    public String getFormattedAmount() {
+        return DKCoinsConfig.formatCurrencyAmount(getAmount());
+    }
+
+    @Override
     public double getAmount() {
         return this.amount;
     }
 
     @Override
-    public void setAmount(AccountMember member, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
+    public AccountTransaction setAmount(AccountMember member, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
         DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
-        getAccount().addTransaction(this, member, this, amount, reason, cause, properties);
+        AccountTransaction transaction = getAccount().addTransaction(this, member, this, amount, reason, cause, properties);
         this.amount = amount;
+        return transaction;
     }
 
     @Override

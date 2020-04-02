@@ -67,6 +67,12 @@ public interface DKCoinsStorage {
 
     void deleteAccount(int id);
 
+    List<Integer> getTopAccountIds(Currency currency, AccountType[] excludedAccountTypes, int limit);
+
+    int getAccountIdByRank(Currency currency, int rank);
+
+
+    int getAccountCreditAccountId(int id);
 
     AccountCredit addAccountCredit(BankAccount account, Currency currency, double amount);
 
@@ -75,6 +81,7 @@ public interface DKCoinsStorage {
     void deleteAccountCredit(int id);
 
 
+    int getAccountLimitationAccountId(int id);
 
     AccountLimitation addAccountLimitation(BankAccount account, AccountMember accountMember, AccountMemberRole memberRole,
                                            Currency comparativeCurrency, double amount, long interval);
@@ -83,9 +90,7 @@ public interface DKCoinsStorage {
 
 
     //Returns bank id to get by bank
-    int getAccountMember(int id);
-
-    AccountMember getAccountMember(DKCoinsUser user, BankAccount account);
+    int getAccountMemberAccountId(int id);
 
     AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMemberRole role);
 

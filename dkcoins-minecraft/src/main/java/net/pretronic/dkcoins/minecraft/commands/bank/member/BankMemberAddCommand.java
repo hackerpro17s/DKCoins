@@ -1,10 +1,12 @@
 package net.pretronic.dkcoins.minecraft.commands.bank.member;
 
+import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.libraries.utility.map.Pair;
 import net.pretronic.dkcoins.api.DKCoins;
@@ -29,13 +31,14 @@ public class BankMemberAddCommand extends ObjectCommand<Pair<BankAccount, String
             commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS, VariableSet.create().add("name", userName));
             return;
         }
-        if(account.getMember(user) == null) {
+        AccountMember member = account.getMember(user);
+        if(member == null) {
             account.addMember(user, CommandUtil.getAccountMemberByCommandSender(commandSender, account), AccountMemberRole.GUEST);
             commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ADD, VariableSet.create().add("name", userName)
                     .add("bank", account.getName()));
         } else {
-            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ALREADY, VariableSet.create().add("name", userName)
-                    .add("bank", account.getName()));
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ALREADY, new ReflectVariableSet()
+                    .add("member", member));
         }
     }
 }

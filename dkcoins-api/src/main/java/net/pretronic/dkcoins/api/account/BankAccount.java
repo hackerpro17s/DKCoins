@@ -63,6 +63,8 @@ public interface BankAccount extends Synchronizable {
 
     Collection<AccountLimitation> getLimitations();
 
+    AccountLimitation getLimitation(int id);
+
     AccountLimitation getLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
                                     double amount, long interval);
 

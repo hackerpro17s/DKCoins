@@ -1,5 +1,6 @@
 package net.pretronic.dkcoins.minecraft.commands.bank.member;
 
+import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
@@ -20,18 +21,21 @@ public class BankMemberInfoCommand extends ObjectCommand<AccountMember> {
 
     @Override
     public void execute(CommandSender commandSender, AccountMember member, String[] strings) {
-        commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_HEADER, VariableSet.create()
+        /*commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_HEADER,
+                VariableSet.create()
                 .add("name", McNative.getInstance().getPlayerManager().getPlayer(member.getUser().getUniqueId()).getName())
                 .add("role", member.getRole()));
         if(CommandUtil.hasAccess(commandSender, member.getAccount(), AccessRight.LIMIT_MANAGEMENT)) {
-            if(member.getLimitations().isEmpty()) {
+            //@Todo custom bml method for check this
+            /*if(member.getLimitations().isEmpty()) {
                 commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION);
             } else {
                 for (AccountLimitation limitation : member.getLimitations()) {
                     commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, VariableSet.create()
-                            .add("amount", limitation.getAmount()).add("interval", limitation.getInterval()));
+                            .add("amount", DKCoinsConfig.formatCurrencyAmount(limitation.getAmount()))
+                            .add("interval", limitation.getInterval()));
                 }
-            }
-        }
+            }*
+        }*/
     }
 }

@@ -10,12 +10,13 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
+import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
 import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
 import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
-import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
@@ -154,6 +155,16 @@ public class DefaultAccountManager implements AccountManager {
     }
 
     @Override
+    public List<BankAccount> getTopAccounts(Currency currency, AccountType[] excludedAccountTypes, int limit) {
+        return Iterators.map(DKCoins.getInstance().getStorage().getTopAccountIds(currency, excludedAccountTypes, limit), this::getAccount);
+    }
+
+    @Override
+    public BankAccount getAccountByRank(Currency currency, int rank) {
+        return getAccount(DKCoins.getInstance().getStorage().getAccountIdByRank(currency, rank));
+    }
+
+    @Override
     public void updateAccountName(BankAccount account) {
         DKCoins.getInstance().getStorage().updateAccountName(account.getId(), account.getName());
         this.accountCache.getCaller().update(account.getId(), Document.newDocument().add("name", account.getName()));
@@ -167,7 +178,9 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public AccountCredit getAccountCredit(int id) {
-        throw new UnsupportedOperationException();
+        int accountId = DKCoins.getInstance().getStorage().getAccountCreditAccountId(id);
+        if(accountId == -1) throw new IllegalArgumentException("No account found for credit id " + id);
+        return getAccount(accountId).getCredit(id);
     }
 
 
@@ -194,7 +207,9 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public AccountMember getAccountMember(int id) {
-        throw new UnsupportedOperationException();
+        int accountId = DKCoins.getInstance().getStorage().getAccountMemberAccountId(id);
+        if(accountId == -1) throw new IllegalArgumentException("No account found for member id " + id);
+        return getAccount(accountId).getMember(id);
     }
 
     @Override
@@ -240,7 +255,9 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public AccountLimitation getAccountLimitation(int id) {
-        throw new UnsupportedOperationException();
+        int accountId = DKCoins.getInstance().getStorage().getAccountLimitationAccountId(id);
+        if(accountId == -1) throw new IllegalArgumentException("No account found for limitation id " + id);
+        return getAccount(accountId).getLimitation(id);
     }
 
 
@@ -288,7 +305,7 @@ public class DefaultAccountManager implements AccountManager {
         Validate.notNull(account);
         for (Currency currency : DKCoins.getInstance().getCurrencyManager().getCurrencies()) {
             if(account.getCredit(currency) == null) {
-                account.addCredit(currency, 0);
+                account.addCredit(currency, DKCoinsConfig.ACCOUNT_TYPE_START_AMOUNT.get(account.getType()));
             }
         }
     }

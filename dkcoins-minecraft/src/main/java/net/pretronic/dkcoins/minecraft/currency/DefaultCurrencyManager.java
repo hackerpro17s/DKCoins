@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
+import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
 import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
@@ -24,6 +25,7 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
+import org.mcnative.common.McNative;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,10 +36,11 @@ public class DefaultCurrencyManager implements CurrencyManager {
 
     public DefaultCurrencyManager() {
         this.currencyCache = new ArraySynchronizableCache<>();
+        registerCurrencyQueries();
         for (Currency currency : DKCoins.getInstance().getStorage().getCurrencies()) {
             this.currencyCache.insert(currency);
         }
-        registerCurrencyQueries();
+
     }
 
     @Override
@@ -156,5 +159,8 @@ public class DefaultCurrencyManager implements CurrencyManager {
                         "(Currency cache) Wrong identifier length or wrong identifier type");
             }
         });
+
+        McNative.getInstance().getLocal().registerSynchronizingChannel("dkcoins_currency", DKCoinsPlugin.getInstance(),
+                int.class, currencyCache);
     }
 }

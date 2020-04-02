@@ -40,7 +40,6 @@ public class DefaultBankAccount implements BankAccount {
     private final Collection<AccountCredit> credits;
     private final Collection<AccountLimitation> limitations;
     private final Collection<AccountMember> members;
-    private final List<AccountTransaction> transactions;
 
     public DefaultBankAccount(int id, String name, AccountType type, boolean disabled, MasterBankAccount parent) {
         Validate.isTrue(id > 0);
@@ -53,7 +52,6 @@ public class DefaultBankAccount implements BankAccount {
         this.limitations = new ArrayList<>();
         this.credits = new ArrayList<>();
         this.members = new ArrayList<>();
-        this.transactions = new ArrayList<>();
     }
 
     @Override
@@ -113,8 +111,8 @@ public class DefaultBankAccount implements BankAccount {
         AccountCredit credit = Iterators.findOne(this.credits, credit0 -> credit0.getCurrency().equals(currency));
         if(credit == null) {
             double amount = 0;
-            if(currency.equals(DKCoinsConfig.DEFAULT_CURRENCY)) {
-                amount = DKCoinsConfig.ACCOUNT_USER_START_AMOUNT;
+            if(currency.equals(DKCoinsConfig.CURRENCY_DEFAULT)) {
+                amount = DKCoinsConfig.ACCOUNT_TYPE_START_AMOUNT.get(getType());
             }
             credit = addCredit(currency, amount);
         }
@@ -124,6 +122,11 @@ public class DefaultBankAccount implements BankAccount {
     @Override
     public Collection<AccountLimitation> getLimitations() {
         return this.limitations;
+    }
+
+    @Override
+    public AccountLimitation getLimitation(int id) {
+        return Iterators.findOne(this.limitations, limitation -> limitation.getId() == id);
     }
 
     @Override
@@ -239,7 +242,6 @@ public class DefaultBankAccount implements BankAccount {
         double exchangeRate = source.getCurrency().getExchangeRate(receiver.getCurrency()).getExchangeAmount();
         AccountTransaction transaction = DKCoins.getInstance().getAccountManager()
                 .addAccountTransaction(source, sender, receiver, amount, exchangeRate, reason, cause, System.currentTimeMillis(), properties);
-        this.transactions.add(transaction);
         return transaction;
     }
 

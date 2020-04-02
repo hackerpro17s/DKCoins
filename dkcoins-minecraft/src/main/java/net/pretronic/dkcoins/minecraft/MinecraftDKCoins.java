@@ -10,10 +10,26 @@
 
 package net.pretronic.dkcoins.minecraft;
 
+import net.pretronic.dkcoins.api.account.AccountCredit;
+import net.pretronic.dkcoins.api.account.AccountLimitation;
+import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
+import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
+import net.pretronic.dkcoins.api.migration.Migration;
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.minecraft.commands.DKCoinsCommand;
+import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
+import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
+import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;
+import net.pretronic.dkcoins.minecraft.listener.MinecraftPlayerListener;
+import net.pretronic.dkcoins.minecraft.migration.EssentialsXMigration;
+import net.pretronic.dkcoins.minecraft.migration.LegacyDKCoinsMigration;
 import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountManager;
-import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
@@ -23,8 +39,17 @@ import net.pretronic.dkcoins.minecraft.account.DefaultAccountManager;
 import net.pretronic.dkcoins.minecraft.account.transaction.DefaultTransactionFilter;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrencyManager;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUserManager;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableDescriber;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableDescriberRegistry;
+import net.pretronic.libraries.plugin.service.ServicePriority;
+import net.pretronic.libraries.utility.Iterators;
 import org.mcnative.common.McNative;
 import org.mcnative.common.plugin.configuration.ConfigurationProvider;
+import org.mcnative.common.serviceprovider.economy.EconomyProvider;
+import org.mcnative.common.serviceprovider.placeholder.PlaceholderService;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class MinecraftDKCoins implements DKCoins {
 
@@ -34,19 +59,26 @@ public class MinecraftDKCoins implements DKCoins {
     private final CurrencyManager currencyManager;
     private final DKCoinsUserManager userManager;
     private final TransactionPropertyBuilder transactionPropertyBuilder;
+    private final Collection<Migration> migrations;
 
-    MinecraftDKCoins(TransactionPropertyBuilder transactionPropertyBuilder) {
+    MinecraftDKCoins(PretronicLogger logger, TransactionPropertyBuilder transactionPropertyBuilder) {
         DKCoins.setInstance(this);
-        this.logger = McNative.getInstance().getLogger();
+        this.logger = logger;
         this.storage = new DefaultDKCoinsStorage(McNative.getInstance().getPluginManager().getService(ConfigurationProvider.class)
-                .getDatabase(DKCoinsPlugin.getInstance(), "default", true));
+                .getDatabase(DKCoinsPlugin.getInstance(), true));
         this.accountManager = new DefaultAccountManager();
         this.currencyManager = new DefaultCurrencyManager();
         this.userManager = new DefaultDKCoinsUserManager();
         this.transactionPropertyBuilder = transactionPropertyBuilder;
+        this.migrations = new ArrayList<>();
 
-        createDefaultAccountTypes();
+        createDefaults();
         DKCoinsConfig.init();
+        registerPlayerAdapter();
+        registerEconomyProvider();
+        PlaceholderService.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
+        setupMigration();
+        registerCommandsAndListeners();
     }
 
     @Override
@@ -84,7 +116,17 @@ public class MinecraftDKCoins implements DKCoins {
         return new DefaultTransactionFilter();
     }
 
-    private void createDefaultAccountTypes() {
+    @Override
+    public Migration getMigration(String name) {
+        return Iterators.findOne(this.migrations, migration -> migration.getName().equalsIgnoreCase(name));
+    }
+
+    @Override
+    public void registerMigration(Migration migration) {
+        this.migrations.add(migration);
+    }
+
+    private void createDefaults() {
         if(getAccountManager().searchAccountType("Bank") == null) {
             getAccountManager().createAccountType("Bank", "*");
         }
@@ -95,5 +137,46 @@ public class MinecraftDKCoins implements DKCoins {
         if(getCurrencyManager().searchCurrency("Coins") == null) {
             getCurrencyManager().createCurrency("Coins", "$");
         }
+    }
+
+    private void registerPlayerAdapter() {
+        McNative.getInstance().getPlayerManager().registerPlayerAdapter(DKCoinsUser.class, minecraftPlayer ->
+                DKCoins.getInstance().getUserManager().getUser(minecraftPlayer.getUniqueId()));
+    }
+
+    private void registerCommandsAndListeners() {
+        McNative.getInstance().getLocal().getCommandManager().registerCommand(new DKCoinsCommand(DKCoinsPlugin.getInstance()));
+        McNative.getInstance().getLocal().getCommandManager().registerCommand(new BankCommand(DKCoinsPlugin.getInstance()));
+        McNative.getInstance().getLocal().getCommandManager().registerCommand(new CurrencyCommand(DKCoinsPlugin.getInstance()));
+        McNative.getInstance().getLocal().getCommandManager().registerCommand(new AccountTransferCommand(DKCoinsPlugin.getInstance(), DKCoinsConfig.COMMAND_PAY));
+        McNative.getInstance().getLocal().getEventBus().subscribe(DKCoinsPlugin.getInstance(), new MinecraftPlayerListener());
+    }
+
+    private void setupMigration() {
+        registerMigration(new LegacyDKCoinsMigration());
+        if(McNative.getInstance().getPluginManager().getPlugin("Essentials") != null) {
+            registerMigration(new EssentialsXMigration());
+        }
+    }
+
+    private void registerEconomyProvider() {
+        if(DKCoinsConfig.ECONOMY_PROVIDER_ENABLED) {
+            getLogger().info("Enabling economy provider");
+            McNative.getInstance().getPluginManager().registerService(DKCoinsPlugin.getInstance(), EconomyProvider.class,
+                    new DKCoinsEconomyProvider(), DKCoinsConfig.ECONOMY_PROVIDER_PRIORITY);
+            getLogger().info("Economy provider enabled with priority " + DKCoinsConfig.ECONOMY_PROVIDER_PRIORITY);
+        }
+    }
+
+    private void registerVariableDescribers() {
+        ReflectVariableDescriberRegistry.registerDescriber(AccountTransaction.class, ReflectVariableDescriber.of(AccountTransaction.class));
+        ReflectVariableDescriberRegistry.registerDescriber(Currency.class, ReflectVariableDescriber.of(Currency.class));
+        ReflectVariableDescriberRegistry.registerDescriber(CurrencyExchangeRate.class, ReflectVariableDescriber.of(CurrencyExchangeRate.class));
+        ReflectVariableDescriberRegistry.registerDescriber(BankAccount.class, ReflectVariableDescriber.of(BankAccount.class));
+        ReflectVariableDescriberRegistry.registerDescriber(AccountMember.class, ReflectVariableDescriber.of(AccountMember.class));
+        ReflectVariableDescriberRegistry.registerDescriber(AccountMemberRole.class, ReflectVariableDescriber.of(AccountMemberRole.class));
+        ReflectVariableDescriberRegistry.registerDescriber(AccountCredit.class, ReflectVariableDescriber.of(AccountCredit.class));
+        ReflectVariableDescriberRegistry.registerDescriber(AccountLimitation.class, ReflectVariableDescriber.of(AccountLimitation.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DKCoinsUser.class, ReflectVariableDescriber.of(DKCoinsUser.class));
     }
 }

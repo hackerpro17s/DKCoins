@@ -10,6 +10,9 @@
 
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
+import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
+import net.pretronic.dkcoins.minecraft.commands.account.AccountTopCommand;
 import net.pretronic.libraries.command.NotFindable;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
@@ -36,18 +39,19 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements NotFi
     private final Command listCommand;
 
     public BankCommand(ObjectOwner owner) {
-        super(owner, CommandConfiguration.newBuilder().name("bank").permission("dkcoins.command.bank").create());
-        registerCommand(new AccountTransferCommand(owner));
+        super(owner, DKCoinsConfig.COMMAND_BANK);
+        registerCommand(new AccountTransferCommand(owner, CommandConfiguration.newBuilder().name("transfer").aliases("pay").create()));
         registerCommand(new AccountExchangeCommand(owner));
         this.createCommand = new BankCreateCommand(owner);
         registerCommand(new BankDeleteCommand(owner));
         this.listCommand = new BankListCommand(owner);
         registerCommand(new BankMemberCommand(owner));
         registerCommand(new BankAdminCommand(owner));
+        registerCommand(new BankStatementCommand(owner));
     }
 
     @Override
-    public BankAccount getObject(String name) {
+    public BankAccount getObject(CommandSender commandSender, String name) {
         return DKCoins.getInstance().getAccountManager().searchAccount(name);
     }
 
@@ -56,14 +60,15 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements NotFi
         if(command == null || command.equals("")) {
             listCommand.execute(commandSender, args);
         } else {
-            BankAccount account = getObject(command);
+            BankAccount account = getObject(commandSender, command);
             if(account != null) {
                 if(CommandUtil.hasAccountAccessAndSendMessage(commandSender, account)) {
-                    commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS_HEADER);
+                    /*commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS_HEADER);
                     for (AccountCredit credit : account.getCredits()) {
                         commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS_LIST, VariableSet.create()
-                                .add("currency", credit.getCurrency().getName()).add("amount", credit.getAmount()));
-                    }
+                                .add("currency", credit.getCurrency().getName())
+                                .add("amount", DKCoinsConfig.formatCurrencyAmount(credit.getAmount())));
+                    }*/
                 }
             } else {
                 commandSender.sendMessage(Messages.COMMAND_BANK_HELP);

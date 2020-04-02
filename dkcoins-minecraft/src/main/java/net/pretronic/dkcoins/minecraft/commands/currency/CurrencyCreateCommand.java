@@ -1,5 +1,6 @@
 package net.pretronic.dkcoins.minecraft.commands.currency;
 
+import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
@@ -26,8 +27,10 @@ public class CurrencyCreateCommand extends ObjectCommand<String> {
             return;
         }
         String symbol = args[0];
-        if(DKCoins.getInstance().getCurrencyManager().searchCurrency(currencyName) != null) {
-            commandSender.sendMessage(Messages.ERROR_CURRENCY_ALREADY_EXISTS, VariableSet.create().add("name", currencyName));
+        Currency currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(currencyName);
+        if(currency != null) {
+            commandSender.sendMessage(Messages.ERROR_CURRENCY_ALREADY_EXISTS, VariableSet.create()
+                    .add("currency", currency));
             return;
         }
         DKCoins.getInstance().getCurrencyManager().createCurrency(currencyName, symbol);

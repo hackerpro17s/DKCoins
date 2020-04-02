@@ -20,6 +20,7 @@ import net.pretronic.databasequery.api.query.result.QueryResult;
 import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.databasequery.api.query.type.FindQuery;
 import net.pretronic.databasequery.api.query.type.InsertQuery;
+import net.pretronic.databasequery.api.query.type.SearchQuery;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.DKCoinsStorage;
@@ -77,7 +78,10 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     @Override
     public AccountType searchAccountType(Object identifier) {
         QueryResultEntry result = this.accountType.find()
-                .or(query -> query.where("name", identifier).where("symbol", identifier).where("id", identifier))
+                .or(query -> {
+                    SearchQuery<?> subQuery = query.where("name", identifier).where("symbol", identifier);
+                    if(identifier instanceof Integer) subQuery.where("id", identifier);
+                })
                 .execute().firstOrNull();
         if(result == null) return null;
         return new DefaultAccountType(result.getInt("id"), result.getString("name"), result.getString("symbol"));
@@ -238,10 +242,38 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
+    public List<Integer> getTopAccountIds(Currency currency, AccountType[] excludedAccountTypes, int limit) {
+        List<Integer> accountIds = new ArrayList<>();
+        FindQuery query = this.accountCredit.find().get("accountId").join(this.account)
+                .on("dkcoins_account_credit.accountId", "dkcoins_account.id")
+                .where("currencyId", currency.getId());
+        for (AccountType type : excludedAccountTypes) {
+            query.whereNot("typeId", type.getId());
+        }
+        query.limit(limit);
+        query.execute().loadIn(accountIds, entry -> entry.getInt("accountId"));
+        return accountIds;
+    }
+
+    @Override
+    public int getAccountIdByRank(Currency currency, int rank) {
+        return this.accountCredit.find().get("accountId")
+                .where("currencyId", currency.getId())
+                .index(rank, rank)
+                .execute().firstOrNull().getInt("accountId");
+    }
+
+    @Override
+    public int getAccountCreditAccountId(int id) {
+        QueryResultEntry entry = this.accountCredit.find().where("id", id).execute().firstOrNull();
+        if(entry == null) return -1;
+        return entry.getInt("accountId");
+    }
+
+    @Override
     public AccountCredit addAccountCredit(BankAccount account, Currency currency, double amount) {
         int id = this.accountCredit.insert().set("accountId", account.getId()).set("currencyId", currency.getId()).set("amount", amount)
                 .executeAndGetGeneratedKeyAsInt("id");
-        System.out.println("addAccountCredit2");
         return new DefaultAccountCredit(id, account, currency, amount);
     }
 
@@ -253,6 +285,13 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     @Override
     public void deleteAccountCredit(int id) {
         this.accountCredit.delete().where("id", id).execute();
+    }
+
+    @Override
+    public int getAccountLimitationAccountId(int id) {
+        QueryResultEntry entry = this.accountLimitation.find().where("id", id).execute().firstOrNull();
+        if(entry == null) return -1;
+        return entry.getInt("accountId");
     }
 
     @Override
@@ -274,27 +313,10 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
-    public int getAccountMember(int id) {
-        /*QueryResultEntry result = this.accountMember.find().where("id", id).execute().firstOrNull();
-        if(result == null) return null;
-        DefaultAccountMember member = new DefaultAccountMember(id, DKCoins.getInstance().getAccountManager()
-                .getAccount(result.getInt("accountId")),
-                DKCoins.getInstance().getUserManager().getUser(result.getUniqueId("userId")),
-                AccountMemberRole.byId(result.getInt("roleId")));
-        loadAccountMemberLimitations(member);
-        return member;*/
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public AccountMember getAccountMember(DKCoinsUser user, BankAccount account) {
-        QueryResultEntry result = this.accountMember.find().where("userId", user.getUniqueId())
-                .where("accountId", account.getId()).execute().firstOrNull();
-        if(result == null) return null;
-        int id = result.getInt("id");
-        DefaultAccountMember member = new DefaultAccountMember(id, account, user, AccountMemberRole.byId(result.getInt("roleId")));
-        loadAccountMemberLimitations(member);
-        return member;
+    public int getAccountMemberAccountId(int id) {
+        QueryResultEntry result = this.accountMember.find().where("id", id).execute().firstOrNull();
+        if(result == null) return -1;
+        return result.getInt("accountId");
     }
 
     private void loadAccountMemberLimitations(DefaultAccountMember member) {

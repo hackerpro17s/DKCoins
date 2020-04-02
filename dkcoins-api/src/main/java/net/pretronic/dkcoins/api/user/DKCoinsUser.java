@@ -20,6 +20,8 @@ public interface DKCoinsUser {
 
     UUID getUniqueId();
 
+    String getName();
+
     Collection<BankAccount> getAccounts();
 
     BankAccount getDefaultAccount();
