@@ -70,7 +70,6 @@
                 <configuration>
                     <mcnative-loader-version>1.0.88-SNAPSHOT</mcnative-loader-version>
                     <resource-loader-version>1.0.53-SNAPSHOT</resource-loader-version>
-
                     <manifest>
                         <name>DKCoins</name>
                         <id>0249f842-de95-42df-b611-7ad390d90086</id>
