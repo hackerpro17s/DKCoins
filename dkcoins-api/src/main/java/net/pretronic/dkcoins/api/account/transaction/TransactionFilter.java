@@ -25,7 +25,7 @@ public interface TransactionFilter {
 
     TransactionFilter time(long time);
 
-    TransactionFilter receiver(AccountCredit receiver);
+    TransactionFilter receiver(BankAccount receiver);
 
     TransactionFilter currency(Currency currency);
 

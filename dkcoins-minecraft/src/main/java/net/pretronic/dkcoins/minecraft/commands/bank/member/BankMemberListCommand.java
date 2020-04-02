@@ -19,11 +19,11 @@ public class BankMemberListCommand extends ObjectCommand<BankAccount> {
 
     @Override
     public void execute(CommandSender commandSender, BankAccount account, String[] strings) {
-        commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIST_HEADER);
+        /*commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIST_HEADER);
         for (AccountMember member : account.getMembers()) {
             MinecraftPlayer player = McNative.getInstance().getPlayerManager().getPlayer(member.getUser().getUniqueId());
             commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIST_ENTRY, VariableSet.create()
                     .add("name", player.getName()).add("role", member.getRole()));
-        }
+        }*/
     }
 }

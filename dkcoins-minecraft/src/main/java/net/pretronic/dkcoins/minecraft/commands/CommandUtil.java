@@ -61,7 +61,8 @@ public final class CommandUtil {
 
     public static boolean hasAccessAndSendMessage(CommandSender commandSender, BankAccount account, AccessRight accessRight) {
         if(!hasAccess(commandSender, account, accessRight)) {
-            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS, VariableSet.create().add("accessRight", accessRight));
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS,
+                    VariableSet.create().add("accessRight", accessRight));
             return false;
         }
         return true;

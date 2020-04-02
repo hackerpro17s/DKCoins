@@ -15,7 +15,7 @@
     <parent>
         <artifactId>DKCoins</artifactId>
         <groupId>net.pretronic.dkcoins</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -68,8 +68,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mcnative-loader-version>${dependency.mcnative.version}</mcnative-loader-version>
-                    <resource-loader-version>${dependency.pretronic.libraries}</resource-loader-version>
+                    <mcnative-loader-version>1.0.88-SNAPSHOT</mcnative-loader-version>
+                    <resource-loader-version>1.0.53-SNAPSHOT</resource-loader-version>
 
                     <manifest>
                         <name>DKCoins</name>
@@ -105,6 +105,13 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>essentials-repo</id>
+            <url>https://ci.ender.zone/plugin/repository/everything/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>net.pretronic.dkcoins</groupId>
@@ -118,6 +125,23 @@
             <version>${dependency.mcnative.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>net.ess3</groupId>
+            <artifactId>EssentialsX</artifactId>
+            <version>2.16.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.8.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.pretronic.libraries</groupId>
+            <artifactId>pretroniclibraries-message</artifactId>
+            <version>1.0.50-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
-
 </project>

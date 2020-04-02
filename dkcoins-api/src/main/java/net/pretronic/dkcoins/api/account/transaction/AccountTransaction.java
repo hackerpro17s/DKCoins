@@ -12,6 +12,7 @@ package net.pretronic.dkcoins.api.account.transaction;
 
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.currency.Currency;
 
 import java.util.Collection;
 
@@ -27,13 +28,23 @@ public interface AccountTransaction {
 
     double getAmount();
 
+    String getFormattedAmount();
+
     double getExchangeRate();
+
+    String getFormattedExchangeRate();
+
+    default Currency getCurrency() {
+        return getSource().getCurrency();
+    }
 
     String getReason();
 
     String getCause();
 
     long getTime();
+
+    String getFormattedTime();
 
     Collection<AccountTransactionProperty> getProperties();
 

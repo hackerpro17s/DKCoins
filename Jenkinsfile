@@ -19,7 +19,7 @@ pipeline {
     agent any
     tools {
         maven 'Maven3'
-        jdk 'Java8'
+        jdk 'Java9'
     }
     options {
         buildDiscarder logRotator(numToKeepStr: '10')
@@ -85,6 +85,30 @@ pipeline {
                 archiveArtifacts artifacts: '**/target/*.jar'
             }
         }
+        stage('Publish on MirrorServer') {
+            when { equals expected: false, actual: SKIP }
+            steps {
+                script {
+                    withCredentials([string(credentialsId: '120a9a64-81a7-4557-80bf-161e3ab8b976', variable: 'SECRET')]) {
+                        int buildNumber = env.BUILD_NUMBER;
+                        httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_JSON',
+                                httpMode: 'POST', ignoreSslErrors: true,timeout: 3000,
+                                responseHandle: 'NONE',
+                                customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
+                                url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/create?name=$OLD_VERSION" +
+                                        "&qualifier=$QUALIFIER&buildNumber=$buildNumber")
+
+                        httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_OCTETSTREAM',
+                                httpMode: 'POST', ignoreSslErrors: true, timeout: 3000,
+                                multipartName: 'file',
+                                responseHandle: 'NONE',
+                                uploadFile: "dkcoins-minecraft/target/dkcoins-minecraft-${OLD_VERSION}.jar",
+                                customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
+                                url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/$buildNumber/publish?edition=default")
+                    }
+                }
+            }
+        }
     }
     post {
         success {
@@ -121,6 +145,7 @@ pipeline {
                         String version = major + "." + minorVersion + "." + patchVersion + "-BETA"
 
                         String commitMessage = COMMIT_MESSAGE.replace("%version%", version)
+
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
 
                             sh """
@@ -169,26 +194,8 @@ pipeline {
                             """
                         }
                     }
-
-                    withCredentials([string(credentialsId: '120a9a64-81a7-4557-80bf-161e3ab8b976', variable: 'SECRET')]) {
-                        int buildNumber = env.BUILD_NUMBER;
-                        httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_JSON',
-                                httpMode: 'POST', ignoreSslErrors: true,timeout: 3000,
-                                responseHandle: 'NONE',
-                                customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
-                                url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/create?name=$OLD_VERSION&qualifier=$QUALIFIER&buildNumber=$buildNumber")
-
-                        httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_OCTETSTREAM',
-                                httpMode: 'POST', ignoreSslErrors: true, timeout: 3000,
-                                multipartName: 'file',
-                                responseHandle: 'NONE',
-                                uploadFile: "dkcoins-minecraft/target/dkcoins-minecraft-${OLD_VERSION}.jar",
-                                customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
-                                url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/$buildNumber/publish?edition=default")
-                    }
                 }
             }
         }
     }
 }
-

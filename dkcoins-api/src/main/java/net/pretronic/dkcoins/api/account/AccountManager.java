@@ -50,11 +50,15 @@ public interface AccountManager {
 
     MasterBankAccount createMasterAccount(String name, AccountType type, boolean disabled, MasterBankAccount parent, DKCoinsUser creator);
 
-    void deleteAccount(BankAccount account, DKCoinsUser user);
-
     void updateAccountName(BankAccount account);
 
     void updateAccountDisabled(BankAccount account);
+
+    void deleteAccount(BankAccount account, DKCoinsUser user);
+
+    List<BankAccount> getTopAccounts(Currency currency, AccountType[] excludedAccountTypes, int limit);
+
+    BankAccount getAccountByRank(Currency currency, int rank);
 
 
     AccountCredit getAccountCredit(int id);

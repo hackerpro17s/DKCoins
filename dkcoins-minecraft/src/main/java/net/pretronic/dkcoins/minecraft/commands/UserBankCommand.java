@@ -1,8 +1,10 @@
 package net.pretronic.dkcoins.minecraft.commands;
 
+import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.minecraft.commands.account.AccountTopCommand;
 import net.pretronic.libraries.command.command.BasicCommand;
-import net.pretronic.libraries.command.command.MainCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
@@ -18,10 +20,17 @@ import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.account.TransferCause;
 import org.mcnative.common.player.MinecraftPlayer;
 
+import java.util.Arrays;
+
 public class UserBankCommand extends BasicCommand {
+
+    private final ObjectCommand<Currency> topCommand;
+    private final Currency currency;
 
     public UserBankCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner, configuration);
+        this.topCommand = new AccountTopCommand(owner);
+        this.currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(getConfiguration().getName());
     }
 
     @Override
@@ -38,7 +47,7 @@ public class UserBankCommand extends BasicCommand {
         String action = args[0];
         if(action.equalsIgnoreCase("pay") || action.equalsIgnoreCase("transfer")) {
             if(args.length == 3) {
-                AccountCredit credit = user.getDefaultAccount().getCredit(DKCoinsConfig.DEFAULT_CURRENCY);
+                AccountCredit credit = user.getDefaultAccount().getCredit(currency);
                 AccountMember member = user.getDefaultAccount().getMember(user);
                 String receiver0 = args[1];
                 BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
@@ -49,7 +58,7 @@ public class UserBankCommand extends BasicCommand {
 
                 String amount0 = args[2];
                 if(!GeneralUtil.isNumber(amount0)) {
-                    commandSender.sendMessage(Messages.ERROR_NOT_NUMBER);
+                    commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", amount0));
                     return;
                 }
                 double amount = Double.parseDouble(amount0);
@@ -66,12 +75,14 @@ public class UserBankCommand extends BasicCommand {
                     CommandUtil.handleTransferFailCauses(result, commandSender);
                 }
             } else {
-                commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create().add("currency", getConfiguration().getName()));
+                commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create().add("currency", currency.getName()));
             }
+        } else if(action.equalsIgnoreCase("top")) {
+            this.topCommand.execute(commandSender, currency, args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
         } else {
             DKCoinsUser target = DKCoins.getInstance().getUserManager().getUser(action);
             if(target == null) {
-                commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS);
+                commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS, VariableSet.create().add("name", action));
                 return;
             }
             printInfoMessage(commandSender, target);
@@ -79,7 +90,7 @@ public class UserBankCommand extends BasicCommand {
     }
 
     private void printInfoMessage(CommandSender commandSender, DKCoinsUser user) {
-        AccountCredit credit = user.getDefaultAccount().getCredit(DKCoinsConfig.DEFAULT_CURRENCY);
+        AccountCredit credit = user.getDefaultAccount().getCredit(DKCoinsConfig.CURRENCY_DEFAULT);
         commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, VariableSet.create()
                 .add("amount", credit.getAmount()).add("currency_symbol", credit.getCurrency().getSymbol()));
     }

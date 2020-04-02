@@ -32,4 +32,6 @@ public interface AccountLimitation {
     double getAmount();
 
     long getInterval();
+
+    String getFormattedInterval();
 }

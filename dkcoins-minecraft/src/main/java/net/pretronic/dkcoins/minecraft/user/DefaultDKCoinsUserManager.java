@@ -29,7 +29,9 @@ public class DefaultDKCoinsUserManager implements DKCoinsUserManager {
     private final Cache<DKCoinsUser> coinsUserCache;
 
     public DefaultDKCoinsUserManager() {
-        this.coinsUserCache = new ArrayCache<DKCoinsUser>().setExpireAfterAccess(30, TimeUnit.MINUTES)
+        this.coinsUserCache = new ArrayCache<DKCoinsUser>()
+                .setExpireAfterAccess(30, TimeUnit.MINUTES)
+                .setMaxSize(500)
                 .registerQuery("getOrLoad", new CacheQuery<DKCoinsUser>() {
                     @Override
                     public boolean check(DKCoinsUser user, Object... identifiers) {

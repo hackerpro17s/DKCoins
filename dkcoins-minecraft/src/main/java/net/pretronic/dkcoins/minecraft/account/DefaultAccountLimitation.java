@@ -71,4 +71,9 @@ public class DefaultAccountLimitation implements AccountLimitation {
     public long getInterval() {
         return this.interval;
     }
+
+    @Override
+    public String getFormattedInterval() {
+        throw new UnsupportedOperationException();
+    }
 }

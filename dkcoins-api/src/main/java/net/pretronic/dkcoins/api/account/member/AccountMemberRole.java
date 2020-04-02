@@ -31,8 +31,7 @@ public enum AccountMemberRole {
     AccountMemberRole(int id, AccountMemberRole childRole, AccessRight... accessRights) {
         this.id = id;
         this.childRole = childRole;
-        this.accessRights = initAccessRights(accessRights);;
-
+        this.accessRights = initAccessRights(accessRights);
     }
 
     public int getId() {
@@ -45,6 +44,11 @@ public enum AccountMemberRole {
 
     public AccessRight[] getAccessRights() {
         return accessRights;
+    }
+
+    //@Todo überarbeiten
+    public String getName() {
+        return name();
     }
 
     public boolean canAccess(AccessRight accessRight) {

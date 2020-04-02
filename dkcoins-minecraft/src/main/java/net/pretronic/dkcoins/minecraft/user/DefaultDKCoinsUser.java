@@ -40,6 +40,11 @@ public class DefaultDKCoinsUser implements DKCoinsUser {
     }
 
     @Override
+    public String getName() {
+        return getAsPlayer().getName();
+    }
+
+    @Override
     public Collection<BankAccount> getAccounts() {
         return DKCoins.getInstance().getAccountManager().getAccounts(this);
     }
@@ -73,7 +78,6 @@ public class DefaultDKCoinsUser implements DKCoinsUser {
             AccountType accountType = DKCoins.getInstance().getAccountManager().searchAccountType("User");
             account = DKCoins.getInstance().getAccountManager().createAccount(getAsPlayer().getName(),
                     accountType, false, null, this);
-            account.addCredit(DKCoinsConfig.DEFAULT_CURRENCY, DKCoinsConfig.ACCOUNT_USER_START_AMOUNT);
         }
         return account;
     }

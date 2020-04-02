@@ -27,6 +27,10 @@ public interface AccountMember {
 
     DKCoinsUser getUser();
 
+    default String getName() {
+        return getUser().getName();
+    }
+
     AccountMemberRole getRole();
 
     void setRole(AccountMemberRole role);

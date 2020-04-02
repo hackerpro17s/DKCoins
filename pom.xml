@@ -17,7 +17,7 @@
     <groupId>net.pretronic.dkcoins</groupId>
     <artifactId>DKCoins</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <modules>
         <module>dkcoins-api</module>
         <module>dkcoins-minecraft</module>
@@ -38,8 +38,8 @@
         <plugin.maven.shade>3.2.2</plugin.maven.shade>
         <plugin.maven.deploy>3.0.0-M1</plugin.maven.deploy>
 
-        <dependency.pretronic.libraries>1.0.33-SNAPSHOT</dependency.pretronic.libraries>
-        <dependency.mcnative.version>1.0.70-SNAPSHOT</dependency.mcnative.version>
+        <dependency.pretronic.libraries>1.0.50-SNAPSHOT</dependency.pretronic.libraries>
+        <dependency.mcnative.version>1.0.88-SNAPSHOT</dependency.mcnative.version>
     </properties>
 
     <repositories>

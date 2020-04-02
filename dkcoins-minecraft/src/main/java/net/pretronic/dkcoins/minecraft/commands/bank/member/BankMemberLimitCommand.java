@@ -58,16 +58,19 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
                             double amount = Double.parseDouble(amount0);
 
                             if(args[0].equalsIgnoreCase("set")) {
-                                member.addLimitation(DKCoinsConfig.DEFAULT_CURRENCY, amount, interval);
-                                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_SET, VariableSet.create().add("amount", amount)
+                                member.addLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
+                                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_SET, VariableSet.create()
+                                        .add("amount", DKCoinsConfig.formatCurrencyAmount(amount))
                                         .add("interval", interval).add("name", CommandUtil.getPlayerName(member.getUser())));
                             } else {
-                                if(member.removeLimitation(DKCoinsConfig.DEFAULT_CURRENCY, amount, interval)) {
-                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE, VariableSet.create().add("amount", amount)
+                                if(member.removeLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval)) {
+                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE, VariableSet.create()
+                                            .add("amount", DKCoinsConfig.formatCurrencyAmount(amount))
                                             .add("interval", interval).add("name", CommandUtil.getPlayerName(member.getUser())));
                                 } else {
                                     commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE_FAILURE, VariableSet.create()
-                                            .add("amount", amount).add("interval", interval).add("name",
+                                            .add("amount", DKCoinsConfig.formatCurrencyAmount(amount))
+                                            .add("interval", interval).add("name",
                                                     CommandUtil.getPlayerName(member.getUser())));
                                 }
                             }
@@ -86,7 +89,8 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
         } else {
             for (AccountLimitation limitation : member.getLimitations()) {
                 commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, VariableSet.create()
-                        .add("amount", limitation.getAmount()).add("interval", limitation.getInterval()));
+                        .add("amount", limitation.getAmount())
+                        .add("interval", limitation.getInterval()));
             }
         }
     }

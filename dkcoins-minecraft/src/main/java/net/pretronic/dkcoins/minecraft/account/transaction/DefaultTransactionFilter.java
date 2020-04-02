@@ -22,7 +22,7 @@ public class DefaultTransactionFilter implements TransactionFilter {
     private String world;
     private String server;
     private long time;
-    private AccountCredit receiver;
+    private BankAccount receiver;
     private Currency currency;
     private String reason;
     private String cause;
@@ -53,7 +53,7 @@ public class DefaultTransactionFilter implements TransactionFilter {
     }
 
     @Override
-    public TransactionFilter receiver(AccountCredit receiver) {
+    public TransactionFilter receiver(BankAccount receiver) {
         this.receiver = receiver;
         return this;
     }
@@ -103,7 +103,7 @@ public class DefaultTransactionFilter implements TransactionFilter {
     }
 
     @Internal
-    public AccountCredit getReceiver() {
+    public BankAccount getReceiver() {
         return receiver;
     }
 

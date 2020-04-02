@@ -17,4 +17,5 @@ public final class TransferCause {
     public static final String WITHDRAW = "withdraw";
     public static final String TRANSFER = "transfer";
     public static final String API = "api";
+    public static final String ECONOMY_PROVIDER = "economyProvider";
 }

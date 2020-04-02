@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.api;
 
+import net.pretronic.dkcoins.api.migration.Migration;
 import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.dkcoins.api.account.AccountManager;
 import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
@@ -32,6 +33,11 @@ public interface DKCoins {
     TransactionPropertyBuilder getTransactionPropertyBuilder();
 
     TransactionFilter newTransactionFilter();
+
+    Migration getMigration(String name);
+
+    void registerMigration(Migration migration);
+
 
     static DKCoins getInstance() {
         return InstanceHolder.INSTANCE;
