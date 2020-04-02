@@ -17,7 +17,7 @@
     <groupId>net.pretronic.dkcoins</groupId>
     <artifactId>DKCoins</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1</version>
+    <version>1.0.0</version>
     <modules>
         <module>dkcoins-api</module>
         <module>dkcoins-minecraft</module>
