@@ -68,8 +68,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mcnative-loader-version>1.0.74-SNAPSHOT</mcnative-loader-version>
-                    <resource-loader-version>1.0.33-SNAPSHOT</resource-loader-version>
+                    <mcnative-loader-version>1.0.88-SNAPSHOT</mcnative-loader-version>
+                    <resource-loader-version>1.0.53-SNAPSHOT</resource-loader-version>
 
                     <manifest>
                         <name>DKCoins</name>
