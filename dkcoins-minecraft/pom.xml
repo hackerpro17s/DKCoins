@@ -15,7 +15,7 @@
     <parent>
         <artifactId>DKCoins</artifactId>
         <groupId>net.pretronic.dkcoins</groupId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -70,7 +70,6 @@
                 <configuration>
                     <mcnative-loader-version>1.0.88-SNAPSHOT</mcnative-loader-version>
                     <resource-loader-version>1.0.53-SNAPSHOT</resource-loader-version>
-
                     <manifest>
                         <name>DKCoins</name>
                         <id>0249f842-de95-42df-b611-7ad390d90086</id>
@@ -88,8 +87,8 @@
 
                     <loader>
                         <version>${project.version}</version>
-                        <versionUrl>https://mirror.prematic.net/v1/{plugin.id}/versions/latest?plain=true</versionUrl>
-                        <downloadUrl>https://mirror.prematic.net/v1/{plugin.id}/versions/{version.build}/download</downloadUrl>
+                        <versionUrl>https://mirror.pretronic.net/v1/{plugin.id}/versions/latest?plain=true</versionUrl>
+                        <downloadUrl>https://mirror.pretronic.net/v1/{plugin.id}/versions/{version.build}/download</downloadUrl>
                     </loader>
 
                 </configuration>
