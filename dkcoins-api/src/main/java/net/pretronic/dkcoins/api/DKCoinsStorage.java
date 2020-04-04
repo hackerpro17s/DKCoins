@@ -125,6 +125,8 @@ public interface DKCoinsStorage {
 
     CurrencyExchangeRate getCurrencyExchangeRate(int id);
 
+    int getCurrencyExchangeRateCurrencyId(int id);
+
     CurrencyExchangeRate getCurrencyExchangeRate(int currencyId, int targetCurrencyId);
 
     CurrencyExchangeRate createCurrencyExchangeRate(int selectedCurrencyId, int targetCurrencyId, double exchangeAmount);

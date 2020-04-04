@@ -102,6 +102,13 @@ public class DefaultCurrencyManager implements CurrencyManager {
     }
 
     @Override
+    public CurrencyExchangeRate getCurrencyExchangeRate(int id) {
+        int currencyId = DKCoins.getInstance().getStorage().getCurrencyExchangeRateCurrencyId(id);
+        if(currencyId < 1) return null;
+        return getCurrency(currencyId).getExchangeRate(id);
+    }
+
+    @Override
     public CurrencyExchangeRate getCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency) {
         return DKCoins.getInstance().getStorage().getCurrencyExchangeRate(selectedCurrency.getId(), targetCurrency.getId());
     }

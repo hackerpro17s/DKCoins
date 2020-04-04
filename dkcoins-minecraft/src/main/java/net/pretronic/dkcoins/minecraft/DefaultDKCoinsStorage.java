@@ -440,6 +440,13 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
+    public int getCurrencyExchangeRateCurrencyId(int id) {
+        QueryResultEntry result = this.currencyExchangeRate.find().where("id", id).execute().firstOrNull();
+        if(result == null) return -1;
+        return result.getInt("currencyId");
+    }
+
+    @Override
     public CurrencyExchangeRate getCurrencyExchangeRate(int currencyId, int targetCurrencyId) {
         QueryResultEntry entry = this.currencyExchangeRate.find().where("currencyId", currencyId)
                 .where("targetCurrencyId", targetCurrencyId).execute().firstOrNull();
