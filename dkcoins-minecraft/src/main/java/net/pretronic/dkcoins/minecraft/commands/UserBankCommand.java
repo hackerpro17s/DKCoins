@@ -7,6 +7,7 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
@@ -90,8 +91,7 @@ public class UserBankCommand extends BasicCommand {
     }
 
     private void printInfoMessage(CommandSender commandSender, DKCoinsUser user) {
-        AccountCredit credit = user.getDefaultAccount().getCredit(DKCoinsConfig.CURRENCY_DEFAULT);
-        commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, VariableSet.create()
-                .add("amount", credit.getAmount()).add("currency_symbol", credit.getCurrency().getSymbol()));
+        AccountCredit credit = user.getDefaultAccount().getCredit(currency);
+        commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, new ReflectVariableSet().add("credit", credit));
     }
 }

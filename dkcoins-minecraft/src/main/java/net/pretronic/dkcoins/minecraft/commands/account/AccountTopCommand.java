@@ -10,6 +10,7 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
@@ -34,13 +35,7 @@ public class AccountTopCommand extends ObjectCommand<Currency> {
                 return;
             }
         }
-        /*sender.sendMessage(Messages.TOP_HEADER, VariableSet.create().add("amount", limit));
-        int rank = 1;
-        for (BankAccount account : DKCoins.getInstance().getAccountManager().getTopAccounts(currency, new AccountType[0], limit)) {
-            sender.sendMessage(Messages.TOP_ENTRY, VariableSet.create()
-                    .add("rank", rank++)
-                    .add("name", account.getName())
-                    .add("amount", account.getCredit(currency).getAccount()));
-        }*/
+        sender.sendMessage(Messages.TOP, new ReflectVariableSet().add("credits",
+                DKCoins.getInstance().getAccountManager().getTopAccounts(currency, new AccountType[0], limit)));
     }
 }

@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
+import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
@@ -40,7 +41,6 @@ public class DefaultCurrencyManager implements CurrencyManager {
         for (Currency currency : DKCoins.getInstance().getStorage().getCurrencies()) {
             this.currencyCache.insert(currency);
         }
-
     }
 
     @Override
@@ -99,6 +99,13 @@ public class DefaultCurrencyManager implements CurrencyManager {
             account.deleteCredit(currency);
         }
         this.currencyCache.getCaller().delete(currency.getId(), Document.newDocument());
+    }
+
+    @Override
+    public CurrencyExchangeRate getCurrencyExchangeRate(int id) {
+        int currencyId = DKCoins.getInstance().getStorage().getCurrencyExchangeRateCurrencyId(id);
+        if(currencyId < 1) return null;
+        return getCurrency(currencyId).getExchangeRate(id);
     }
 
     @Override

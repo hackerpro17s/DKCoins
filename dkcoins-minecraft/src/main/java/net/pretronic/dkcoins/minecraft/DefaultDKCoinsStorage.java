@@ -79,8 +79,8 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     public AccountType searchAccountType(Object identifier) {
         QueryResultEntry result = this.accountType.find()
                 .or(query -> {
-                    SearchQuery<?> subQuery = query.where("name", identifier).where("symbol", identifier);
-                    if(identifier instanceof Integer) subQuery.where("id", identifier);
+                    query.where("name", identifier).where("symbol", identifier);
+                    if(identifier instanceof Integer) query.where("id", identifier);
                 })
                 .execute().firstOrNull();
         if(result == null) return null;
@@ -124,7 +124,10 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     @Override
     public BankAccount searchAccount(Object identifier) {
-        return getAccount(this.account.find().or(query -> query.where("id", identifier).where("name", identifier)).execute().firstOrNull());
+        return getAccount(this.account.find().or(query -> {
+            if(identifier instanceof Integer) query.where("id", identifier);
+            query.where("name", identifier);
+        }).execute().firstOrNull());
     }
 
     @Override
@@ -380,8 +383,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     @Override
     public Collection<Currency> getCurrencies() {
         Collection<Currency> currencies = new ArrayList<>();
-        this.currency.find().execute().loadIn(currencies, entry ->
-                new DefaultCurrency(entry.getInt("id"), entry.getString("name"), entry.getString("symbol")));
+        this.currency.find().execute().loadIn(currencies, entry -> new DefaultCurrency(entry.getInt("id"), entry.getString("name"), entry.getString("symbol")));
         return currencies;
     }
 
@@ -398,19 +400,17 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     @Override
     public Currency searchCurrency(Object identifier) {
         QueryResultEntry result = this.currency.find()
-                .or(query -> query.where("name", identifier).where("symbol", identifier).where("id", identifier))
+                .or(query -> {
+                    if(identifier instanceof Integer) query.where("id", identifier);
+                    query.where("name", identifier).where("symbol", identifier);
+                })
                 .execute().firstOrNull();
         return getCurrency(result);
     }
 
     private Currency getCurrency(QueryResultEntry result) {
         if(result == null) return null;
-        DefaultCurrency currency = new DefaultCurrency(result.getInt("id"), result.getString("name"), result.getString("symbol"));
-        for (QueryResultEntry entry : this.currencyExchangeRate.find().where("currencyId", result.getInt("id")).execute()) {
-            currency.addLoadedExchangeRate(new DefaultCurrencyExchangeRate(entry.getInt("id"), currency,
-                    DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("targetCurrencyId")), entry.getDouble("exchangeAmount")));
-        }
-        return currency;
+        return new DefaultCurrency(result.getInt("id"), result.getString("name"), result.getString("symbol"));
     }
 
     @Override
@@ -437,6 +437,13 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     @Override
     public CurrencyExchangeRate getCurrencyExchangeRate(int id) {
         return null;
+    }
+
+    @Override
+    public int getCurrencyExchangeRateCurrencyId(int id) {
+        QueryResultEntry result = this.currencyExchangeRate.find().where("id", id).execute().firstOrNull();
+        if(result == null) return -1;
+        return result.getInt("currencyId");
     }
 
     @Override

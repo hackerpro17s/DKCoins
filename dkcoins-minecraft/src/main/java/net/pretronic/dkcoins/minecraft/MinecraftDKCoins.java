@@ -20,13 +20,18 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.migration.Migration;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.minecraft.account.*;
+import net.pretronic.dkcoins.minecraft.account.transaction.DefaultAccountTransaction;
 import net.pretronic.dkcoins.minecraft.commands.DKCoinsCommand;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
 import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;
+import net.pretronic.dkcoins.minecraft.currency.DefaultCurrency;
+import net.pretronic.dkcoins.minecraft.currency.DefaultCurrencyExchangeRate;
 import net.pretronic.dkcoins.minecraft.listener.MinecraftPlayerListener;
 import net.pretronic.dkcoins.minecraft.migration.EssentialsXMigration;
 import net.pretronic.dkcoins.minecraft.migration.LegacyDKCoinsMigration;
+import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUser;
 import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountManager;
@@ -35,7 +40,6 @@ import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
 import net.pretronic.dkcoins.api.DKCoinsStorage;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
-import net.pretronic.dkcoins.minecraft.account.DefaultAccountManager;
 import net.pretronic.dkcoins.minecraft.account.transaction.DefaultTransactionFilter;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrencyManager;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUserManager;
@@ -79,6 +83,7 @@ public class MinecraftDKCoins implements DKCoins {
         PlaceholderService.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
         setupMigration();
         registerCommandsAndListeners();
+        registerVariableDescribers();
     }
 
     @Override
@@ -169,14 +174,14 @@ public class MinecraftDKCoins implements DKCoins {
     }
 
     private void registerVariableDescribers() {
-        ReflectVariableDescriberRegistry.registerDescriber(AccountTransaction.class, ReflectVariableDescriber.of(AccountTransaction.class));
-        ReflectVariableDescriberRegistry.registerDescriber(Currency.class, ReflectVariableDescriber.of(Currency.class));
-        ReflectVariableDescriberRegistry.registerDescriber(CurrencyExchangeRate.class, ReflectVariableDescriber.of(CurrencyExchangeRate.class));
-        ReflectVariableDescriberRegistry.registerDescriber(BankAccount.class, ReflectVariableDescriber.of(BankAccount.class));
-        ReflectVariableDescriberRegistry.registerDescriber(AccountMember.class, ReflectVariableDescriber.of(AccountMember.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class, ReflectVariableDescriber.of(DefaultAccountTransaction.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultCurrency.class, ReflectVariableDescriber.of(DefaultCurrency.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultCurrencyExchangeRate.class, ReflectVariableDescriber.of(DefaultCurrencyExchangeRate.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultBankAccount.class, ReflectVariableDescriber.of(DefaultBankAccount.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountMember.class, ReflectVariableDescriber.of(DefaultAccountMember.class));
         ReflectVariableDescriberRegistry.registerDescriber(AccountMemberRole.class, ReflectVariableDescriber.of(AccountMemberRole.class));
-        ReflectVariableDescriberRegistry.registerDescriber(AccountCredit.class, ReflectVariableDescriber.of(AccountCredit.class));
-        ReflectVariableDescriberRegistry.registerDescriber(AccountLimitation.class, ReflectVariableDescriber.of(AccountLimitation.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DKCoinsUser.class, ReflectVariableDescriber.of(DKCoinsUser.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountCredit.class, ReflectVariableDescriber.of(DefaultAccountCredit.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountLimitation.class, ReflectVariableDescriber.of(DefaultAccountLimitation.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultDKCoinsUser.class, ReflectVariableDescriber.of(DefaultDKCoinsUser.class));
     }
 }

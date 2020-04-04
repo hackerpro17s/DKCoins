@@ -35,6 +35,8 @@ public interface CurrencyManager {
     void deleteCurrency(Currency currency);
 
 
+    CurrencyExchangeRate getCurrencyExchangeRate(int id);
+
     CurrencyExchangeRate getCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency);
 
     CurrencyExchangeRate createCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount);

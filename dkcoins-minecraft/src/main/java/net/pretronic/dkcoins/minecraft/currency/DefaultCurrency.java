@@ -13,6 +13,7 @@ package net.pretronic.dkcoins.minecraft.currency;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.entry.DocumentEntry;
 import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
@@ -21,6 +22,7 @@ import net.pretronic.libraries.document.Document;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class DefaultCurrency implements Currency {
 
@@ -64,21 +66,35 @@ public class DefaultCurrency implements Currency {
     }
 
     @Override
+    public Collection<CurrencyExchangeRate> getExchangeRates() {
+        Collection<CurrencyExchangeRate> exchangeRates = new ArrayList<>();
+        for (Currency currency : DKCoins.getInstance().getCurrencyManager().getCurrencies()) {
+            exchangeRates.add(getExchangeRate(currency));
+        }
+        return exchangeRates;
+    }
+
+    @Override
     public CurrencyExchangeRate getExchangeRate(int id) {
-        return Iterators.findOne(this.exchangeRates, exchangeRate -> exchangeRate.getId() == id);
+        CurrencyExchangeRate exchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate0 -> exchangeRate0.getId() == id);
+        if(exchangeRate == null) {
+            exchangeRate = DKCoins.getInstance().getCurrencyManager().getCurrencyExchangeRate(id);
+        }
+        return exchangeRate;
     }
 
     @Override
     public CurrencyExchangeRate getExchangeRate(Currency targetCurrency) {
-        CurrencyExchangeRate currencyExchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate -> exchangeRate.getTargetCurrency().equals(targetCurrency));
-        if(currencyExchangeRate == null) {
-            currencyExchangeRate = DKCoins.getInstance().getCurrencyManager().getCurrencyExchangeRate(this, targetCurrency);
-            if(currencyExchangeRate == null) {
-                currencyExchangeRate = DKCoins.getInstance().getCurrencyManager().createCurrencyExchangeRate(this, targetCurrency, 1);
+        Validate.notNull(targetCurrency);
+        CurrencyExchangeRate exchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate0 ->
+                exchangeRate0.getTargetCurrency().equals(targetCurrency));
+        if(exchangeRate == null) {
+            exchangeRate = DKCoins.getInstance().getCurrencyManager().getCurrencyExchangeRate(this, targetCurrency);
+            if(exchangeRate == null) {
+                exchangeRate = DKCoins.getInstance().getCurrencyManager().createCurrencyExchangeRate(this, targetCurrency, 1);
             }
-            this.exchangeRates.add(currencyExchangeRate);
         }
-        return currencyExchangeRate;
+        return exchangeRate;
     }
 
     @Override

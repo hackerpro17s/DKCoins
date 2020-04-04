@@ -157,7 +157,7 @@ messages:
   dkcoins.command.currency.info: '${dkcoins.prefix} &7Currency&8: &e{currency.name}
    &8» &7Symbol&8: &e{currency.symbol}
    &8» &7Exchange rates&8:
-    @for("exchangeRate" in {exchangeRates}, ${dkcoins.command.currency.info.exchangeRate.loop},"\n")'
+   @for("exchangeRate" in {exchangeRates}, ${dkcoins.command.currency.info.exchangeRate.loop},"\n")'
   dkcoins.command.currency.info.exchangeRate.loop: '&8» &7Target&8: &e{exchangeRate.targetCurrency.name} &7Exchange amount&8: &e{exchangeRate.formattedExchangeAmount}'
 
   dkcoins.command.currency.edit.help: '${dkcoins.prefix} &cInvalid usage of command currency edit&8:
@@ -180,4 +180,4 @@ messages:
   dkcoins.top.reach.limit: '${dkcoins.prefix} &cYou can not see so much credit top'
   dkcoins.top: '${dkcoins.prefix} &7Top {amount}&8:
    @for("credit" in {credits}, ${dkcoins.top.loop},"\n")'
-  dkcoins.top.loop: '&8» &7#{rank} &7{account.name} &e{credit.formattedAmount}{credit.currency.symbol}'
+  dkcoins.top.loop: '&8» &7#{index} &7{credit.account.name} &e{credit.formattedAmount}{credit.currency.symbol}'
