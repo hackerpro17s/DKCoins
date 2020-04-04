@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
+import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
@@ -40,7 +41,6 @@ public class DefaultCurrencyManager implements CurrencyManager {
         for (Currency currency : DKCoins.getInstance().getStorage().getCurrencies()) {
             this.currencyCache.insert(currency);
         }
-
     }
 
     @Override

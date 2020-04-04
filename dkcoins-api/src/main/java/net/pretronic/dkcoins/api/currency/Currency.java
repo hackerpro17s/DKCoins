@@ -12,6 +12,7 @@ package net.pretronic.dkcoins.api.currency;
 
 import net.pretronic.libraries.synchronisation.Synchronizable;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface Currency extends Synchronizable {
@@ -26,7 +27,7 @@ public interface Currency extends Synchronizable {
 
     void setSymbol(String name);
 
-    List<CurrencyExchangeRate> getExchangeRates();
+    Collection<CurrencyExchangeRate> getExchangeRates();
 
     CurrencyExchangeRate getExchangeRate(int id);
 

@@ -383,8 +383,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     @Override
     public Collection<Currency> getCurrencies() {
         Collection<Currency> currencies = new ArrayList<>();
-        this.currency.find().execute().loadIn(currencies, entry ->
-                new DefaultCurrency(entry.getInt("id"), entry.getString("name"), entry.getString("symbol")));
+        this.currency.find().execute().loadIn(currencies, entry -> new DefaultCurrency(entry.getInt("id"), entry.getString("name"), entry.getString("symbol")));
         return currencies;
     }
 
@@ -411,12 +410,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     private Currency getCurrency(QueryResultEntry result) {
         if(result == null) return null;
-        DefaultCurrency currency = new DefaultCurrency(result.getInt("id"), result.getString("name"), result.getString("symbol"));
-        for (QueryResultEntry entry : this.currencyExchangeRate.find().where("currencyId", result.getInt("id")).execute()) {
-            currency.addLoadedExchangeRate(new DefaultCurrencyExchangeRate(entry.getInt("id"), currency,
-                    DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("targetCurrencyId")), entry.getDouble("exchangeAmount")));
-        }
-        return currency;
+        return new DefaultCurrency(result.getInt("id"), result.getString("name"), result.getString("symbol"));
     }
 
     @Override
