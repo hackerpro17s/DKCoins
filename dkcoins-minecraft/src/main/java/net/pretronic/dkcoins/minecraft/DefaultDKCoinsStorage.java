@@ -79,8 +79,8 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     public AccountType searchAccountType(Object identifier) {
         QueryResultEntry result = this.accountType.find()
                 .or(query -> {
-                    SearchQuery<?> subQuery = query.where("name", identifier).where("symbol", identifier);
-                    if(identifier instanceof Integer) subQuery.where("id", identifier);
+                    query.where("name", identifier).where("symbol", identifier);
+                    if(identifier instanceof Integer) query.where("id", identifier);
                 })
                 .execute().firstOrNull();
         if(result == null) return null;
@@ -124,7 +124,10 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     @Override
     public BankAccount searchAccount(Object identifier) {
-        return getAccount(this.account.find().or(query -> query.where("id", identifier).where("name", identifier)).execute().firstOrNull());
+        return getAccount(this.account.find().or(query -> {
+            if(identifier instanceof Integer) query.where("id", identifier);
+            query.where("name", identifier);
+        }).execute().firstOrNull());
     }
 
     @Override
@@ -398,7 +401,10 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     @Override
     public Currency searchCurrency(Object identifier) {
         QueryResultEntry result = this.currency.find()
-                .or(query -> query.where("name", identifier).where("symbol", identifier).where("id", identifier))
+                .or(query -> {
+                    if(identifier instanceof Integer) query.where("id", identifier);
+                    query.where("name", identifier).where("symbol", identifier);
+                })
                 .execute().firstOrNull();
         return getCurrency(result);
     }
