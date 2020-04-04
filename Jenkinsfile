@@ -13,6 +13,7 @@ String VERSION = "UNDEFINED"
 String BRANCH = "UNDEFINED"
 boolean SKIP = false
 
+
 String QUALIFIER = "UNDEFINDED"
 int BUILD_NUMBER = -1;
 
