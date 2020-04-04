@@ -132,6 +132,7 @@ public class DefaultAccountCredit implements AccountCredit {
             removeAmount(amount0);
             AccountTransaction transaction = account.addTransaction(this, member, credit, amount0, reason, cause, properties);
             McNative.getInstance().getLocal().getEventBus().callEvent(new DKCoinsAccountTransactEvent(transaction));
+            ((DefaultTransferResult)result).setTransaction(transaction);
         }
         return result;
     }

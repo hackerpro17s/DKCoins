@@ -15,6 +15,7 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
@@ -73,11 +74,8 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
                     CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
                     DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
             if(result.isSuccess()) {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, VariableSet.create()
-                        .add("amount", DKCoinsConfig.formatCurrencyAmount(amount))
-                        .add("currency.name", currency.getName())
-                        .add("currency.symbol", currency.getSymbol())
-                        .add("receiver", receiver.getName()));
+                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new ReflectVariableSet()
+                        .add("transaction", result.getTransaction()));
             } else {
                 CommandUtil.handleTransferFailCauses(result, commandSender);
             }

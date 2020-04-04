@@ -68,10 +68,8 @@ public class UserBankCommand extends BasicCommand {
                         CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
                         DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
                 if(result.isSuccess()) {
-                    commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, VariableSet.create()
-                            .add("amount", amount)
-                            .add("currency", credit.getCurrency())
-                            .add("receiver", receiver.getName()));
+                    commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new ReflectVariableSet()
+                            .add("transaction", result.getTransaction()));
                 } else {
                     CommandUtil.handleTransferFailCauses(result, commandSender);
                 }

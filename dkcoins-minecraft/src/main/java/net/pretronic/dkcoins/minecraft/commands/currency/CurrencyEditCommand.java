@@ -5,6 +5,7 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
@@ -33,15 +34,17 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
                 final String oldName = currency.getName();
                 String name = args[1];
                 currency.setName(name);
-                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_NAME, VariableSet.create()
-                        .add("oldName", oldName).add("name", name));
+                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_NAME, new ReflectVariableSet()
+                        .add("oldName", oldName)
+                        .add("currency", currency));
                 return;
             } else if(action.equalsIgnoreCase("symbol")) {
                 final String oldSymbol = currency.getSymbol();
                 String symbol = args[1];
                 currency.setSymbol(symbol);
-                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_SYMBOL, VariableSet.create()
-                        .add("name", currency.getName()).add("symbol", symbol));
+                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_SYMBOL, new ReflectVariableSet()
+                        .add("oldSymbol", oldSymbol)
+                        .add("currency", currency));
                 return;
             }
         } else if(args.length == 3 && (args[0].equalsIgnoreCase("exchangeRate")
@@ -55,8 +58,9 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
             String argument = args[2];
             if(argument.equalsIgnoreCase("disable")) {
                 currency.setExchangeRate(targetCurrency, -1);
-                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DISABLE_EXCHANGE_RATE, VariableSet.create()
-                        .add("source", currency.getName()).add("target", targetCurrency.getName()));
+                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DISABLE_EXCHANGE_RATE, new ReflectVariableSet()
+                        .add("currency", currency)
+                        .add("targetCurrency", targetCurrency));
                 return;
             }
             if(!GeneralUtil.isNumber(argument)) {
@@ -69,10 +73,9 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
                         .add("value", DKCoinsConfig.formatCurrencyAmount(amount)));
                 return;
             }
-            currency.setExchangeRate(targetCurrency, amount);
-            commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_EXCHANGE_RATE, VariableSet.create()
-                    .add("name", currency.getName()).add("target", targetCurrency.getName())
-                    .add("amount", DKCoinsConfig.formatCurrencyAmount(amount)));
+            CurrencyExchangeRate exchangeRate = currency.setExchangeRate(targetCurrency, amount);
+            commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_EXCHANGE_RATE, new ReflectVariableSet()
+                    .add("exchangeRate", exchangeRate));
             return;
         }
         commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_HELP);

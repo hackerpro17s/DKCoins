@@ -12,6 +12,7 @@ import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
 
+//@Todo DKCOins Command
 public class DKCoinsCommand extends BasicCommand {
 
     public DKCoinsCommand(ObjectOwner owner) {

@@ -97,7 +97,7 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
                     }
                     case TRANSFER_DISABLED: {
                         commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_FAILURE_DISABLED, VariableSet.create()
-                                .add("source", sourceCurrency.getName()).add("target", targetCurrency.getName()));
+                                .add("sourceCurrency", sourceCurrency).add("targetCurrency", targetCurrency));
                         break;
                     }
                 }

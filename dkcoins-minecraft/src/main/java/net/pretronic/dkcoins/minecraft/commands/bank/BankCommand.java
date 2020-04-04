@@ -21,6 +21,7 @@ import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.command.object.ObjectNotFindable;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
@@ -63,12 +64,8 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements NotFi
             BankAccount account = getObject(commandSender, command);
             if(account != null) {
                 if(CommandUtil.hasAccountAccessAndSendMessage(commandSender, account)) {
-                    /*commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS_HEADER);
-                    for (AccountCredit credit : account.getCredits()) {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS_LIST, VariableSet.create()
-                                .add("currency", credit.getCurrency().getName())
-                                .add("amount", DKCoinsConfig.formatCurrencyAmount(credit.getAmount())));
-                    }*/
+                    commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS, new ReflectVariableSet()
+                            .add("credits", account.getCredits()));
                 }
             } else {
                 commandSender.sendMessage(Messages.COMMAND_BANK_HELP);

@@ -5,6 +5,7 @@ import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
@@ -58,20 +59,18 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
                             double amount = Double.parseDouble(amount0);
 
                             if(args[0].equalsIgnoreCase("set")) {
-                                member.addLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
-                                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_SET, VariableSet.create()
-                                        .add("amount", DKCoinsConfig.formatCurrencyAmount(amount))
-                                        .add("interval", interval).add("name", CommandUtil.getPlayerName(member.getUser())));
+                                AccountLimitation limitation = member.addLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
+                                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_SET, new ReflectVariableSet()
+                                        .add("limitation", limitation)
+                                        .add("member", member));
                             } else {
-                                if(member.removeLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval)) {
-                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE, VariableSet.create()
-                                            .add("amount", DKCoinsConfig.formatCurrencyAmount(amount))
-                                            .add("interval", interval).add("name", CommandUtil.getPlayerName(member.getUser())));
+                                AccountLimitation limitation = member.getLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
+                                if(member.removeLimitation(limitation)) {
+                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE, new ReflectVariableSet()
+                                            .add("limitation", limitation)
+                                            .add("member", member));
                                 } else {
-                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE_FAILURE, VariableSet.create()
-                                            .add("amount", DKCoinsConfig.formatCurrencyAmount(amount))
-                                            .add("interval", interval).add("name",
-                                                    CommandUtil.getPlayerName(member.getUser())));
+                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE_FAILURE);
                                 }
                             }
                             return;
@@ -85,13 +84,11 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
 
     private void listLimitations(CommandSender commandSender, AccountMember member) {
         if(member.getLimitations().isEmpty()) {
-            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION);
+            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION, new ReflectVariableSet()
+                    .add("member", member));
         } else {
-            for (AccountLimitation limitation : member.getLimitations()) {
-                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, VariableSet.create()
-                        .add("amount", limitation.getAmount())
-                        .add("interval", limitation.getInterval()));
-            }
+            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, new ReflectVariableSet()
+                    .add("limitations", member.getLimitations()));
         }
     }
 }

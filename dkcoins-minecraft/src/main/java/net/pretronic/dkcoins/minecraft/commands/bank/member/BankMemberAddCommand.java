@@ -33,9 +33,9 @@ public class BankMemberAddCommand extends ObjectCommand<Pair<BankAccount, String
         }
         AccountMember member = account.getMember(user);
         if(member == null) {
-            account.addMember(user, CommandUtil.getAccountMemberByCommandSender(commandSender, account), AccountMemberRole.GUEST);
-            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ADD, VariableSet.create().add("name", userName)
-                    .add("bank", account.getName()));
+            member = account.addMember(user, CommandUtil.getAccountMemberByCommandSender(commandSender, account), AccountMemberRole.GUEST);
+            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ADD, new ReflectVariableSet()
+                    .add("member", member));
         } else {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ALREADY, new ReflectVariableSet()
                     .add("member", member));

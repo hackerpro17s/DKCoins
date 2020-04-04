@@ -50,7 +50,7 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_FAILURE_DISABLED =
             Text.ofMessageKey("dkcoins.command.account.exchange.failure.disabled");
 
-    public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_HELP = Text.ofMessageKey("dkcoins.command.account.transfer.help");//
+    public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_HELP = Text.ofMessageKey("dkcoins.command.account.transfer.help");
     public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_SUCCESS = Text.ofMessageKey("dkcoins.command.account.transfer.success");
     public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_FAILURE_NOT_ENOUGH_AMOUNT =
             Text.ofMessageKey("dkcoins.command.account.transfer.failure.notEnoughAmount");

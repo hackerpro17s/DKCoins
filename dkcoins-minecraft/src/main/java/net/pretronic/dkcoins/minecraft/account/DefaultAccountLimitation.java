@@ -74,6 +74,7 @@ public class DefaultAccountLimitation implements AccountLimitation {
 
     @Override
     public String getFormattedInterval() {
-        throw new UnsupportedOperationException();
+        //@Todo format interval
+        return String.valueOf(getInterval());
     }
 }

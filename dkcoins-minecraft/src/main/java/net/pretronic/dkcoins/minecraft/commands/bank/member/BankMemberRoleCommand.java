@@ -44,8 +44,8 @@ public class BankMemberRoleCommand extends ObjectCommand<AccountMember> {
                     return;
                 }
                 member.setRole(role);
-                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ROLE, VariableSet.create().add("role", role)
-                        .add("name", McNative.getInstance().getPlayerManager().getPlayer(member.getUser().getUniqueId()).getName()));
+                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ROLE, new ReflectVariableSet()
+                        .add("member", member));
                 if(role == AccountMemberRole.OWNER) {
                     if(self != null) {
                         self.setRole(AccountMemberRole.ADMIN);

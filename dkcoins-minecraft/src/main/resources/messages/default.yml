@@ -37,7 +37,7 @@ messages:
 
   dkcoins.command.account.transfer.help: '${dkcoins.prefix} &cInvalid usage of transfer command&8:
    &8» &7/bank <name> transfer <receiver> <amount> [currency]'
-  dkcoins.command.account.transfer.success: '${dkcoins.prefix} &aYou have transfered &e{amount}{currency.symbol} &ato &e{receiver}'
+  dkcoins.command.account.transfer.success: '${dkcoins.prefix} &aYou have transfered &e{transaction.formattedAmount}{transaction.currency.symbol} &ato &e{transaction.receiver.name}'
   dkcoins.command.account.transfer.failure.notEnoughAmount: '${dkcoins.prefix} &cThe account has not enough money'
   dkcoins.command.account.transfer.failure.masterAccountNotEnoughAmount: '${dkcoins.prefix} &cThe master account has not enough money'
   dkcoins.command.account.transfer.failure.limit: '${dkcoins.prefix} &cYou have reached your limit'
@@ -46,7 +46,7 @@ messages:
 
   dkcoins.command.bank.create.help: '${dkcoins.prefix} &cInvalid usage of bank create command:&8:
    &8» &7/bank <name> create <accountType>'
-  dkcoins.command.bank.create.done: '${dkcoins.prefix} &e{name} &abank was successfully created'
+  dkcoins.command.bank.create.done: '${dkcoins.prefix} &e{account.name} &abank was successfully created'
 
   dkcoins.command.bank.delete.done: '${dkcoins.prefix} &e{name} &cbank was successfully deleted'
 
@@ -79,22 +79,22 @@ messages:
   dkcoins.command.bank.credits.loop: '&8» {credit.formattedAmount}{credit.currency.name}'
 
   dkcoins.command.bank.member.list: '${dkcoins.prefix} &7Account members&8:
-   @for("credit" in {credits}, ${dkcoins.command.bank.member.list.loop},"\n")'
+   @for("member" in {members}, ${dkcoins.command.bank.member.list.loop},"\n")'
   dkcoins.command.bank.member.list.loop: '&8» {member.name} {member.role.name}'
 
   dkcoins.command.bank.member.info: '${dkcoins.prefix} &7Member&8: &e{member.name} &7Role&8: 6e{member.role.name}'
   dkcoins.command.bank.member.info.limitation: '${dkcoins.prefix} &7Limitations&8:
-   @for("credit" in {credits}, ${dkcoins.command.bank.member.info.limitation.loop},"\n")'
+   @for("limitation" in {limitations}, ${dkcoins.command.bank.member.info.limitation.loop},"\n")'
   dkcoins.command.bank.member.info.limitation.loop: '&8» 67{limitation.formattedAmount}{limitation.comparativeCurrency.name} &7in an interval of &e{limitation.formattedInterval}'
   dkcoins.command.bank.member.info.noLimitation: '${dkcoins.prefix} &e{member.name} &7has no limitations'
 
-  dkcoins.command.bank.member.role: '${dkcoins.prefix} &aYou have set &e{role.name} &afor member &e{member.name}'
+  dkcoins.command.bank.member.role: '${dkcoins.prefix} &aYou have set &e{member.role.name} &afor member &e{member.name}'
   dkcoins.command.bank.member.remove: '${dkcoins.prefix} &e{user.name} &cwas removed from the bank account'
   dkcoins.command.bank.member.role.help: '${dkcoins.prefix} &cInvalid usage of role command&8:
    &8» &7/bank <name> member <name> role <role>'
 
-  dkcoins.command.bank.member.limit.set: '${dkcoins.prefix} &aYou have set a limit of &e{limit.amount} &ain an interval of &e{limit.interval} &7for player &e{member.name}'
-  dkcoins.command.bank.member.limit.remove: '${dkcoins.prefix} &cYou removed a limit of &e{limit.amount} &cin an interval of &e{limit.interval} &7for player &e{member.name}'
+  dkcoins.command.bank.member.limit.set: '${dkcoins.prefix} &aYou have set a limit of &e{limitation.amount} &ain an interval of &e{limitation.interval} &7for player &e{member.name}'
+  dkcoins.command.bank.member.limit.remove: '${dkcoins.prefix} &cYou removed a limit of &e{limitation.amount} &cin an interval of &e{limitation.interval} &7for player &e{member.name}'
   dkcoins.command.bank.member.limit.remove.failure: '${dkcoins.prefix} &cFailed to remove limit'
   dkcoins.command.bank.member.limit.help: '${dkcoins.prefix} &cInvalid usage of limit command&8:
    &8» &7/bank <name> member <member> limit list

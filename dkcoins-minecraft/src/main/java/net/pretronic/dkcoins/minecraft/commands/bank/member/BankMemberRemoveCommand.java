@@ -5,6 +5,7 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
@@ -26,7 +27,7 @@ public class BankMemberRemoveCommand extends ObjectCommand<AccountMember> {
             return;
         }
         member.getAccount().removeMember(member, CommandUtil.getAccountMemberByCommandSender(commandSender, member.getAccount()));
-        commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_REMOVE, VariableSet.create()
-                .add("name", McNative.getInstance().getPlayerManager().getPlayer(member.getUser().getUniqueId()).getName()));
+        commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_REMOVE, new ReflectVariableSet()
+                .add("user", member.getUser()));
     }
 }

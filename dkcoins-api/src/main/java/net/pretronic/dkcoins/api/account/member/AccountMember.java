@@ -45,7 +45,7 @@ public interface AccountMember {
 
     AccountLimitation getLimitation(Currency comparativeCurrency, double amount, long interval);
 
-    void addLimitation(Currency comparativeCurrency, double amount, long interval);
+    AccountLimitation addLimitation(Currency comparativeCurrency, double amount, long interval);
 
     boolean removeLimitation(AccountLimitation limitation);
 

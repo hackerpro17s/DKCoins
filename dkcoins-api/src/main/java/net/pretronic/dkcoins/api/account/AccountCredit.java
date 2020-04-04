@@ -25,6 +25,10 @@ public interface AccountCredit {
 
     Currency getCurrency();
 
+    default String getName() {
+        return getAccount().getName();
+    }
+
 
     boolean hasAmount(double amount);
 

@@ -1,11 +1,14 @@
 package net.pretronic.dkcoins.minecraft.account;
 
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
+import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveHashMap;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveMap;
 import net.pretronic.dkcoins.api.account.TransferResult;
 
 public class DefaultTransferResult implements TransferResult {
 
+    private AccountTransaction transaction;
     private final FailCause failCause;
     private final CaseIntensiveMap<Object> properties;
 
@@ -22,6 +25,11 @@ public class DefaultTransferResult implements TransferResult {
     @Override
     public FailCause getFailCause() {
         return this.failCause;
+    }
+
+    @Override
+    public AccountTransaction getTransaction() {
+        return this.transaction;
     }
 
     @Override
@@ -43,5 +51,10 @@ public class DefaultTransferResult implements TransferResult {
     public DefaultTransferResult addProperty(String key, Object value) {
         this.properties.put(key, value);
         return this;
+    }
+
+    @Internal
+    public void setTransaction(AccountTransaction transaction) {
+        this.transaction = transaction;
     }
 }
