@@ -1,17 +1,15 @@
 package net.pretronic.dkcoins.minecraft.commands.bank.member;
 
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.account.AccountLimitation;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
-import org.mcnative.common.McNative;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 public class BankMemberInfoCommand extends ObjectCommand<AccountMember> {
 
@@ -21,21 +19,19 @@ public class BankMemberInfoCommand extends ObjectCommand<AccountMember> {
 
     @Override
     public void execute(CommandSender commandSender, AccountMember member, String[] strings) {
-        /*commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_HEADER,
-                VariableSet.create()
-                .add("name", McNative.getInstance().getPlayerManager().getPlayer(member.getUser().getUniqueId()).getName())
-                .add("role", member.getRole()));
+        commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO,
+                new ReflectVariableSet()
+                        .add("member", member));
         if(CommandUtil.hasAccess(commandSender, member.getAccount(), AccessRight.LIMIT_MANAGEMENT)) {
             //@Todo custom bml method for check this
-            /*if(member.getLimitations().isEmpty()) {
-                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION);
+            if(member.getLimitations().isEmpty()) {
+                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION, new ReflectVariableSet()
+                        .add("member", member));
             } else {
-                for (AccountLimitation limitation : member.getLimitations()) {
-                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, VariableSet.create()
-                            .add("amount", DKCoinsConfig.formatCurrencyAmount(limitation.getAmount()))
-                            .add("interval", limitation.getInterval()));
-                }
-            }*
-        }*/
+                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, new ReflectVariableSet()
+                        .add("limitations", member.getLimitations())
+                        .add("member", member));
+            }
+        }
     }
 }

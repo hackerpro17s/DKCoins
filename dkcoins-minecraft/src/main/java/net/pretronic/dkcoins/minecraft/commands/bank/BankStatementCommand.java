@@ -25,7 +25,8 @@ public class BankStatementCommand extends ObjectCommand<BankAccount> {
         TransactionFilter filter = TransactionFilter.newFilter().account(account);
         for (String filterOption : args) {
             if(!filterOption.contains("=")) {
-                sender.sendMessage(Messages.COMMAND_BANK_BANK_STATEMENT_FILTER_OPTION_WRONG, VariableSet.create().add("filterOption", filterOption));
+                sender.sendMessage(Messages.COMMAND_BANK_BANK_STATEMENT_FILTER_OPTION_WRONG, VariableSet.create()
+                        .add("filterOption", filterOption));
                 return;
             }
             String[] split = filterOption.split("=");

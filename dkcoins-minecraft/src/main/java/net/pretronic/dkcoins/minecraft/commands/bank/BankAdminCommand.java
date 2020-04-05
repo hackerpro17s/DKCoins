@@ -6,6 +6,7 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
@@ -61,25 +62,22 @@ public class BankAdminCommand extends ObjectCommand<BankAccount> {
                     case "addamount": {
                         AccountTransaction transaction = account.getCredit(currency).addAmount(member, amount,
                                 CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, VariableSet.create()
-                                .add("amount", DKCoinsConfig.formatCurrencyAmount(amount))
-                                .add("currency_symbol", currency.getSymbol())
-                                .add("bank", account.getName()));
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, new ReflectVariableSet()
+                                .add("transaction", transaction));
                         return;
                     }
                     case "removeamount": {
-                        account.getCredit(currency).removeAmount(member, amount,
+                        AccountTransaction transaction = account.getCredit(currency).removeAmount(member, amount,
                                 CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, VariableSet.create()
-                                .add("amount", DKCoinsConfig.formatCurrencyAmount(amount))
-                                .add("currency_symbol", currency.getSymbol()).add("bank", account.getName()));
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, new ReflectVariableSet()
+                                .add("transaction", transaction));
                         return;
                     }
                     case "setamount": {
-                        account.getCredit(currency).setAmount(member, amount, CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, VariableSet.create()
-                                .add("amount", DKCoinsConfig.formatCurrencyAmount(amount))
-                                .add("currency_symbol", currency.getSymbol()).add("bank", account.getName()));
+                        AccountTransaction transaction = account.getCredit(currency)
+                                .setAmount(member, amount, CommandUtil.buildReason(args, 3), TransferCause.API, properties);
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, new ReflectVariableSet()
+                                .add("transaction", transaction));
                         return;
                     }
                 }

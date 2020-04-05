@@ -26,9 +26,5 @@ public class CurrencyListCommand extends BasicCommand {
         }
         commandSender.sendMessage(Messages.COMMAND_CURRENCY_LIST,
                 new ReflectVariableSet().add("currencies", DKCoins.getInstance().getCurrencyManager().getCurrencies()));
-        /*for (Currency currency : ) {
-            commandSender.sendMessage(Messages.COMMAND_CURRENCY_LIST_CURRENCIES, VariableSet.create()
-                    .add("name", currency.getName()).add("symbol", currency.getSymbol()));
-        }*/
     }
 }

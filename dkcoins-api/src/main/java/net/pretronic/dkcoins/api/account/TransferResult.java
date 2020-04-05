@@ -1,5 +1,6 @@
 package net.pretronic.dkcoins.api.account;
 
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveMap;
 
 public interface TransferResult {
@@ -13,6 +14,8 @@ public interface TransferResult {
     }
 
     FailCause getFailCause();
+
+    AccountTransaction getTransaction();
 
     CaseIntensiveMap<Object> getProperties();
 

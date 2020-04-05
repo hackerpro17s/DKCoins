@@ -87,10 +87,11 @@ public class DefaultAccountMember implements AccountMember {
     }
 
     @Override
-    public void addLimitation(Currency comparativeCurrency, double amount, long interval) {
+    public AccountLimitation addLimitation(Currency comparativeCurrency, double amount, long interval) {
         AccountLimitation limitation = DKCoins.getInstance().getAccountManager()
                 .addAccountLimitation(getAccount(), this, null, comparativeCurrency, amount, interval);
         this.limitations.add(limitation);
+        return limitation;
     }
 
     @Override

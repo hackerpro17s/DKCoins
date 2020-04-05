@@ -55,9 +55,9 @@ public class BankCreateCommand extends ObjectCommand<String> {
             commandSender.sendMessage(Messages.ERROR_NO_PERMISSION);
             return;
         }
-        DKCoins.getInstance().getAccountManager().createAccount(bankName, accountType, false, null,
+        account = DKCoins.getInstance().getAccountManager().createAccount(bankName, accountType, false, null,
                 DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
-        player.sendMessage(Messages.COMMAND_BANK_CREATE_DONE, VariableSet.create().add("name", bankName)
-                .add("type", accountType.getName()));
+        player.sendMessage(Messages.COMMAND_BANK_CREATE_DONE, new ReflectVariableSet()
+                .add("account", account));
     }
 }

@@ -225,24 +225,24 @@ public class DefaultBankAccount implements BankAccount {
     }
 
     @Override
-    public void addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role) {
+    public AccountMember addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role) {
         AccountMember member = DKCoins.getInstance().getAccountManager().addAccountMember(this, user, adder, role);
         this.members.add(member);
+        return member;
     }
 
     @Override
-    public void removeMember(AccountMember member, AccountMember remover) {
+    public boolean removeMember(AccountMember member, AccountMember remover) {
         DKCoins.getInstance().getAccountManager().removeAccountMember(member, remover);
-        this.members.remove(member);
+        return this.members.remove(member);
     }
 
     @Override
     public AccountTransaction addTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver, double amount,
                                String reason, String cause, Collection<AccountTransactionProperty> properties) {
         double exchangeRate = source.getCurrency().getExchangeRate(receiver.getCurrency()).getExchangeAmount();
-        AccountTransaction transaction = DKCoins.getInstance().getAccountManager()
+        return DKCoins.getInstance().getAccountManager()
                 .addAccountTransaction(source, sender, receiver, amount, exchangeRate, reason, cause, System.currentTimeMillis(), properties);
-        return transaction;
     }
 
     @Override

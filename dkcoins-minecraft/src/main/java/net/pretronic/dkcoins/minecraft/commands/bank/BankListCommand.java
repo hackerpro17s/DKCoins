@@ -32,13 +32,5 @@ public class BankListCommand extends BasicCommand {
         DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(player.getUniqueId());
         List<AccountMember> members = Iterators.map(user.getAccounts(), account -> account.getMember(user));
         player.sendMessage(Messages.COMMAND_BANK_LIST, new ReflectVariableSet().add("members", members));
-        /*for (BankAccount account : ) {
-            AccountMember member = account.getMember(user);
-            /*player.sendMessage(Messages.COMMAND_BANK_LIST_ACCOUNTS, VariableSet.create()
-                    .add("account.name", account.getName())
-                    .add("role", member.getRole()));*
-        }
-        //member.account.name
-        //member.role.name*/
     }
 }
