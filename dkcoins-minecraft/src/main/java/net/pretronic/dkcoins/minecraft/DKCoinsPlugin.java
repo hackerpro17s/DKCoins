@@ -41,6 +41,8 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         //@Todo change for service and proxy
         TransactionPropertyBuilder builder = member -> new ArrayList<>();
         new MinecraftDKCoins(getLogger(), builder);
+
+        setUpdateConfiguration(DKCoinsConfig.AUTO_UPDATE_ENABLED,DKCoinsConfig.AUTO_UPDATE_QUALIFIER);
     }
 
     private void loadConfig() {

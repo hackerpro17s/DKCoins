@@ -68,16 +68,13 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mcnative-loader-version>1.0.88-SNAPSHOT</mcnative-loader-version>
-                    <resource-loader-version>1.0.53-SNAPSHOT</resource-loader-version>
+                    <mcnative-loader-version>${dependency.mcnative.version}</mcnative-loader-version>
+                    <resource-loader-version>${dependency.pretronic.libraries}</resource-loader-version>
                     <manifest>
                         <name>DKCoins</name>
                         <id>0249f842-de95-42df-b611-7ad390d90086</id>
                         <category>Network Management</category>
-                        <version>
-                            <name>${project.version}</name>
-                            <build>1</build>
-                        </version>
+                        <version>${project.version}</version>
                         <main>net.pretronic.dkcoins.minecraft.DKCoinsPlugin</main>
                         <description>McNative demo plugin</description>
                         <website>https://mcnative.org/</website>
@@ -87,7 +84,7 @@
 
                     <loader>
                         <version>${project.version}</version>
-                        <versionUrl>https://mirror.pretronic.net/v1/{plugin.id}/versions/latest?plain=true</versionUrl>
+                        <versionUrl>https://mirror.pretronic.net/v1/{plugin.id}/versions/latest?plain=true&amp;qualifier={qualifier}</versionUrl>
                         <downloadUrl>https://mirror.pretronic.net/v1/{plugin.id}/versions/{version.build}/download</downloadUrl>
                     </loader>
 
@@ -127,20 +124,14 @@
         <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
-            <version>2.16.1</version>
+            <version>${dependency.essentialsX}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>3.8.0</version>
+            <version>${dependency.mongodb}</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.pretronic.libraries</groupId>
-            <artifactId>pretroniclibraries-message</artifactId>
-            <version>1.0.50-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
