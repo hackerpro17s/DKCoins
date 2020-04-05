@@ -16,6 +16,7 @@ import net.pretronic.dkcoins.minecraft.commands.account.AccountTopCommand;
 import net.pretronic.libraries.command.NotFindable;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.DefinedNotFindable;
 import net.pretronic.libraries.command.command.object.MainObjectCommand;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.command.object.ObjectNotFindable;
@@ -34,7 +35,7 @@ import net.pretronic.dkcoins.minecraft.commands.bank.member.BankMemberCommand;
 
 import java.util.Arrays;
 
-public class BankCommand extends MainObjectCommand<BankAccount> implements NotFindable, ObjectNotFindable {
+public class BankCommand extends MainObjectCommand<BankAccount> implements DefinedNotFindable<BankAccount>, ObjectNotFindable {
 
     private final ObjectCommand<String> createCommand;
     private final Command listCommand;
@@ -57,19 +58,19 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements NotFi
     }
 
     @Override
-    public void commandNotFound(CommandSender commandSender, String command, String[] args) {
-        if(command == null || command.equals("")) {
-            listCommand.execute(commandSender, args);
-        } else {
-            BankAccount account = getObject(commandSender, command);
-            if(account != null) {
-                if(CommandUtil.hasAccountAccessAndSendMessage(commandSender, account)) {
-                    commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS, new ReflectVariableSet()
-                            .add("credits", account.getCredits()));
-                }
+    public void commandNotFound(CommandSender commandSender, BankAccount account, String command, String[] args) {
+        System.out.println(Arrays.toString(args));
+        System.out.println(command);
+        if(account != null) {
+            if(command == null && CommandUtil.hasAccountAccessAndSendMessage(commandSender, account)) {
+                commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS, new ReflectVariableSet()
+                        .add("credits", account.getCredits()));
             } else {
                 commandSender.sendMessage(Messages.COMMAND_BANK_HELP);
             }
+        } else {
+
+            listCommand.execute(commandSender, args);
         }
     }
 

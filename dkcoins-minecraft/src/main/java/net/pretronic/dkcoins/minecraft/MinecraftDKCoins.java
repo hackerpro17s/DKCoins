@@ -130,10 +130,6 @@ public class MinecraftDKCoins implements DKCoins {
         if(getAccountManager().searchAccountType("User") == null) {
             getAccountManager().createAccountType("User", "");
         }
-
-        if(getCurrencyManager().searchCurrency("Coins") == null) {
-            getCurrencyManager().createCurrency("Coins", "$");
-        }
     }
 
     private void registerPlayerAdapter() {
@@ -166,14 +162,14 @@ public class MinecraftDKCoins implements DKCoins {
     }
 
     private void registerVariableDescribers() {
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class, ReflectVariableDescriber.of(DefaultAccountTransaction.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultCurrency.class, ReflectVariableDescriber.of(DefaultCurrency.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultCurrencyExchangeRate.class, ReflectVariableDescriber.of(DefaultCurrencyExchangeRate.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultBankAccount.class, ReflectVariableDescriber.of(DefaultBankAccount.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountMember.class, ReflectVariableDescriber.of(DefaultAccountMember.class));
-        ReflectVariableDescriberRegistry.registerDescriber(AccountMemberRole.class, ReflectVariableDescriber.of(AccountMemberRole.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountCredit.class, ReflectVariableDescriber.of(DefaultAccountCredit.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountLimitation.class, ReflectVariableDescriber.of(DefaultAccountLimitation.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultDKCoinsUser.class, ReflectVariableDescriber.of(DefaultDKCoinsUser.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class, ReflectVariableDescriber.ofSuper(DefaultAccountTransaction.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultCurrency.class, ReflectVariableDescriber.ofSuper(DefaultCurrency.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultCurrencyExchangeRate.class, ReflectVariableDescriber.ofSuper(DefaultCurrencyExchangeRate.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultBankAccount.class, ReflectVariableDescriber.ofSuper(DefaultBankAccount.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountMember.class, ReflectVariableDescriber.ofSuper(DefaultAccountMember.class));
+        ReflectVariableDescriberRegistry.registerDescriber(AccountMemberRole.class, ReflectVariableDescriber.ofSuper(AccountMemberRole.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountCredit.class, ReflectVariableDescriber.ofSuper(DefaultAccountCredit.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountLimitation.class, ReflectVariableDescriber.ofSuper(DefaultAccountLimitation.class));
+        ReflectVariableDescriberRegistry.registerDescriber(DefaultDKCoinsUser.class, ReflectVariableDescriber.ofSuper(DefaultDKCoinsUser.class));
     }
 }

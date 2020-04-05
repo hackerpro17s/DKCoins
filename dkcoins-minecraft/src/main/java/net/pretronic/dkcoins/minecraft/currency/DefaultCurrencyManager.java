@@ -10,25 +10,20 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
-import net.pretronic.databasequery.api.query.result.QueryResultEntry;
-import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
-import net.pretronic.libraries.caching.CacheQuery;
-import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
-import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
-import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.utility.Iterators;
-import net.pretronic.libraries.utility.Validate;
-import net.pretronic.libraries.synchronisation.map.HashSynchronizableMap;
-import net.pretronic.libraries.synchronisation.map.SynchronizableMap;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
+import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
+import net.pretronic.libraries.caching.CacheQuery;
+import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
+import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
+import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.utility.Validate;
 import org.mcnative.common.McNative;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class DefaultCurrencyManager implements CurrencyManager {
@@ -40,6 +35,9 @@ public class DefaultCurrencyManager implements CurrencyManager {
         registerCurrencyQueries();
         for (Currency currency : DKCoins.getInstance().getStorage().getCurrencies()) {
             this.currencyCache.insert(currency);
+        }
+        if(this.currencyCache.isEmpty() && searchCurrency("Coins") == null) {
+            createCurrency("Coins", "$");
         }
     }
 
@@ -167,7 +165,7 @@ public class DefaultCurrencyManager implements CurrencyManager {
             }
         });
 
-        McNative.getInstance().getLocal().registerSynchronizingChannel("dkcoins_currency", DKCoinsPlugin.getInstance(),
+        McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_currency", DKCoinsPlugin.getInstance(),
                 int.class, currencyCache);
     }
 }

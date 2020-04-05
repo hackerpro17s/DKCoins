@@ -38,8 +38,8 @@
         <plugin.maven.shade>3.2.2</plugin.maven.shade>
         <plugin.maven.deploy>3.0.0-M1</plugin.maven.deploy>
 
-        <dependency.pretronic.libraries>1.0.71.44-SNAPSHOT</dependency.pretronic.libraries>
-        <dependency.mcnative.version>1.0.110.42-SNAPSHOT</dependency.mcnative.version>
+        <dependency.pretronic.libraries>1.0.72.45-SNAPSHOT</dependency.pretronic.libraries>
+        <dependency.mcnative.version>1.0.116.49-SNAPSHOT</dependency.mcnative.version>
 
         <dependency.essentialsX>2.16.1</dependency.essentialsX>
         <dependency.mongodb>3.8.0</dependency.mongodb>

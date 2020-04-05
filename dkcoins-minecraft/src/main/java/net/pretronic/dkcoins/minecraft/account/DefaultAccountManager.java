@@ -363,7 +363,7 @@ public class DefaultAccountManager implements AccountManager {
             }
         });
 
-        McNative.getInstance().getLocal().registerSynchronizingChannel("dkcoins_accountType", DKCoinsPlugin.getInstance(),
+        McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_accountType", DKCoinsPlugin.getInstance(),
                 int.class, accountTypeCache);
     }
 
@@ -426,7 +426,7 @@ public class DefaultAccountManager implements AccountManager {
 
         this.accountCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getAccount(id));
 
-        McNative.getInstance().getLocal().registerSynchronizingChannel("dkcoins_account", DKCoinsPlugin.getInstance(),
+        McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_account", DKCoinsPlugin.getInstance(),
                 int.class, accountCache);
     }
 }
