@@ -112,14 +112,6 @@ pipeline {
                                 customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
                                 url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/$BUILD_NUMBER/publish?edition=default")
 
-                        //Loader
-                        httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_JSON',
-                                httpMode: 'POST', ignoreSslErrors: true,timeout: 3000,
-                                responseHandle: 'NONE',
-                                customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
-                                url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/create?name=$VERSION" +
-                                        "&qualifier=loader&buildNumber=$BUILD_NUMBER")
-
                         httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_OCTETSTREAM',
                                 httpMode: 'POST', ignoreSslErrors: true, timeout: 3000,
                                 multipartName: 'file',
