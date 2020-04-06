@@ -10,8 +10,10 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
+import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.entry.DocumentEntry;
+import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
@@ -210,7 +212,7 @@ public class DefaultBankAccount implements BankAccount {
 
     @Override
     public void addLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
-                       double amount, long interval) {
+                              double amount, long interval) {
         AccountLimitation limitation = DKCoins.getInstance().getAccountManager()
                 .addAccountLimitation(this, member, role, comparativeCurrency, amount, interval);
         this.limitations.add(limitation);
@@ -239,7 +241,7 @@ public class DefaultBankAccount implements BankAccount {
 
     @Override
     public AccountTransaction addTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver, double amount,
-                               String reason, String cause, Collection<AccountTransactionProperty> properties) {
+                                             String reason, String cause, Collection<AccountTransactionProperty> properties) {
         double exchangeRate = source.getCurrency().getExchangeRate(receiver.getCurrency()).getExchangeAmount();
         return DKCoins.getInstance().getAccountManager()
                 .addAccountTransaction(source, sender, receiver, amount, exchangeRate, reason, cause, System.currentTimeMillis(), properties);
@@ -247,7 +249,7 @@ public class DefaultBankAccount implements BankAccount {
 
     @Override
     public TransferResult exchangeAccountCredit(AccountMember member, Currency from, Currency to, double amount,
-                                         String reason, Collection<AccountTransactionProperty> properties) {
+                                                String reason, Collection<AccountTransactionProperty> properties) {
         return getCredit(from).transfer(member, amount, getCredit(to), reason, TransferCause.EXCHANGE, properties);
     }
 
@@ -268,55 +270,58 @@ public class DefaultBankAccount implements BankAccount {
 
     @Override
     public void onUpdate(Document data) {
-        for (DocumentEntry entry : data) {
-            switch (entry.getKey()) {
-                case "name": {
-                    this.name = entry.toPrimitive().getAsString();
-                    break;
+        System.out.println("ON UPDATE " + getId() + "|" + getName());
+        System.out.println(DocumentFileType.JSON.getWriter().write(data, true));
+
+        switch (data.getString("action")) {
+            case SyncAction.ACCOUNT_UPDATE_NAME: {
+                this.name = data.getString("name");
+                break;
+            }
+            case SyncAction.ACCOUNT_UPDATE_DISABLED: {
+                this.disabled = data.getBoolean("disabled");
+                break;
+            }
+            case SyncAction.ACCOUNT_CREDIT_NEW: {
+                int id = data.getInt("creditId");
+                if(getCredit(id) == null) {
+                    addLoadedAccountCredit(DKCoins.getInstance().getAccountManager().getAccountCredit(id));
                 }
-                case "disabled": {
-                    this.disabled = entry.toPrimitive().getAsBoolean();
-                    break;
-                }
-                case "newCredit": {
-                    int id = entry.toPrimitive().getAsInt();
-                    if(getCredit(id) == null) {
-                        addLoadedAccountCredit(DKCoins.getInstance().getAccountManager().getAccountCredit(id));
-                    }
-                    break;
-                }
-                case "removeCredit": {
-                    Iterators.removeOne(this.credits, credit -> credit.getId() == entry.toPrimitive().getAsInt());
-                    break;
-                }
-                case "updateCreditAmount": {
-                    DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(entry.toDocument().getInt("creditId"));
-                    credit.updateAmount(entry.toDocument().getDouble("amount"));
-                    break;
-                }
-                case "newLimitation": {
-                    addLoadedLimitation(DKCoins.getInstance().getAccountManager().getAccountLimitation(entry.toPrimitive().getAsInt()));
-                    break;
-                }
-                case "removeLimitation": {
-                    Iterators.removeOne(this.limitations, limitation -> limitation.getId() == entry.toPrimitive().getAsInt());
-                    break;
-                }
-                case "newMember": {
-                    addLoadedMember(DKCoins.getInstance().getAccountManager().getAccountMember(entry.toPrimitive().getAsInt()));
-                    break;
-                }
-                case "removeMember": {
-                    Iterators.removeOne(this.members, member -> member.getId() == entry.toPrimitive().getAsInt());
-                }
-                case "updateMemberRole": {
-                    DefaultAccountMember member = (DefaultAccountMember) getMember(entry.toDocument().getInt("memberId"));
-                    member.updateRole(AccountMemberRole.byId(entry.toDocument().getInt("roleId")));
-                }
-                default: {
-                    DKCoins.getInstance().getLogger().warn("Account (id={}) update without action", getId());
-                }
+                break;
+            }
+            case SyncAction.ACCOUNT_CREDIT_DELETE: {
+                Iterators.removeOne(this.credits, credit -> credit.getId() == data.getInt("creditId"));
+                break;
+            }
+            case SyncAction.ACCOUNT_CREDIT_UPDATE_AMOUNT: {
+                System.out.println("update credit amount");
+                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(data.getInt("creditId"));
+                credit.updateAmount(data.getDouble("amount"));
+                break;
+            }
+            case SyncAction.ACCOUNT_LIMITATION_ADD: {
+                addLoadedLimitation(DKCoins.getInstance().getAccountManager().getAccountLimitation(data.getInt("limitationId")));
+                break;
+            }
+            case SyncAction.ACCOUNT_LIMITATION_REMOVE: {
+                Iterators.removeOne(this.limitations, limitation -> limitation.getId() == data.getInt("limitationId"));
+                break;
+            }
+            case SyncAction.ACCOUNT_MEMBER_ADD: {
+                addLoadedMember(DKCoins.getInstance().getAccountManager().getAccountMember(data.getInt("memberId")));
+                break;
+            }
+            case SyncAction.ACCOUNT_MEMBER_REMOVE: {
+                Iterators.removeOne(this.members, member -> member.getId() == data.getInt("memberId"));
+            }
+            case SyncAction.ACCOUNT_MEMBER_UPDATE_ROLE: {
+                DefaultAccountMember member = (DefaultAccountMember) getMember(data.getInt("memberId"));
+                member.updateRole(AccountMemberRole.byId(data.getInt("roleId")));
+            }
+            default: {
+                DKCoins.getInstance().getLogger().warn("Account (id={}) update without action", getId());
             }
         }
+
     }
 }

@@ -11,6 +11,7 @@
 package net.pretronic.dkcoins.minecraft.account;
 
 import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
+import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
 import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
@@ -167,13 +168,17 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public void updateAccountName(BankAccount account) {
         DKCoins.getInstance().getStorage().updateAccountName(account.getId(), account.getName());
-        this.accountCache.getCaller().update(account.getId(), Document.newDocument().add("name", account.getName()));
+        this.accountCache.getCaller().update(account.getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_UPDATE_NAME)
+                .add("name", account.getName()));
     }
 
     @Override
     public void updateAccountDisabled(BankAccount account) {
         DKCoins.getInstance().getStorage().updateAccountDisabled(account.getId(), account.isDisabled());
-        this.accountCache.getCaller().update(account.getId(), Document.newDocument().add("disabled", account.isDisabled()));
+        this.accountCache.getCaller().update(account.getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_UPDATE_DISABLED)
+                .add("disabled", account.isDisabled()));
     }
 
     @Override
@@ -187,21 +192,27 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public AccountCredit addAccountCredit(BankAccount account, Currency currency, double amount) {
         AccountCredit credit = DKCoins.getInstance().getStorage().addAccountCredit(account, currency, amount);
-        this.accountCache.getCaller().update(account.getId(), Document.newDocument().add("newCredit", credit.getId()));
+        this.accountCache.getCaller().update(account.getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_CREDIT_NEW)
+                .add("creditId", credit.getId()));
         return credit;
     }
 
     @Override
     public void deleteAccountCredit(AccountCredit credit) {
         DKCoins.getInstance().getStorage().deleteAccountCredit(credit.getId());
-        this.accountCache.getCaller().update(credit.getId(), Document.newDocument().add("removeCredit", credit.getId()));
+        this.accountCache.getCaller().update(credit.getAccount().getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_CREDIT_DELETE)
+                .add("creditId", credit.getId()));
     }
 
     @Override
     public void setAccountCreditAmount(AccountCredit credit, double amount) {
         DKCoins.getInstance().getStorage().setAccountCreditAmount(credit.getId(), amount);
-        this.accountCache.getCaller().update(credit.getId(), Document.newDocument("updateCreditAmount")
-                .add("creditId", credit.getId()).add("amount", amount));
+        this.accountCache.getCaller().update(credit.getAccount().getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_CREDIT_UPDATE_AMOUNT)
+                .add("creditId", credit.getId())
+                .add("amount", amount));
     }
 
 
@@ -220,7 +231,9 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMember adder, AccountMemberRole memberRole) {
         AccountMember member = DKCoins.getInstance().getStorage().addAccountMember(account, user, memberRole);
-        this.accountCache.getCaller().update(account.getId(), Document.newDocument().add("newMember", member.getId()));
+        this.accountCache.getCaller().update(account.getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_MEMBER_ADD)
+                .add("memberId", member.getId()));
         McNative.getInstance().getLocal().getEventBus().callEvent(new DKCoinsAccountMemberAddEvent(member, adder));
         return member;
     }
@@ -228,14 +241,18 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public void updateAccountMemberRole(AccountMember member) {
         DKCoins.getInstance().getStorage().updateAccountMemberRole(member);
-        this.accountCache.getCaller().update(member.getAccount().getId(), Document.newDocument("updateMemberRole")
-                .add("memberId", member.getId()).add("roleId", member.getRole().getId()));
+        this.accountCache.getCaller().update(member.getAccount().getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_MEMBER_UPDATE_ROLE)
+                .add("memberId", member.getId())
+                .add("roleId", member.getRole().getId()));
     }
 
     @Override
     public void removeAccountMember(AccountMember member, AccountMember remover) {
         DKCoins.getInstance().getStorage().removeAccountMember(member.getId());
-        this.accountCache.getCaller().update(member.getAccount().getId(), Document.newDocument().add("removeMember", member.getId()));
+        this.accountCache.getCaller().update(member.getAccount().getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_MEMBER_REMOVE)
+                .add("memberId", member.getId()));
         McNative.getInstance().getLocal().getEventBus().callEvent(new DKCoinsAccountMemberRemoveEvent(member.getUser(), remover));
     }
 
@@ -284,16 +301,20 @@ public class DefaultAccountManager implements AccountManager {
         Validate.isTrue(amount > 0);
         AccountLimitation limitation = DKCoins.getInstance().getStorage().addAccountLimitation(account, member, memberRole,
                 comparativeCurrency, amount, interval);
-        this.accountCache.getCaller().update(account.getId(), Document.newDocument().add("newLimitation", limitation.getId()));
+        this.accountCache.getCaller().update(account.getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_LIMITATION_ADD)
+                .add("limitationId", limitation.getId()));
         return limitation;
     }
 
     @Override
-    public void removeAccountLimitation(AccountLimitation accountLimitation) {
-        Validate.notNull(accountLimitation);
-        DKCoins.getInstance().getStorage().removeAccountLimitation(accountLimitation.getId());
-        this.accountCache.getCaller().update(accountLimitation.getAccount().getId(),
-                Document.newDocument().add("removeLimitation", accountLimitation.getId()));
+    public void removeAccountLimitation(AccountLimitation limitation) {
+        Validate.notNull(limitation);
+        DKCoins.getInstance().getStorage().removeAccountLimitation(limitation.getId());
+        this.accountCache.getCaller().update(limitation.getAccount().getId(),
+                Document.newDocument()
+                        .add("action", SyncAction.ACCOUNT_LIMITATION_REMOVE)
+                        .add("limitationId", limitation.getId()));
     }
 
     @Override
@@ -311,6 +332,8 @@ public class DefaultAccountManager implements AccountManager {
     }
 
     private void registerAccountTypeCacheQueries() {
+        accountTypeCache.setClearOnDisconnect(true);
+        accountTypeCache.setSkipOnDisconnect(true);
         this.accountTypeCache.setIdentifierQuery(new CacheQuery<AccountType>() {
 
             @Override
@@ -363,12 +386,34 @@ public class DefaultAccountManager implements AccountManager {
             }
         });
 
-        McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_accountType", DKCoinsPlugin.getInstance(),
-                int.class, accountTypeCache);
+
+        if(McNative.getInstance().isNetworkAvailable()) {
+            McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_accountType", DKCoinsPlugin.getInstance(),
+                    int.class, accountTypeCache);
+            McNative.getInstance().getNetwork().registerStatusCallback(DKCoinsPlugin.getInstance(), accountTypeCache);
+        } else {
+            accountTypeCache.initUnconnected();
+        }
     }
 
     private void registerAccountCacheQueries() {
+        accountCache.setClearOnDisconnect(true);
+        accountCache.setSkipOnDisconnect(true);
         this.accountCache.setMaxSize(100);
+
+        this.accountCache.setIdentifierQuery(new CacheQuery<BankAccount>() {
+            @Override
+            public boolean check(BankAccount account, Object[] identifiers) {
+                return (int) identifiers[0] == account.getId();
+            }
+
+            @Override
+            public void validate(Object[] identifiers) {
+                Validate.isTrue(identifiers.length == 1 && identifiers[0] instanceof Integer,
+                        "AccountCache: Wrong identifiers for identifier query");
+            }
+        });
+
         this.accountCache.registerQuery("search", new CacheQuery<BankAccount>() {
 
             @Override
@@ -426,7 +471,12 @@ public class DefaultAccountManager implements AccountManager {
 
         this.accountCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getAccount(id));
 
-        McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_account", DKCoinsPlugin.getInstance(),
-                int.class, accountCache);
+        if(McNative.getInstance().isNetworkAvailable()) {
+            McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_account", DKCoinsPlugin.getInstance(),
+                    int.class, accountCache);
+            McNative.getInstance().getNetwork().registerStatusCallback(DKCoinsPlugin.getInstance(), accountCache);
+        } else {
+            accountCache.initUnconnected();
+        }
     }
 }

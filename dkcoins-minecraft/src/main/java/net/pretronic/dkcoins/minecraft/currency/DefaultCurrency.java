@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
+import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.entry.DocumentEntry;
 import net.pretronic.libraries.utility.Iterators;
@@ -128,31 +129,29 @@ public class DefaultCurrency implements Currency {
 
     @Override
     public void onUpdate(Document data) {
-        for (DocumentEntry entry : data) {
-            switch (entry.getKey()) {
-                case "name": {
-                    this.name = entry.toPrimitive().getAsString();
-                    break;
-                }
-                case "symbol": {
-                    this.symbol = entry.toPrimitive().getAsString();
-                    break;
-                }
-                case "newExchangeRate": {
-                    addLoadedExchangeRate(DKCoins.getInstance().getStorage().getCurrencyExchangeRate(entry.toPrimitive().getAsInt()));
-                    break;
-                }
-                case "removeExchangeRate": {
-                    Iterators.removeOne(this.exchangeRates, exchangeRate -> exchangeRate.getId() == entry.toPrimitive().getAsInt());
-                    break;
-                }
-                case "updateExchangeRateAmount": {
-                    DefaultCurrencyExchangeRate exchangeRate = (DefaultCurrencyExchangeRate) getExchangeRate(entry.toDocument()
-                            .getInt("exchangeRateId"));
-                    exchangeRate.updateExchangeAmount(entry.toDocument().getDouble("exchangeAmount"));
-                    break;
-                }
+        switch (data.getString("action")) {
+            case SyncAction.CURRENCY_UPDATE_NAME: {
+                this.name = data.getString("name");
+                break;
+            }
+            case SyncAction.CURRENCY_UPDATE_SYMBOL: {
+                this.symbol = data.getString("symbol");
+                break;
+            }
+            case SyncAction.CURRENCY_EXCHANGE_RATE_NEW: {
+                addLoadedExchangeRate(DKCoins.getInstance().getStorage().getCurrencyExchangeRate(data.getInt("exchangeRateId")));
+                break;
+            }
+            case SyncAction.CURRENCY_EXCHANGE_RATE_DELETE: {
+                Iterators.removeOne(this.exchangeRates, exchangeRate -> exchangeRate.getId() == data.getInt("exchangeRateId"));
+                break;
+            }
+            case SyncAction.CURRENCY_EXCHANGE_RATE_UPDATE_AMOUNT: {
+                DefaultCurrencyExchangeRate exchangeRate = (DefaultCurrencyExchangeRate) getExchangeRate(data.getInt("exchangeRateId"));
+                exchangeRate.updateExchangeAmount(data.getDouble("exchangeAmount"));
+                break;
             }
         }
+
     }
 }

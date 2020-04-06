@@ -89,17 +89,16 @@ public class DKCoinsConfig {
     @DocumentKey("command.top.limit.max")
     public static int TOP_LIMIT_MAX = 10;
 
-    @DocumentIgnored
-    //@DocumentKey("command.bank")
-    public static CommandConfiguration COMMAND_BANK = CommandConfiguration.newBuilder().name("bank").permission("dkcoins.command.bank").create();
+    @DocumentKey("command.bank")
+    public static CommandConfiguration COMMAND_BANK = CommandConfiguration.newBuilder().name("bank")
+            .permission("dkcoins.command.bank")
+            .create();
 
-    @DocumentIgnored
-    //@DocumentKey("command.currency")
+    @DocumentKey("command.currency")
     public static CommandConfiguration COMMAND_CURRENCY = CommandConfiguration.newBuilder().name("currency")
             .permission("dkcoins.command.currency").create();
 
-    @DocumentIgnored
-    //@DocumentKey("command.pay")
+    @DocumentKey("command.pay")
     public static CommandConfiguration COMMAND_PAY = CommandConfiguration.newBuilder().name("pay").aliases("transfer").create();
 
     public static void init() {

@@ -139,6 +139,7 @@ public class DefaultAccountCredit implements AccountCredit {
 
     @Internal
     public void updateAmount(double amount) {
+        System.out.println("internal update amount " + amount);
         this.amount = amount;
     }
 }

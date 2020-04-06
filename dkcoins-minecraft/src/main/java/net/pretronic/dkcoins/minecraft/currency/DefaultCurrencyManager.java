@@ -17,43 +17,64 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
+import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
 import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
 import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.synchronisation.NetworkSynchronisationCallback;
+import net.pretronic.libraries.synchronisation.SynchronisationCaller;
+import net.pretronic.libraries.synchronisation.SynchronisationHandler;
+import net.pretronic.libraries.synchronisation.UnconnectedSynchronisationCaller;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
 import org.mcnative.common.McNative;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-public class DefaultCurrencyManager implements CurrencyManager {
+public class DefaultCurrencyManager implements CurrencyManager, SynchronisationHandler<Currency,Integer>, NetworkSynchronisationCallback {
 
-    private final SynchronizableCache<Currency, Integer> currencyCache;
+    private final Collection<Currency> currencies;
+    private boolean connected;
+    private SynchronisationCaller<Integer> caller;
 
     public DefaultCurrencyManager() {
-        this.currencyCache = new ArraySynchronizableCache<>();
+        this.currencies = new ArrayList<>();
+        this.connected = false;
         registerCurrencyQueries();
-        for (Currency currency : DKCoins.getInstance().getStorage().getCurrencies()) {
-            this.currencyCache.insert(currency);
-        }
-        if(this.currencyCache.isEmpty() && searchCurrency("Coins") == null) {
+        this.currencies.addAll(DKCoins.getInstance().getStorage().getCurrencies());
+
+        if(this.currencies.isEmpty() && searchCurrency("Coins") == null) {
             createCurrency("Coins", "$");
         }
     }
 
     @Override
     public Collection<Currency> getCurrencies() {
-        return this.currencyCache.getCachedObjects();
+        if(connected){
+            if(this.currencies.isEmpty()){
+                this.currencies.addAll(DKCoins.getInstance().getStorage().getCurrencies());
+            }
+            return this.currencies;
+        }
+        return DKCoins.getInstance().getStorage().getCurrencies();
     }
 
     @Override
     public Currency getCurrency(int id) {
-        return this.currencyCache.get("byId", id);
+        if(connected){
+            return Iterators.findOne(getCurrencies(), currency -> currency.getId() == id);
+        }
+        return DKCoins.getInstance().getStorage().getCurrency(id);
     }
 
     @Override
     public Currency getCurrency(String name) {
-        return this.currencyCache.get("search", name);
+        if(connected){
+            return Iterators.findOne(getCurrencies(), currency -> currency.getName().equalsIgnoreCase(name));
+        }
+        return DKCoins.getInstance().getStorage().getCurrency(name);
     }
 
     @Override
@@ -63,40 +84,49 @@ public class DefaultCurrencyManager implements CurrencyManager {
 
     @Override
     public Currency searchCurrency(Object identifier) {
-        return this.currencyCache.get("search", identifier);
+        if(connected){
+            if(identifier instanceof Integer) return getCurrency((int) identifier);
+            else if(identifier instanceof String) return getCurrency((String) identifier);
+            throw new IllegalArgumentException("Wrong identifier for currency");
+        }
+        return DKCoins.getInstance().getStorage().searchCurrency(identifier);
     }
 
     @Override
     public Currency createCurrency(String name, String symbol) {
         Currency currency = DKCoins.getInstance().getStorage().createCurrency(name, symbol);
-        this.currencyCache.insert(currency);
+        if(connected && !this.currencies.isEmpty()) this.currencies.add(currency);
         for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
             account.addCredit(currency, 0);
         }
-        this.currencyCache.getCaller().create(currency.getId(), Document.newDocument());
+        caller.create(currency.getId(), Document.newDocument());
         return currency;
     }
 
     @Override
     public void updateCurrencyName(Currency currency) {
         DKCoins.getInstance().getStorage().updateCurrencyName(currency.getId(), currency.getName());
-        this.currencyCache.getCaller().update(currency.getId(), Document.newDocument().add("name", currency.getName()));
+        caller.update(currency.getId(), Document.newDocument()
+                .add("action", SyncAction.CURRENCY_UPDATE_NAME)
+                .add("name", currency.getName()));
     }
 
     @Override
     public void updateCurrencySymbol(Currency currency) {
         DKCoins.getInstance().getStorage().updateCurrencySymbol(currency.getId(), currency.getSymbol());
-        this.currencyCache.getCaller().update(currency.getId(), Document.newDocument().add("symbol", currency.getSymbol()));
+        this.caller.update(currency.getId(), Document.newDocument()
+                .add("action", SyncAction.CURRENCY_UPDATE_SYMBOL)
+                .add("symbol", currency.getSymbol()));
     }
 
     @Override
     public void deleteCurrency(Currency currency) {
         DKCoins.getInstance().getStorage().deleteCurrency(currency.getId());
-        this.currencyCache.remove(currency);
+        this.currencies.remove(currency);
         for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
             account.deleteCredit(currency);
         }
-        this.currencyCache.getCaller().delete(currency.getId(), Document.newDocument());
+        caller.delete(currency.getId(), Document.newDocument());
     }
 
     @Override
@@ -115,8 +145,9 @@ public class DefaultCurrencyManager implements CurrencyManager {
     public CurrencyExchangeRate createCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount) {
         CurrencyExchangeRate exchangeRate = DKCoins.getInstance().getStorage()
                 .createCurrencyExchangeRate(selectedCurrency.getId(), targetCurrency.getId(), exchangeAmount);
-        this.currencyCache.getCaller().update(selectedCurrency.getId(), Document.newDocument()
-                .add("newExchangeRate", exchangeRate.getId()));
+        caller.update(selectedCurrency.getId(), Document.newDocument()
+                .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_NEW)
+                .add("exchangeRateId", exchangeRate.getId()));
         return exchangeRate;
     }
 
@@ -124,7 +155,8 @@ public class DefaultCurrencyManager implements CurrencyManager {
     public void updateCurrencyExchangeRateAmount(CurrencyExchangeRate currencyExchangeRate) {
         DKCoins.getInstance().getStorage().updateCurrencyExchangeAmount(currencyExchangeRate.getCurrency().getId(),
                 currencyExchangeRate.getTargetCurrency().getId(), currencyExchangeRate.getExchangeAmount());
-        this.currencyCache.getCaller().update(currencyExchangeRate.getCurrency().getId(), Document.newDocument("updateExchangeRateAmount")
+        caller.update(currencyExchangeRate.getCurrency().getId(), Document.newDocument()
+                .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_UPDATE_AMOUNT)
                 .add("exchangeRateId", currencyExchangeRate.getId())
                 .add("exchangeAmount", currencyExchangeRate.getExchangeAmount()));
     }
@@ -132,40 +164,64 @@ public class DefaultCurrencyManager implements CurrencyManager {
     @Override
     public void deleteCurrencyExchangeRate(CurrencyExchangeRate exchangeRate) {
         DKCoins.getInstance().getStorage().deleteCurrencyExchangeRate(exchangeRate.getId());
-        this.currencyCache.getCaller().update(exchangeRate.getCurrency().getId(), Document.newDocument()
-                .add("removeExchangeRate", exchangeRate.getId()));
+        caller.update(exchangeRate.getCurrency().getId(), Document.newDocument()
+                .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_DELETE)
+                .add("exchangeRateId", exchangeRate.getId()));
     }
 
     private void registerCurrencyQueries() {
-        this.currencyCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getCurrency(id));
-        this.currencyCache.registerQuery("search", new CacheQuery<Currency>() {
-            @Override
-            public boolean check(Currency currency, Object[] identifiers) {
-                Object identifier = identifiers[0];
-                if(identifier instanceof Integer) {
-                    return currency.getId() == (int) identifier;
-                }
-                return identifier instanceof String && currency.getName().equalsIgnoreCase((String) identifier);
-            }
+        if(McNative.getInstance().isNetworkAvailable()) {
+            McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_currency", DKCoinsPlugin.getInstance(),
+                    int.class, this);
+            McNative.getInstance().getNetwork().registerStatusCallback(DKCoinsPlugin.getInstance(), this);
+        } else {
+            init(new UnconnectedSynchronisationCaller<>(true));
+        }
 
-            @Override
-            public void validate(Object[] identifiers) {
-                Validate.isTrue(identifiers.length == 1, "(Currency cache) Wrong identifier length");
-            }
-        }).registerQuery("byId", new CacheQuery<Currency>() {
-            @Override
-            public boolean check(Currency currency, Object[] identifier) {
-                return currency.getId() == (int) identifier[0];
-            }
+    }
 
-            @Override
-            public void validate(Object[] identifiers) {
-                Validate.isTrue(identifiers.length == 1 && identifiers[0] instanceof Integer,
-                        "(Currency cache) Wrong identifier length or wrong identifier type");
-            }
-        });
+    @Override
+    public void onDelete(Integer id, Document document) {
+        if(!this.currencies.isEmpty()){
+            Iterators.removeOne(this.currencies, currency -> currency.getId() == id);
+        }
+    }
 
-        McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_currency", DKCoinsPlugin.getInstance(),
-                int.class, currencyCache);
+    @Override
+    public void onCreate(Integer id, Document document) {
+        if(connected && !currencies.isEmpty()) {
+            this.currencies.add(DKCoins.getInstance().getStorage().getCurrency(id));
+        }
+    }
+
+    @Override
+    public void onUpdate(Integer id, Document document) {
+        if(connected && !currencies.isEmpty()) {
+            Currency currency = getCurrency(id);
+            if(currency != null) currency.onUpdate(document);
+        }
+    }
+
+    @Override
+    public void onConnect() {
+        this.connected = true;
+        this.currencies.clear();
+    }
+
+    @Override
+    public void onDisconnect() {
+        this.connected = false;
+        this.currencies.clear();
+    }
+
+    @Override
+    public SynchronisationCaller<Integer> getCaller() {
+        return caller;
+    }
+
+    @Override
+    public void init(SynchronisationCaller<Integer> synchronisationCaller) {
+        this.caller = synchronisationCaller;
+        this.connected = synchronisationCaller.isConnected();
     }
 }

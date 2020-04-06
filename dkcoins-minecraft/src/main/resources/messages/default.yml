@@ -76,7 +76,7 @@ messages:
 
   dkcoins.command.bank.credits: '${dkcoins.prefix} &7Your credits&8:
   @for("credit" in {credits}, ${dkcoins.command.bank.credits.loop},"\n")'
-  dkcoins.command.bank.credits.loop: '&8» {credit.formattedAmount}{credit.currency.symbol}'
+  dkcoins.command.bank.credits.loop: '&8» &e{credit.formattedAmount}&8{credit.currency.symbol}'
 
   dkcoins.command.bank.member.list: '${dkcoins.prefix} &7Account members&8:
   @for("member" in {members}, ${dkcoins.command.bank.member.list.loop},"\n")'
