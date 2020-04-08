@@ -14,6 +14,7 @@ messages:
   dkcoins.error.currency.notExists: '${dkcoins.prefix} &cThe currency &e{name} &cdoes not exist'
   dkcoins.error.account.type.notExists: '${dkcoins.prefix} &cThe account type &e{name} &cdoes not exist'
   dkcoins.error.notNumber: '${dkcoins.prefix} &e{value} &cis not a number'
+  dkcoins.error.notBoolean: '${dkcoins.prefix} &e{value} &cis not a boolean'
   dkcoins.error.account.notExists: '${dkcoins.prefix} &cThe account &e{name} &cdoes not exist'
   dkcoins.error.account.member.notExists: '${dkcoins.prefix} &e{name} &cis not a member of that account'
   dkcoins.error.account.memberRole.notExists: '${dkcoins.prefix} &cThe member role &e{name} &cdoes not exist'
@@ -38,6 +39,7 @@ messages:
   dkcoins.command.account.transfer.help: '${dkcoins.prefix} &cInvalid usage of transfer command&8:
   &8» &7/bank <name> transfer <receiver> <amount> [currency]'
   dkcoins.command.account.transfer.success: '${dkcoins.prefix} &aYou have transfered &e{transaction.formattedAmount}{transaction.currency.symbol} &ato &e{transaction.receiver.name}'
+  dkcoins.command.account.transfer.success.receiver: '${dkcoins.prefix} &aYou have received &e{transaction.formattedAmount}{transaction.currency.symbol} &afrom &e{transaction.receiver.name}'
   dkcoins.command.account.transfer.failure.notEnoughAmount: '${dkcoins.prefix} &cThe account has not enough money'
   dkcoins.command.account.transfer.failure.masterAccountNotEnoughAmount: '${dkcoins.prefix} &cThe master account has not enough money'
   dkcoins.command.account.transfer.failure.limit: '${dkcoins.prefix} &cYou have reached your limit'
@@ -56,6 +58,7 @@ messages:
   &8» &7/bank <name> exchange <sourceCurrency> <targetCurrency> <account>
   &8» &7/bank <name> create <accountType>
   &8» &7/bank <name> delete
+  &8» &7/bank <name> settings <setting> <value>
   &8» &7/bank list
 
   &8» &7/bank <name> member list
@@ -134,15 +137,15 @@ messages:
   &8» &7Cause&8: &e{transaction.cause}'
 
   dkcoins.command.currency.help: '${dkcoins.prefix} &cInvalid usage of currency command&8:
-  &8» /currency help
-  &8» /currency [list]
-  &8» /currency <name> [info]
-  &8» /currency <name> create <symbol>
-  &8» /currency <name> delete
-  &8» /currency <name> edit name <name>
-  &8» /currency <name> edit symbol <symbol>
-  &8» /currency <name> edit exchangeRate <targetCurrency> <amount>
-  &8» /currency <name> edit exchangeRate <targetCurrency> disable'
+  &8» &7/currency help
+  &8» &7/currency [list]
+  &8» &7/currency <name> [info]
+  &8» &7/currency <name> create <symbol>
+  &8» &7/currency <name> delete
+  &8» &7/currency <name> edit name <name>
+  &8» &7/currency <name> edit symbol <symbol>
+  &8» &7/currency <name> edit exchangeRate <targetCurrency> <amount>
+  &8» &7/currency <name> edit exchangeRate <targetCurrency> disable'
 
   dkcoins.command.currency.create.help: '${dkcoins.prefix} &cInvalid usage of currency create command&8:
   &8» &7/currency <name> create <symbol>'
@@ -161,17 +164,18 @@ messages:
   dkcoins.command.currency.info.exchangeRate.loop: '&8» &7Target&8: &e{exchangeRate.targetCurrency.name} &7Exchange amount&8: &e{exchangeRate.formattedExchangeAmount}'
 
   dkcoins.command.currency.edit.help: '${dkcoins.prefix} &cInvalid usage of command currency edit&8:
-  &8» /currency <name> edit name <name>
-  &8» /currency <name> edit symbol <symbol>
-  &8» /currency <name> edit exchangeRate <targetCurrency> <amount>
-  &8» /currency <name> edit exchangeRate <targetCurrency> disable'
+  &8» &7/currency <name> edit name <name>
+  &8» &7/currency <name> edit symbol <symbol>
+  &8» &7/currency <name> edit exchangeRate <targetCurrency> <amount>
+  &8» &7/currency <name> edit exchangeRate <targetCurrency> disable'
   dkcoins.command.currency.edit.done.name: '${dkcoins.prefix} &aYou have changed the name of &e{oldName} &ato &e{currency.name}'
   dkcoins.command.currency.edit.done.symbol: '${dkcoins.prefix} &aYou have changed the symbol from &e{oldSymbol} &ato &e{currency.symbol}'
   dkcoins.command.currency.edit.done.exchangeRate: '${dkcoins.prefix} &aYou have set the exchange rate to the currency &e{exchangeRate.targetCurrency} &ato &e{exchangeRate.formattedExchangeAmount}'
   dkcoins.command.currency.edit.disable.exchangeRate: '${dkcoins.prefix} &cYou have disabled the exchange from &e{currency.name} &cto &e{targetCurrency.name}'
   dkcoins.command.currency.edit.exchangeRate.amountNotValid: '${dkcoins.prefix} &e{value} &cas a exchange rate is not valid'
 
-  dkcoins.command.userBank.amount: '${dkcoins.prefix} &7You have &e{credit.formattedAmount}{credit.currency.symbol}'
+  dkcoins.command.userBank.amount: '&8» &7You have &e{credit.formattedAmount}&8{credit.currency.symbol}'
+  dkcoins.command.userBank.amount.other: '${dkcoins.prefix} &e{other.name} &7has &e{credit.formattedAmount}{credit.currency.symbol}'
   dkcoins.command.userBank.help: '${dkcoins.prefix} &cInvalid usage of {currency.name} command&8:
   &8» &7/{currency.name}
   &8» &7/{currency.name} transfer <receiver> <amount>
@@ -181,3 +185,12 @@ messages:
   dkcoins.top: '${dkcoins.prefix} &7Top {amount}&8:
   @for("credit" in {credits}, ${dkcoins.top.loop},"\n")'
   dkcoins.top.loop: '&8» &7#{index} &7{credit.account.name} &e{credit.formattedAmount}{credit.currency.symbol}'
+
+  dkcoins.bank.settings.help: '${dkcoins.prefix} &cInvalid usage of command bank settings&8:
+  &8» &7/bank <name> settings <setting> <value>
+
+  &7Settings&8:
+  &8- &ereceiveNotifications with type &eboolean'
+  dkcoins.bank.settings.receiveNotifications.on: '${dkcoins.prefix} &aYou have turn on your notifications'
+  dkcoins.bank.settings.receiveNotifications.off: '${dkcoins.prefix} &aYou have turn off your notifications'
+  dkcoins.bank.settings.notValid: '${dkcoins.prefix} &e{value} &cis not a valid setting'
