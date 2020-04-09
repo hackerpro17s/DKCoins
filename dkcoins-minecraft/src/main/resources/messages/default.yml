@@ -8,6 +8,7 @@ meta:
 messages:
   dkcoins.prefix: '&8» &6DKCoins &8|&f'
   dkcoins.error.notFromConsole: '${dkcoins.prefix} &cThis command can only be executed as player'
+  dkcoins.error.onlyFromConsole: '${dkcoins.prefix} &cThis command can only be executed from console'
   dkcoins.error.notPermission: '${dkcoins.prefix} &cYou are not allowed to execute this command'
   dkcoins.error.account.alreadyExists: '${dkcoins.prefix} &cAn account with the name &e{account.name} &cdoes already exist'
   dkcoins.error.currency.alreadyExists: '${dkcoins.prefix} &cA currency with the name &e{currency.name} &cdoes already exist'
@@ -184,7 +185,7 @@ messages:
   dkcoins.top.reach.limit: '${dkcoins.prefix} &cYou can not see so much credit top'
   dkcoins.top: '${dkcoins.prefix} &7Top {amount}&8:
   @for("credit" in {credits}, ${dkcoins.top.loop},"\n")'
-  dkcoins.top.loop: '&8» &7#{index} &7{credit.account.name} &e{credit.formattedAmount}{credit.currency.symbol}'
+  dkcoins.top.loop: '&8» &7#{position} &7{credit.name} &e{credit.formattedAmount}{credit.currency.symbol}'
 
   dkcoins.bank.settings.help: '${dkcoins.prefix} &cInvalid usage of command bank settings&8:
   &8» &7/bank <name> settings <setting> <value>

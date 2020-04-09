@@ -64,4 +64,9 @@ public class DefaultMasterBankAccount extends DefaultBankAccount implements Mast
                     account.getId(), this.getId()));
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof MasterBankAccount && ((MasterBankAccount)obj).getId() == getId();
+    }
 }

@@ -12,7 +12,6 @@ package net.pretronic.dkcoins.minecraft.account;
 
 import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.document.entry.DocumentEntry;
 import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
@@ -30,7 +29,6 @@ import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class DefaultBankAccount implements BankAccount {
 
@@ -112,10 +110,7 @@ public class DefaultBankAccount implements BankAccount {
         if(currency == null) return null;
         AccountCredit credit = Iterators.findOne(this.credits, credit0 -> credit0.getCurrency().equals(currency));
         if(credit == null) {
-            double amount = 0;
-            if(currency.equals(DKCoinsConfig.CURRENCY_DEFAULT)) {
-                amount = DKCoinsConfig.ACCOUNT_TYPE_START_AMOUNT.get(getType());
-            }
+            double amount = DKCoinsConfig.getAccountTypeStartAmount(getType());
             credit = addCredit(currency, amount);
         }
         return credit;
@@ -227,8 +222,8 @@ public class DefaultBankAccount implements BankAccount {
     }
 
     @Override
-    public AccountMember addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role) {
-        AccountMember member = DKCoins.getInstance().getAccountManager().addAccountMember(this, user, adder, role);
+    public AccountMember addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role, boolean receiveNotifications) {
+        AccountMember member = DKCoins.getInstance().getAccountManager().addAccountMember(this, user, adder, role, receiveNotifications);
         this.members.add(member);
         return member;
     }
@@ -270,9 +265,6 @@ public class DefaultBankAccount implements BankAccount {
 
     @Override
     public void onUpdate(Document data) {
-        System.out.println("ON UPDATE " + getId() + "|" + getName());
-        System.out.println(DocumentFileType.JSON.getWriter().write(data, true));
-
         switch (data.getString("action")) {
             case SyncAction.ACCOUNT_UPDATE_NAME: {
                 this.name = data.getString("name");
@@ -293,10 +285,19 @@ public class DefaultBankAccount implements BankAccount {
                 Iterators.removeOne(this.credits, credit -> credit.getId() == data.getInt("creditId"));
                 break;
             }
-            case SyncAction.ACCOUNT_CREDIT_UPDATE_AMOUNT: {
-                System.out.println("update credit amount");
+            case SyncAction.ACCOUNT_CREDIT_SET_AMOUNT: {
                 DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(data.getInt("creditId"));
                 credit.updateAmount(data.getDouble("amount"));
+                break;
+            }
+            case SyncAction.ACCOUNT_CREDIT_ADD_AMOUNT: {
+                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(data.getInt("creditId"));
+                credit.updateAmount(credit.getAmount()+data.getDouble("amount"));
+                break;
+            }
+            case SyncAction.ACCOUNT_CREDIT_REMOVE_AMOUNT: {
+                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(data.getInt("creditId"));
+                credit.updateAmount(credit.getAmount()-data.getDouble("amount"));
                 break;
             }
             case SyncAction.ACCOUNT_LIMITATION_ADD: {
@@ -313,15 +314,26 @@ public class DefaultBankAccount implements BankAccount {
             }
             case SyncAction.ACCOUNT_MEMBER_REMOVE: {
                 Iterators.removeOne(this.members, member -> member.getId() == data.getInt("memberId"));
+                break;
             }
             case SyncAction.ACCOUNT_MEMBER_UPDATE_ROLE: {
                 DefaultAccountMember member = (DefaultAccountMember) getMember(data.getInt("memberId"));
                 member.updateRole(AccountMemberRole.byId(data.getInt("roleId")));
+                break;
+            }
+            case SyncAction.ACCOUNT_MEMBER_UPDATE_RECEIVE_NOTIFICATIONS: {
+                DefaultAccountMember member = (DefaultAccountMember) getMember(data.getInt("memberId"));
+                member.updateReceiveNotifications(data.getBoolean("receiveNotifications"));
+                break;
             }
             default: {
                 DKCoins.getInstance().getLogger().warn("Account (id={}) update without action", getId());
             }
         }
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof BankAccount && ((BankAccount)obj).getId() == this.id;
     }
 }

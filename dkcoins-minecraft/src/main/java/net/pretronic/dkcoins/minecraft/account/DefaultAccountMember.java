@@ -30,13 +30,15 @@ public class DefaultAccountMember implements AccountMember {
     private final DKCoinsUser user;
     private AccountMemberRole role;
     private final Collection<AccountLimitation> limitations;
+    private boolean receiveNotifications;
 
-    public DefaultAccountMember(int id, BankAccount account, DKCoinsUser user, AccountMemberRole role) {
+    public DefaultAccountMember(int id, BankAccount account, DKCoinsUser user, AccountMemberRole role, boolean receiveNotifications) {
         this.id = id;
         this.account = account;
         this.user = user;
         this.role = role;
         this.limitations = new ArrayList<>();
+        this.receiveNotifications = receiveNotifications;
     }
 
     @Override
@@ -102,6 +104,17 @@ public class DefaultAccountMember implements AccountMember {
         return true;
     }
 
+    @Override
+    public boolean receiveNotifications() {
+        return this.receiveNotifications;
+    }
+
+    @Override
+    public void setReceiveNotifications(boolean receiveNotifications) {
+        this.receiveNotifications = receiveNotifications;
+        DKCoins.getInstance().getAccountManager().updateAccountMemberReceiveNotifications(this);
+    }
+
     @Internal
     public void addLoadedLimitation(AccountLimitation limitation) {
         this.limitations.add(limitation);
@@ -110,6 +123,11 @@ public class DefaultAccountMember implements AccountMember {
     @Internal
     public void updateRole(AccountMemberRole role) {
         this.role = role;
+    }
+
+    @Internal
+    public void updateReceiveNotifications(boolean receiveNotifications) {
+        this.receiveNotifications = receiveNotifications;
     }
 
     @Override

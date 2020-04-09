@@ -4,6 +4,7 @@ import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.libraries.command.NotFindable;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.DefinedNotFindable;
 import net.pretronic.libraries.command.command.object.MainObjectCommand;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.command.object.ObjectNotFindable;
@@ -16,7 +17,7 @@ import net.pretronic.dkcoins.minecraft.Messages;
 
 import java.util.Arrays;
 
-public class CurrencyCommand extends MainObjectCommand<Currency> implements NotFindable, ObjectNotFindable {
+public class CurrencyCommand extends MainObjectCommand<Currency> implements DefinedNotFindable<Currency>, ObjectNotFindable {
 
     private final ObjectCommand<String> createCommand;
     private final Command listCommand;
@@ -38,23 +39,20 @@ public class CurrencyCommand extends MainObjectCommand<Currency> implements NotF
     }
 
     @Override
-    public void commandNotFound(CommandSender commandSender, String command, String[] args) {
-        System.out.println("not found");
-        if(command == null || command.equals("")) {
-            listCommand.execute(commandSender, args);
-        } else {
-            Currency currency = getObject(commandSender, command);
-            if(currency != null) {
+    public void commandNotFound(CommandSender commandSender, Currency currency, String command, String[] args) {
+        if(currency != null) {
+            if(command == null) {
                 infoCommand.execute(commandSender, currency, args);
             } else {
                 commandSender.sendMessage(Messages.COMMAND_CURRENCY_HELP);
             }
+        } else {
+            listCommand.execute(commandSender, args);
         }
     }
 
     @Override
     public void objectNotFound(CommandSender commandSender, String command, String[] args) {
-        System.out.println("obj not fond");
         if(command.equalsIgnoreCase("list")) {
             listCommand.execute(commandSender, args);
         } else if(command.equalsIgnoreCase("help")) {

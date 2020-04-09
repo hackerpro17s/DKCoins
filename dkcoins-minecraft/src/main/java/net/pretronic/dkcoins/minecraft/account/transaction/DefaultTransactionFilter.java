@@ -21,7 +21,7 @@ public class DefaultTransactionFilter implements TransactionFilter {
     private BankAccount account;
     private String world;
     private String server;
-    private long time;
+    private Long time = null;
     private BankAccount receiver;
     private Currency currency;
     private String reason;
@@ -98,7 +98,7 @@ public class DefaultTransactionFilter implements TransactionFilter {
     }
 
     @Internal
-    public long getTime() {
+    public Long getTime() {
         return time;
     }
 
@@ -134,7 +134,7 @@ public class DefaultTransactionFilter implements TransactionFilter {
         return filter.account.equals(this.account)
                 && filter.world.equals(this.world)
                 && filter.server.equals(this.server)
-                && filter.time == this.time
+                && filter.time.equals(this.time)
                 && filter.receiver.equals(this.receiver)
                 && filter.currency.equals(this.currency)
                 && filter.reason.equals(this.reason)

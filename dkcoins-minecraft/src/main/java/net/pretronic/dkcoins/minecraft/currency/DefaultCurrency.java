@@ -139,7 +139,7 @@ public class DefaultCurrency implements Currency {
                 break;
             }
             case SyncAction.CURRENCY_EXCHANGE_RATE_NEW: {
-                addLoadedExchangeRate(DKCoins.getInstance().getStorage().getCurrencyExchangeRate(data.getInt("exchangeRateId")));
+                addLoadedExchangeRate(DKCoins.getInstance().getCurrencyManager().getCurrencyExchangeRate(data.getInt("exchangeRateId")));
                 break;
             }
             case SyncAction.CURRENCY_EXCHANGE_RATE_DELETE: {

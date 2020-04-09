@@ -43,6 +43,8 @@ public interface DKCoinsStorage {
 
     BankAccount getAccount(int id);
 
+    BankAccount getAccount(String name, AccountType type);
+
     BankAccount searchAccount(Object identifier);
 
     BankAccount getAccountByCredit(int creditId);
@@ -78,6 +80,10 @@ public interface DKCoinsStorage {
 
     void setAccountCreditAmount(int id, double amount);
 
+    void addAccountCreditAmount(int id, double amount);
+
+    void removeAccountCreditAmount(int id, double amount);
+
     void deleteAccountCredit(int id);
 
 
@@ -92,14 +98,16 @@ public interface DKCoinsStorage {
     //Returns bank id to get by bank
     int getAccountMemberAccountId(int id);
 
-    AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMemberRole role);
+    AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMemberRole role, boolean receiveNotifications);
 
     void updateAccountMemberRole(AccountMember member);
+
+    void updateAccountMemberReceiveNotifications(AccountMember member);
 
     void removeAccountMember(int id);
 
 
-    Collection<AccountTransaction> getAccountTransactions(int senderId, int start, int end);
+    List<AccountTransaction> filterAccountTransactions(TransactionFilter filter);
 
     AccountTransaction addAccountTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver,
                                              double amount, double exchangeRate, String reason, String cause,
@@ -138,6 +146,4 @@ public interface DKCoinsStorage {
 
 
     DKCoinsUser getUser(UUID uniqueId);
-
-    List<AccountTransaction> filterAccountTransactions(TransactionFilter filter);
 }

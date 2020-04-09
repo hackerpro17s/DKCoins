@@ -39,4 +39,9 @@ public class DefaultAccountType implements AccountType {
     public String getSymbol() {
         return this.symbol;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AccountType && ((AccountType)obj).getId() == this.id;
+    }
 }

@@ -18,16 +18,12 @@ import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.SyncAction;
-import net.pretronic.libraries.caching.CacheQuery;
-import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
-import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.synchronisation.NetworkSynchronisationCallback;
 import net.pretronic.libraries.synchronisation.SynchronisationCaller;
 import net.pretronic.libraries.synchronisation.SynchronisationHandler;
 import net.pretronic.libraries.synchronisation.UnconnectedSynchronisationCaller;
 import net.pretronic.libraries.utility.Iterators;
-import net.pretronic.libraries.utility.Validate;
 import org.mcnative.common.McNative;
 
 import java.util.ArrayList;
@@ -42,12 +38,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     public DefaultCurrencyManager() {
         this.currencies = new ArrayList<>();
         this.connected = false;
-        registerCurrencyQueries();
-        this.currencies.addAll(DKCoins.getInstance().getStorage().getCurrencies());
-
-        if(this.currencies.isEmpty() && searchCurrency("Coins") == null) {
-            createCurrency("Coins", "$");
-        }
+        init();
     }
 
     @Override
@@ -99,14 +90,14 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
         for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
             account.addCredit(currency, 0);
         }
-        caller.create(currency.getId(), Document.newDocument());
+        caller.createAndIgnore(currency.getId(), Document.newDocument());
         return currency;
     }
 
     @Override
     public void updateCurrencyName(Currency currency) {
         DKCoins.getInstance().getStorage().updateCurrencyName(currency.getId(), currency.getName());
-        caller.update(currency.getId(), Document.newDocument()
+        caller.updateAndIgnore(currency.getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_UPDATE_NAME)
                 .add("name", currency.getName()));
     }
@@ -114,7 +105,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     @Override
     public void updateCurrencySymbol(Currency currency) {
         DKCoins.getInstance().getStorage().updateCurrencySymbol(currency.getId(), currency.getSymbol());
-        this.caller.update(currency.getId(), Document.newDocument()
+        this.caller.updateAndIgnore(currency.getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_UPDATE_SYMBOL)
                 .add("symbol", currency.getSymbol()));
     }
@@ -126,7 +117,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
         for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
             account.deleteCredit(currency);
         }
-        caller.delete(currency.getId(), Document.newDocument());
+        caller.deleteAndIgnore(currency.getId(), Document.newDocument());
     }
 
     @Override
@@ -145,7 +136,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     public CurrencyExchangeRate createCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount) {
         CurrencyExchangeRate exchangeRate = DKCoins.getInstance().getStorage()
                 .createCurrencyExchangeRate(selectedCurrency.getId(), targetCurrency.getId(), exchangeAmount);
-        caller.update(selectedCurrency.getId(), Document.newDocument()
+        caller.updateAndIgnore(selectedCurrency.getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_NEW)
                 .add("exchangeRateId", exchangeRate.getId()));
         return exchangeRate;
@@ -155,7 +146,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     public void updateCurrencyExchangeRateAmount(CurrencyExchangeRate currencyExchangeRate) {
         DKCoins.getInstance().getStorage().updateCurrencyExchangeAmount(currencyExchangeRate.getCurrency().getId(),
                 currencyExchangeRate.getTargetCurrency().getId(), currencyExchangeRate.getExchangeAmount());
-        caller.update(currencyExchangeRate.getCurrency().getId(), Document.newDocument()
+        caller.updateAndIgnore(currencyExchangeRate.getCurrency().getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_UPDATE_AMOUNT)
                 .add("exchangeRateId", currencyExchangeRate.getId())
                 .add("exchangeAmount", currencyExchangeRate.getExchangeAmount()));
@@ -164,12 +155,12 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     @Override
     public void deleteCurrencyExchangeRate(CurrencyExchangeRate exchangeRate) {
         DKCoins.getInstance().getStorage().deleteCurrencyExchangeRate(exchangeRate.getId());
-        caller.update(exchangeRate.getCurrency().getId(), Document.newDocument()
+        caller.updateAndIgnore(exchangeRate.getCurrency().getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_DELETE)
                 .add("exchangeRateId", exchangeRate.getId()));
     }
 
-    private void registerCurrencyQueries() {
+    private void init() {
         if(McNative.getInstance().isNetworkAvailable()) {
             McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_currency", DKCoinsPlugin.getInstance(),
                     int.class, this);
@@ -177,7 +168,11 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
         } else {
             init(new UnconnectedSynchronisationCaller<>(true));
         }
+        this.currencies.addAll(DKCoins.getInstance().getStorage().getCurrencies());
 
+        if(this.currencies.isEmpty() && searchCurrency("Coins") == null) {
+            createCurrency("Coins", "$");
+        }
     }
 
     @Override

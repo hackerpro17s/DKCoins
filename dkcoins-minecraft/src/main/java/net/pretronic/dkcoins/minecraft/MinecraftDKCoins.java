@@ -114,6 +114,11 @@ public class MinecraftDKCoins implements DKCoins {
     }
 
     @Override
+    public Collection<Migration> getMigrations() {
+        return this.migrations;
+    }
+
+    @Override
     public Migration getMigration(String name) {
         return Iterators.findOne(this.migrations, migration -> migration.getName().equalsIgnoreCase(name));
     }
@@ -147,9 +152,7 @@ public class MinecraftDKCoins implements DKCoins {
 
     private void setupMigration() {
         registerMigration(new LegacyDKCoinsMigration());
-        if(McNative.getInstance().getPluginManager().getPlugin("Essentials") != null) {
-            registerMigration(new EssentialsXMigration());
-        }
+        registerMigration(new EssentialsXMigration());
     }
 
     private void registerEconomyProvider() {

@@ -46,7 +46,6 @@ public class DKCoinsLegacy {
 
 
     public static DKCoinsLegacy getInstance() {
-        if(INSTANCE == null) throw new IllegalArgumentException("DKCoins legacy instance is null");
         return INSTANCE;
     }
 

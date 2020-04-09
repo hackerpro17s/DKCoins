@@ -1,6 +1,7 @@
 package net.pretronic.dkcoins.minecraft.commands.account;
 
 import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
@@ -12,7 +13,10 @@ import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
+
+import java.util.List;
 
 public class AccountTopCommand extends ObjectCommand<Currency> {
 
@@ -35,7 +39,10 @@ public class AccountTopCommand extends ObjectCommand<Currency> {
                 return;
             }
         }
-        sender.sendMessage(Messages.TOP, new ReflectVariableSet().add("credits",
-                DKCoins.getInstance().getAccountManager().getTopAccounts(currency, new AccountType[0], limit)));
+        List<BankAccount> accounts = DKCoins.getInstance().getAccountManager().getTopAccounts(currency, new AccountType[0], limit);
+        List<AccountCredit> credits = Iterators.map(accounts, account -> account.getCredit(currency));
+        sender.sendMessage(Messages.TOP, new ReflectVariableSet()
+                .add("amount", limit)
+                .add("credits", credits));
     }
 }

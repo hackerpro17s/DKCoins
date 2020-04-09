@@ -14,6 +14,8 @@ import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
 
+import java.util.Collection;
+
 public class BankStatementCommand extends ObjectCommand<BankAccount> {
 
     public BankStatementCommand(ObjectOwner owner) {
@@ -34,8 +36,10 @@ public class BankStatementCommand extends ObjectCommand<BankAccount> {
             String value = split[1];
             appendFilterOption(sender, filter, key, value);
         }
+        Collection<AccountTransaction> transactions = DKCoins.getInstance().getAccountManager().filterAccountTransactions(filter);
+        System.out.println("statement size:"+transactions.size());
         sender.sendMessage(Messages.COMMAND_BANK_BANK_STATEMENT, new ReflectVariableSet()
-                    .add("transactions", DKCoins.getInstance().getAccountManager().filterAccountTransactions(filter)));
+                    .add("transactions", transactions));
 
     }
 

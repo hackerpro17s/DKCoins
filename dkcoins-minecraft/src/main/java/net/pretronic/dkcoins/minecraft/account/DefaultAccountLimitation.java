@@ -77,4 +77,9 @@ public class DefaultAccountLimitation implements AccountLimitation {
         //@Todo format interval
         return String.valueOf(getInterval());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AccountLimitation && ((AccountLimitation)obj).getId() == this.id;
+    }
 }

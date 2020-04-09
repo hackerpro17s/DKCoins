@@ -26,12 +26,10 @@ import java.util.Arrays;
 public class UserBankCommand extends BasicCommand {
 
     private final ObjectCommand<Currency> topCommand;
-    private final Currency currency;
 
     public UserBankCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner, configuration);
         this.topCommand = new AccountTopCommand(owner);
-        this.currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(getConfiguration().getName());
     }
 
     @Override
@@ -42,13 +40,16 @@ public class UserBankCommand extends BasicCommand {
         }
         DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer)commandSender).getUniqueId());
         if(args.length == 0) {
-            printInfoMessage(commandSender, user);
+            AccountCredit credit = user.getDefaultAccount().getCredit(getCurrency());
+            commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, new ReflectVariableSet()
+                    .add("credit", credit));
+            System.out.println(credit);
             return;
         }
         String action = args[0];
         if(action.equalsIgnoreCase("pay") || action.equalsIgnoreCase("transfer")) {
             if(args.length == 3) {
-                AccountCredit credit = user.getDefaultAccount().getCredit(currency);
+                AccountCredit credit = user.getDefaultAccount().getCredit(getCurrency());
                 AccountMember member = user.getDefaultAccount().getMember(user);
                 String receiver0 = args[1];
                 BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
@@ -74,22 +75,24 @@ public class UserBankCommand extends BasicCommand {
                     CommandUtil.handleTransferFailCauses(result, commandSender);
                 }
             } else {
-                commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create().add("currency", currency.getName()));
+                commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create().add("currency", getCurrency().getName()));
             }
         } else if(action.equalsIgnoreCase("top")) {
-            this.topCommand.execute(commandSender, currency, args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
+            this.topCommand.execute(commandSender, getCurrency(), args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
         } else {
             DKCoinsUser target = DKCoins.getInstance().getUserManager().getUser(action);
             if(target == null) {
                 commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS, VariableSet.create().add("name", action));
                 return;
             }
-            printInfoMessage(commandSender, target);
+            AccountCredit credit = target.getDefaultAccount().getCredit(getCurrency());
+            commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT_OTHER, new ReflectVariableSet()
+                    .add("other", target.getDefaultAccount().getMember(target))
+                    .add("credit", credit));
         }
     }
 
-    private void printInfoMessage(CommandSender commandSender, DKCoinsUser user) {
-        AccountCredit credit = user.getDefaultAccount().getCredit(currency);
-        commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, new ReflectVariableSet().add("credit", credit));
+    private Currency getCurrency() {
+        return DKCoins.getInstance().getCurrencyManager().searchCurrency(getConfiguration().getName());
     }
 }

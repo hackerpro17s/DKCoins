@@ -18,6 +18,8 @@ import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 
+import java.util.Collection;
+
 public interface DKCoins {
 
     PretronicLogger getLogger();
@@ -33,6 +35,8 @@ public interface DKCoins {
     TransactionPropertyBuilder getTransactionPropertyBuilder();
 
     TransactionFilter newTransactionFilter();
+
+    Collection<Migration> getMigrations();
 
     Migration getMigration(String name);
 

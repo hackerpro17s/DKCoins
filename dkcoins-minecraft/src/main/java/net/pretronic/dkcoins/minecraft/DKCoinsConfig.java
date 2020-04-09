@@ -18,6 +18,8 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.commands.UserBankCommand;
 import net.pretronic.libraries.document.annotations.DocumentKey;
 import net.pretronic.libraries.plugin.service.ServicePriority;
+import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.map.Maps;
 import net.pretronic.libraries.utility.map.Pair;
 import org.mcnative.common.McNative;
@@ -66,7 +68,7 @@ public class DKCoinsConfig {
     private static Map<String, Integer> ACCOUNT_TYPE_START_AMOUNT0 = Maps.ofValues(new Pair<>("User", 1000), new Pair<>("Bank", 0));
 
     @DocumentIgnored
-    public static Map<AccountType, Integer> ACCOUNT_TYPE_START_AMOUNT = new HashMap<>();
+    private static Map<AccountType, Integer> ACCOUNT_TYPE_START_AMOUNT = new HashMap<>();
 
     @DocumentKey("account.user.creditAliases")
     public static String[] ACCOUNT_USER_CREDIT_ALIASES = new String[]{"coins"};
@@ -90,16 +92,25 @@ public class DKCoinsConfig {
     public static int TOP_LIMIT_MAX = 10;
 
     @DocumentKey("command.bank")
-    public static CommandConfiguration COMMAND_BANK = CommandConfiguration.newBuilder().name("bank")
+    public static CommandConfiguration COMMAND_BANK = CommandConfiguration.newBuilder()
+            .name("bank")
+            .enabled(McNative.getInstance().getPlatform().isService())
             .permission("dkcoins.command.bank")
             .create();
 
     @DocumentKey("command.currency")
-    public static CommandConfiguration COMMAND_CURRENCY = CommandConfiguration.newBuilder().name("currency")
-            .permission("dkcoins.command.currency").create();
+    public static CommandConfiguration COMMAND_CURRENCY = CommandConfiguration.newBuilder()
+            .name("currency")
+            .enabled(McNative.getInstance().getPlatform().isService())
+            .permission("dkcoins.command.currency")
+            .create();
 
     @DocumentKey("command.pay")
-    public static CommandConfiguration COMMAND_PAY = CommandConfiguration.newBuilder().name("pay").aliases("transfer").create();
+    public static CommandConfiguration COMMAND_PAY = CommandConfiguration.newBuilder()
+            .name("pay")
+            .aliases("transfer")
+            .enabled(McNative.getInstance().getPlatform().isService())
+            .create();
 
     public static void init() {
         CURRENCY_DEFAULT = DKCoins.getInstance().getCurrencyManager().searchCurrency(CURRENCY_DEFAULT0);
@@ -129,5 +140,14 @@ public class DKCoinsConfig {
 
     public static String formatDate(long time) {
         return DATE_FORMAT.format(time);
+    }
+
+    public static double getAccountTypeStartAmount(AccountType type) {
+        Validate.notNull(type);
+        for (Map.Entry<AccountType, Integer> entry : ACCOUNT_TYPE_START_AMOUNT.entrySet()) {
+            if(entry.getKey().equals(type)) return entry.getValue();
+        }
+        System.out.println("account type not found");
+        return 0.0D;
     }
 }

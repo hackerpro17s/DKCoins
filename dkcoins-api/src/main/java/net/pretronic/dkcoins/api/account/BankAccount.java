@@ -91,7 +91,7 @@ public interface BankAccount extends Synchronizable {
 
     AccountMember getMember(int id);
 
-    AccountMember addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role);
+    AccountMember addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role, boolean receiveNotifications);
 
     boolean removeMember(AccountMember member, AccountMember remover);
 

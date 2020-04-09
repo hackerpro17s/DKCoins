@@ -15,10 +15,11 @@ import org.mcnative.common.text.components.MessageKeyComponent;
 
 public class Messages {
 
-    public static final MessageKeyComponent COINS_PREFIX = Text.ofMessageKey("dkcoins.coins.prefix");
+    public static final MessageKeyComponent PREFIX = Text.ofMessageKey("dkcoins.prefix");
 
 
     public static final MessageKeyComponent ERROR_NOT_FROM_CONSOLE = Text.ofMessageKey("dkcoins.error.notFromConsole");
+    public static final MessageKeyComponent ERROR_ONLY_FROM_CONSOLE = Text.ofMessageKey("dkcoins.error.onlyFromConsole");
     public static final MessageKeyComponent ERROR_NO_PERMISSION = Text.ofMessageKey("dkcoins.error.notPermission");
     public static final MessageKeyComponent ERROR_ACCOUNT_ALREADY_EXISTS = Text.ofMessageKey("dkcoins.error.account.alreadyExists");
     public static final MessageKeyComponent ERROR_CURRENCY_ALREADY_EXISTS = Text.ofMessageKey("dkcoins.error.currency.alreadyExists");

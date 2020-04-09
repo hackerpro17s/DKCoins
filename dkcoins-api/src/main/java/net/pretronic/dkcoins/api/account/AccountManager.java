@@ -38,6 +38,12 @@ public interface AccountManager {
 
     BankAccount getAccount(int id);
 
+    BankAccount getAccount(String name, AccountType type);
+
+    default BankAccount getAccount(String name, String type) {
+        return getAccount(name, searchAccountType(type));
+    }
+
     BankAccount searchAccount(Object identifier);
 
     MasterBankAccount getMasterAccount(int id);
@@ -69,19 +75,25 @@ public interface AccountManager {
 
     void setAccountCreditAmount(AccountCredit credit, double amount);
 
+    void addAccountCreditAmount(AccountCredit credit, double amount);
+
+    void removeAccountCreditAmount(AccountCredit credit, double amount);
+
 
     AccountMember getAccountMember(int id);
 
     AccountMember getAccountMember(DKCoinsUser user, BankAccount account);
 
-    AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMember adder, AccountMemberRole memberRole);
+    AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMember adder, AccountMemberRole memberRole, boolean receiveNotifications);
 
     void updateAccountMemberRole(AccountMember member);
+
+    void updateAccountMemberReceiveNotifications(AccountMember member);
 
     void removeAccountMember(AccountMember member, AccountMember remover);
 
 
-    Collection<AccountTransaction> getAccountTransactions(AccountMember member, int start, int end);
+    List<AccountTransaction> filterAccountTransactions(TransactionFilter filter);
 
     AccountTransaction addAccountTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver,
                                              double amount, double exchangeRate, String reason, String cause,
@@ -100,7 +112,4 @@ public interface AccountManager {
                                            Currency comparativeCurrency, double amount, long interval);
 
     void removeAccountLimitation(AccountLimitation accountLimitation);
-
-
-    List<AccountTransaction> filterAccountTransactions(TransactionFilter filter);
 }

@@ -85,9 +85,37 @@ public class DefaultAccountCredit implements AccountCredit {
     }
 
     @Override
+    public AccountTransaction addAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
+        DKCoins.getInstance().getAccountManager().addAccountCreditAmount(this, amount);
+        AccountTransaction transaction = getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
+        this.amount+=amount;
+        return transaction;
+    }
+
+    @Override
+    public AccountTransaction removeAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
+        DKCoins.getInstance().getAccountManager().removeAccountCreditAmount(this, amount);
+        AccountTransaction transaction = getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
+        this.amount-=amount;
+        return transaction;
+    }
+
+    @Override
     public void setAmount(double amount) {
         DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
         this.amount = amount;
+    }
+
+    @Override
+    public void addAmount(double amount) {
+        DKCoins.getInstance().getAccountManager().addAccountCreditAmount(this, amount);
+        this.amount+=amount;
+    }
+
+    @Override
+    public void removeAmount(double amount) {
+        DKCoins.getInstance().getAccountManager().removeAccountCreditAmount(this, amount);
+        this.amount-=amount;
     }
 
     @Override
@@ -141,5 +169,10 @@ public class DefaultAccountCredit implements AccountCredit {
     public void updateAmount(double amount) {
         System.out.println("internal update amount " + amount);
         this.amount = amount;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AccountCredit && ((AccountCredit)obj).getId() == this.id;
     }
 }

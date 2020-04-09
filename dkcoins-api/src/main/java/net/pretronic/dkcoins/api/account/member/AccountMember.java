@@ -53,4 +53,8 @@ public interface AccountMember {
     default boolean removeLimitation(Currency comparativeCurrency, double amount, long interval) {
         return removeLimitation(getLimitation(comparativeCurrency, amount, interval));
     }
+
+    boolean receiveNotifications();
+
+    void setReceiveNotifications(boolean receiveNotifications);
 }

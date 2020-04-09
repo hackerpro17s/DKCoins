@@ -10,32 +10,25 @@
 
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
-import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
-import net.pretronic.dkcoins.minecraft.commands.account.AccountTopCommand;
-import net.pretronic.libraries.command.NotFindable;
-import net.pretronic.libraries.command.command.Command;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.DefinedNotFindable;
-import net.pretronic.libraries.command.command.object.MainObjectCommand;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.command.object.ObjectNotFindable;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountExchangeCommand;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.member.BankMemberCommand;
+import net.pretronic.libraries.command.command.Command;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.*;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Arrays;
 
-public class BankCommand extends MainObjectCommand<BankAccount> implements DefinedNotFindable<BankAccount>, ObjectNotFindable {
+public class BankCommand extends MainObjectCommand<BankAccount> implements DefinedNotFindable<BankAccount>, ObjectNotFindable, ObjectCommandPrecondition<BankAccount> {
 
     private final ObjectCommand<String> createCommand;
     private final Command listCommand;
@@ -50,6 +43,7 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
         registerCommand(new BankMemberCommand(owner));
         registerCommand(new BankAdminCommand(owner));
         registerCommand(new BankStatementCommand(owner));
+        registerCommand(new BankSettingsCommand(owner));
     }
 
     @Override
@@ -59,17 +53,16 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
 
     @Override
     public void commandNotFound(CommandSender commandSender, BankAccount account, String command, String[] args) {
-        System.out.println(Arrays.toString(args));
-        System.out.println(command);
         if(account != null) {
-            if(command == null && CommandUtil.hasAccountAccessAndSendMessage(commandSender, account)) {
-                commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS, new ReflectVariableSet()
-                        .add("credits", account.getCredits()));
+            if(command == null) {
+                if(CommandUtil.hasAccountAccessAndSendMessage(commandSender, account)) {
+                    commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS, new ReflectVariableSet()
+                            .add("credits", account.getCredits()));
+                }
             } else {
                 commandSender.sendMessage(Messages.COMMAND_BANK_HELP);
             }
         } else {
-
             listCommand.execute(commandSender, args);
         }
     }
@@ -89,5 +82,11 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
             }
         }
         commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", command));
+    }
+
+    @Override
+    public boolean checkPrecondition(CommandSender commandSender, BankAccount account) {
+        System.out.println("pre condition");
+        return CommandUtil.hasAccountAccessAndSendMessage(commandSender, account);
     }
 }

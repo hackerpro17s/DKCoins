@@ -43,26 +43,18 @@ public interface AccountCredit {
         return setAmount(null, amount, null, cause, properties);
     }
 
-    default AccountTransaction addAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
-        return setAmount(executor, getAmount()+amount, reason, cause, properties);
-    }
+    AccountTransaction addAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties);
 
-    default AccountTransaction removeAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
-        return setAmount(executor, getAmount()-amount, reason, cause, properties);
-    }
+    AccountTransaction removeAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties);
 
     //Without transaction add
     void setAmount(double amount);
 
     //Without transaction add
-    default void addAmount(double amount) {
-        setAmount(getAmount()+amount);
-    }
+    void addAmount(double amount);
 
     //Without transaction add
-    default void removeAmount(double amount) {
-        setAmount(getAmount()-amount);
-    }
+    void removeAmount(double amount);
 
 
     TransferResult canTransfer(AccountMember member, AccountCredit target, double amount);

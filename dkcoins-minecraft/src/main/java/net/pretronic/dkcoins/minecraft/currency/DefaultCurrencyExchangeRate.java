@@ -75,4 +75,9 @@ public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
     public void updateExchangeAmount(double amount) {
         this.exchangeAmount = amount;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof CurrencyExchangeRate && ((CurrencyExchangeRate)obj).getId() == this.id;
+    }
 }

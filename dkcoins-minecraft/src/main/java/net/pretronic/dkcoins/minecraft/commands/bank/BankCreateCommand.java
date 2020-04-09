@@ -40,7 +40,7 @@ public class BankCreateCommand extends ObjectCommand<String> {
             return;
         }
         String accountType0 = args[0];
-        BankAccount account = DKCoins.getInstance().getAccountManager().searchAccount(bankName);
+        BankAccount account = DKCoins.getInstance().getAccountManager().getAccount(bankName, accountType0);
         if(account != null) {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_ALREADY_EXISTS, new ReflectVariableSet().add("account", account));
             return;
