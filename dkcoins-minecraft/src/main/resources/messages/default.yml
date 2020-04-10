@@ -29,7 +29,7 @@ messages:
   dkcoins.error.account.user.notPossible: '${dkcoins.prefix} &cThis action is not possible on an user account'
 
   dkcoins.command.account.exchange.help: '${dkcoins.prefix} &cInvalid usage of exchange command&8:
-  &8» &7/bank <name> exchange <sourceCurrency> <targetCurrency> <amount>'
+  &7/bank <name> exchange <source> <target> <amount>'
   dkcoins.command.account.exchange.success: '${dkcoins.prefix} &aSuccessfully exchanged &e{sourceAmount}{sourceCurrency.symbol} &ato &e{targetAmount}{targetCurrency.symbol}'
   dkcoins.command.account.exchange.failure.notEnoughAmount: '${dkcoins.prefix} &cThe account has not enough money'
   dkcoins.command.account.exchange.failure.masterAccountNotEnoughAmount: '${dkcoins.prefix} &cThe master account has not enough money'
@@ -38,7 +38,7 @@ messages:
   dkcoins.command.account.exchange.failure.disabled: '${dkcoins.prefix} &cExchange is disabled for this currency'
 
   dkcoins.command.account.transfer.help: '${dkcoins.prefix} &cInvalid usage of transfer command&8:
-  &8» &7/bank <name> transfer <receiver> <amount> [currency]'
+  &7/bank <name> transfer <receiver> <amount> [currency]'
   dkcoins.command.account.transfer.success: '${dkcoins.prefix} &aYou have transfered &e{transaction.formattedAmount}{transaction.currency.symbol} &ato &e{transaction.receiver.name}'
   dkcoins.command.account.transfer.success.receiver: '${dkcoins.prefix} &aYou have received &e{transaction.formattedAmount}{transaction.currency.symbol} &afrom &e{transaction.receiver.name}'
   dkcoins.command.account.transfer.failure.notEnoughAmount: '${dkcoins.prefix} &cThe account has not enough money'
@@ -48,31 +48,31 @@ messages:
   dkcoins.command.account.transfer.failure.disabled: '${dkcoins.prefix} &cTransfer is disabled for this currency'
 
   dkcoins.command.bank.create.help: '${dkcoins.prefix} &cInvalid usage of bank create command:&8:
-  &8» &7/bank <name> create <accountType>'
+  &7/bank <name> create <type>'
   dkcoins.command.bank.create.done: '${dkcoins.prefix} &e{account.name} &abank was successfully created'
 
   dkcoins.command.bank.delete.done: '${dkcoins.prefix} &e{name} &cbank was successfully deleted'
 
   dkcoins.command.bank.help: '${dkcoins.prefix} &cInvalid usage of bank command&8:
-  &8» &7/bank <name> help &8- &7Open this help page
-  &8» &7/bank <name> transfer <receiver> <amount> [currency]
-  &8» &7/bank <name> exchange <sourceCurrency> <targetCurrency> <account>
-  &8» &7/bank <name> create <accountType>
-  &8» &7/bank <name> delete
-  &8» &7/bank <name> settings <setting> <value>
-  &8» &7/bank list
+  &7/bank <name> help &8- &7Open this help page
+  &7/bank <name> transfer <receiver> <amount> [currency]
+  &7/bank <name> exchange <sourceCurrency> <targetCurrency> <account>
+  &7/bank <name> create <accountType>
+  &7/bank <name> delete
+  &7/bank <name> settings <setting> <value>
+  &7/bank list
 
-  &8» &7/bank <name> member list
-  &8» &7/bank <name> member <name> help
-  &8» &7/bank <name> member <name> role <role>
-  &8» &7/bank <name> member <name> remove
-  &8» &7/bank <name> member <name> help
-  &8» &7/bank <name> member <name> limit [list]
-  &8» &7/bank <name> member <name> limit set <interval> <amount>
-  &8» &7/bank <name> member <name> limit remove <interval> <amount>
-  &8» &7/bank <name> member <name> add
+  &7/bank <name> member list
+  &7/bank <name> member <name> help
+  &7/bank <name> member <name> role <role>
+  &7/bank <name> member <name> remove
+  &7/bank <name> member <name> help
+  &7/bank <name> member <name> limit [list]
+  &7/bank <name> member <name> limit set <interval> <amount>
+  &7/bank <name> member <name> limit remove <interval> <amount>
+  &7/bank <name> member <name> add
 
-  &8» &7/bank <name> bankStatement'
+  &7/bank <name> bankStatement'
 
   dkcoins.command.bank.list: '${dkcoins.prefix} &7Your accounts&8:
   @for("member" in {members}, ${dkcoins.command.bank.list.loop},"\n")'
@@ -84,36 +84,35 @@ messages:
 
   dkcoins.command.bank.member.list: '${dkcoins.prefix} &7Account members&8:
   @for("member" in {members}, ${dkcoins.command.bank.member.list.loop},"\n")'
-  dkcoins.command.bank.member.list.loop: '&8» {member.name} {member.role.name}'
+  dkcoins.command.bank.member.list.loop: '&8» &7{member.name} &e{member.role.name}'
 
   dkcoins.command.bank.member.info: '${dkcoins.prefix} &7Member&8: &e{member.name} &7Role&8: 6e{member.role.name}'
-  dkcoins.command.bank.member.info.limitation: '${dkcoins.prefix} &7Limitations&8:
-  @for("limitation" in {limitations}, ${dkcoins.command.bank.member.info.limitation.loop},"\n")'
+  dkcoins.command.bank.member.info.limitation: '${dkcoins.prefix} &7Limitations&8: @for("limitation" in {limitations}, ${dkcoins.command.bank.member.info.limitation.loop},"\n", "\n")'
   dkcoins.command.bank.member.info.limitation.loop: '&8» 67{limitation.formattedAmount}{limitation.comparativeCurrency.name} &7in an interval of &e{limitation.formattedInterval}'
   dkcoins.command.bank.member.info.noLimitation: '${dkcoins.prefix} &e{member.name} &7has no limitations'
 
   dkcoins.command.bank.member.role: '${dkcoins.prefix} &aYou have set &e{member.role.name} &afor member &e{member.name}'
   dkcoins.command.bank.member.remove: '${dkcoins.prefix} &e{user.name} &cwas removed from the bank account'
   dkcoins.command.bank.member.role.help: '${dkcoins.prefix} &cInvalid usage of role command&8:
-  &8» &7/bank <name> member <name> role <role>'
+  &7/bank <name> member <name> role <role>'
 
   dkcoins.command.bank.member.limit.set: '${dkcoins.prefix} &aYou have set a limit of &e{limitation.amount} &ain an interval of &e{limitation.interval} &7for player &e{member.name}'
   dkcoins.command.bank.member.limit.remove: '${dkcoins.prefix} &cYou removed a limit of &e{limitation.amount} &cin an interval of &e{limitation.interval} &7for player &e{member.name}'
   dkcoins.command.bank.member.limit.remove.failure: '${dkcoins.prefix} &cFailed to remove limit'
   dkcoins.command.bank.member.limit.help: '${dkcoins.prefix} &cInvalid usage of limit command&8:
-  &8» &7/bank <name> member <member> limit list
-  &8» &7/bank <name> member <member> limit set <interval> <amount>
-  &8» &7/bank <name> member <member> limit remove <interval> <amount>'
+  &7/bank <name> member <member> limit list
+  &7/bank <name> member <member> limit set <interval> <amount>
+  &7/bank <name> member <member> limit remove <interval> <amount>'
 
   dkcoins.command.bank.member.help: '${dkcoins.prefix} &cInvalid usage of member command&8:
-  &8» &7/bank <name> member list
-  &8» &7/bank <name> member <name> help
-  &8» &7/bank <name> member <name> role <role>
-  &8» &7/bank <name> member <name> remove
-  &8» &7/bank <name> member <name> help
-  &8» &7/bank <name> member <name> limit [list]
-  &8» &7/bank <name> member <name> limit set <interval> <amount>
-  &8» &7/bank <name> member <name> add'
+  &7/bank <name> member list
+  &7/bank <name> member <name> help
+  &7/bank <name> member <name> role <role>
+  &7/bank <name> member <name> remove
+  &7/bank <name> member <name> help
+  &7/bank <name> member <name> limit [list]
+  &7/bank <name> member <name> limit set <interval> <amount>
+  &7/bank <name> member <name> add'
 
   dkcoins.command.bank.member.add: '${dkcoins.prefix} &e{member.name} &awas added to this bank'
 
@@ -121,15 +120,14 @@ messages:
   dkcoins.command.bank.admin.remove: '${dkcoins.prefix} &aYou have removed &e{transaction.amount}{transaction.currency.symbol}'
   dkcoins.command.bank.admin.set: '${dkcoins.prefix} &aYou have set &e{transaction.amount}{transaction.currency.symbol}'
   dkcoins.command.bank.admin.help: '${dkcoins.prefix} &cInvalid usage of admin command&8:
-  &8» &7/bank <name> admin addAmount <amount> <currency>
-  &8» &7/bank <name> admin removeAmount <amount> <currency>
-  &8» &7/bank <name> admin setAmount <amount> <currency>'
+  &7/bank <name> admin addAmount <amount> <currency>
+  &7/bank <name> admin removeAmount <amount> <currency>
+  &7/bank <name> admin setAmount <amount> <currency>'
 
   dkcoins.command.bank.bankStatement.filterOption.wrong: '${dkcoins.prefix} &e{filterOption} &cis a wrong option &8» &cUse option=value'
   dkcoins.command.bank.bankStatement.filterOption.notFound: '${dkcoins.prefix} &e{filterOption} &cis not a valid filter option'
 
-  dkcoins.command.bank.bankStatement: '${dkcoins.prefix} &7Bank statements&8:
-  @for("transaction" in {transactions}, ${dkcoins.command.bank.bankStatement.loop},,"\n-------------------------------\n","\n")'
+  dkcoins.command.bank.bankStatement: '${dkcoins.prefix} &7Bank statements&8: @for("transaction" in {transactions}, ${dkcoins.command.bank.bankStatement.loop},"\n-------------------------------\n","\n")'
   dkcoins.command.bank.bankStatement.loop: '&8» &7Time&8: &e{transaction.formattedTime}
   &8» &7Sender&8: &e{transaction.sender.name}
   &8» &7Receiver&8: &e{transaction.receiver.account.name}
@@ -138,18 +136,18 @@ messages:
   &8» &7Cause&8: &e{transaction.cause}'
 
   dkcoins.command.currency.help: '${dkcoins.prefix} &cInvalid usage of currency command&8:
-  &8» &7/currency help
-  &8» &7/currency [list]
-  &8» &7/currency <name> [info]
-  &8» &7/currency <name> create <symbol>
-  &8» &7/currency <name> delete
-  &8» &7/currency <name> edit name <name>
-  &8» &7/currency <name> edit symbol <symbol>
-  &8» &7/currency <name> edit exchangeRate <targetCurrency> <amount>
-  &8» &7/currency <name> edit exchangeRate <targetCurrency> disable'
+  &7/currency help
+  &7/currency [list]
+  &7/currency <name> [info]
+  &7/currency <name> create <symbol>
+  &7/currency <name> delete
+  &7/currency <name> edit name <name>
+  &7/currency <name> edit symbol <symbol>
+  &7/currency <name> edit exchangeRate <target> <amount>
+  &7/currency <name> edit exchangeRate <target> disable'
 
   dkcoins.command.currency.create.help: '${dkcoins.prefix} &cInvalid usage of currency create command&8:
-  &8» &7/currency <name> create <symbol>'
+  &7/currency <name> create <symbol>'
   dkcoins.command.currency.create.done: '${dkcoins.prefix} &aYou have created the currency &e{currency.name}'
 
   dkcoins.command.currency.delete.done: '${dkcoins.prefix} &cYou have deleted the currency &e{currency.name}'
@@ -160,15 +158,14 @@ messages:
 
   dkcoins.command.currency.info: '${dkcoins.prefix} &7Currency&8: &e{currency.name}
   &8» &7Symbol&8: &e{currency.symbol}
-  &8» &7Exchange rates&8:
-  @for("exchangeRate" in {exchangeRates}, ${dkcoins.command.currency.info.exchangeRate.loop},"\n")'
+  &8» &7Exchange rates&8: @for("exchangeRate" in {exchangeRates}, ${dkcoins.command.currency.info.exchangeRate.loop},"\n", "\n")'
   dkcoins.command.currency.info.exchangeRate.loop: '&8» &7Target&8: &e{exchangeRate.targetCurrency.name} &7Exchange amount&8: &e{exchangeRate.formattedExchangeAmount}'
 
   dkcoins.command.currency.edit.help: '${dkcoins.prefix} &cInvalid usage of command currency edit&8:
-  &8» &7/currency <name> edit name <name>
-  &8» &7/currency <name> edit symbol <symbol>
-  &8» &7/currency <name> edit exchangeRate <targetCurrency> <amount>
-  &8» &7/currency <name> edit exchangeRate <targetCurrency> disable'
+  &7/currency <name> edit name <name>
+  &7/currency <name> edit symbol <symbol>
+  &7/currency <name> edit exchangeRate <targetCurrency> <amount>
+  &7/currency <name> edit exchangeRate <targetCurrency> disable'
   dkcoins.command.currency.edit.done.name: '${dkcoins.prefix} &aYou have changed the name of &e{oldName} &ato &e{currency.name}'
   dkcoins.command.currency.edit.done.symbol: '${dkcoins.prefix} &aYou have changed the symbol from &e{oldSymbol} &ato &e{currency.symbol}'
   dkcoins.command.currency.edit.done.exchangeRate: '${dkcoins.prefix} &aYou have set the exchange rate to the currency &e{exchangeRate.targetCurrency} &ato &e{exchangeRate.formattedExchangeAmount}'
@@ -178,9 +175,9 @@ messages:
   dkcoins.command.userBank.amount: '${dkcoins.prefix} &8» &7You have &e{credit.formattedAmount}&8{credit.currency.symbol}'
   dkcoins.command.userBank.amount.other: '${dkcoins.prefix} &e{other.name} &7has &e{credit.formattedAmount}{credit.currency.symbol}'
   dkcoins.command.userBank.help: '${dkcoins.prefix} &cInvalid usage of {currency.name} command&8:
-  &8» &7/{currency.name}
-  &8» &7/{currency.name} transfer <receiver> <amount>
-  &8» &7/{currency.name} top <limit>'
+  &7/{currency.name}
+  &7/{currency.name} transfer <receiver> <amount>
+  &7/{currency.name} top <limit>'
 
   dkcoins.top.reach.limit: '${dkcoins.prefix} &cYou can not see so much credit top'
   dkcoins.top: '${dkcoins.prefix} &7Top {amount}&8:
@@ -188,7 +185,7 @@ messages:
   dkcoins.top.loop: '&8» &7#{position} &7{credit.name} &e{credit.formattedAmount}{credit.currency.symbol}'
 
   dkcoins.bank.settings.help: '${dkcoins.prefix} &cInvalid usage of command bank settings&8:
-  &8» &7/bank <name> settings <setting> <value>
+  &7/bank <name> settings <setting> <value>
 
   &7Settings&8:
   &8- &ereceiveNotifications with type &eboolean'
