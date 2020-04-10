@@ -674,7 +674,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                 .field("Name", DataType.STRING, FieldOption.NOT_NULL)
                 .field("TypeId", DataType.INTEGER, ForeignKey.of(this.accountType, "Id", ForeignKey.Option.CASCADE, null), FieldOption.NOT_NULL)
                 .field("Disabled", DataType.BOOLEAN, FieldOption.NOT_NULL)
-                .field("ParentId", DataType.INTEGER, ForeignKey.of(this.database.getName(),"DKCoinsAccount", "Id", ForeignKey.Option.CASCADE, null))
+                .field("ParentId", DataType.INTEGER, ForeignKey.of(this.database.getName(),"dkcoins_account", "Id", ForeignKey.Option.CASCADE, null))
                 .field("Master", DataType.BOOLEAN, FieldOption.NOT_NULL)
                 .create();
     }
