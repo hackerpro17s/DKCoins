@@ -76,7 +76,6 @@ public final class CommandUtil {
     }
 
     public static boolean hasAccountAccessAndSendMessage(CommandSender commandSender, BankAccount account) {
-        System.out.println("has access check");
         if(!hasAccountAccess(commandSender, account)) {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_NO_ACCESS);
             return false;

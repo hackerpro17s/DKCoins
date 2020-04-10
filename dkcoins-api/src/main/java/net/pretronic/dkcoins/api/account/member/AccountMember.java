@@ -28,7 +28,6 @@ public interface AccountMember {
     DKCoinsUser getUser();
 
     default String getName() {
-        System.out.println("getName:" + getUser().getName());
         return getUser().getName();
     }
 

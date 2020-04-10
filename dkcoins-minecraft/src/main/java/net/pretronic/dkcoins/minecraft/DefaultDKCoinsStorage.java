@@ -419,7 +419,6 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                 .join(this.accountTransactionProperty, JoinType.LEFT).on("Id", this.accountTransactionProperty, "TransactionId")
                 ;
         //.where("accountId", filter.getAccount().getId())
-        System.out.println("AccountId:" + filter.getAccount().getId());
 
         if(filter.getWorld() != null) {
             query.and(subQuery ->

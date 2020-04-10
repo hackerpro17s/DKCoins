@@ -147,7 +147,6 @@ public class DKCoinsConfig {
         for (Map.Entry<AccountType, Integer> entry : ACCOUNT_TYPE_START_AMOUNT.entrySet()) {
             if(entry.getKey().equals(type)) return entry.getValue();
         }
-        System.out.println("account type not found");
         return 0.0D;
     }
 }

@@ -11,7 +11,6 @@ public class MinecraftPlayerListener {
 
     @Listener
     public void onPlayerLogin(MinecraftPlayerLoginEvent event) {
-        System.out.println("Player login");
         OnlineMinecraftPlayer player = event.getOnlinePlayer();
 
         DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(player.getUniqueId());

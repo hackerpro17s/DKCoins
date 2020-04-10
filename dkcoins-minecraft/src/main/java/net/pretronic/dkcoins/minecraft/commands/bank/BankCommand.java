@@ -86,7 +86,6 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
 
     @Override
     public boolean checkPrecondition(CommandSender commandSender, BankAccount account) {
-        System.out.println("pre condition");
         return CommandUtil.hasAccountAccessAndSendMessage(commandSender, account);
     }
 }

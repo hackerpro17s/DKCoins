@@ -43,7 +43,6 @@ public class UserBankCommand extends BasicCommand {
             AccountCredit credit = user.getDefaultAccount().getCredit(getCurrency());
             commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, new ReflectVariableSet()
                     .add("credit", credit));
-            System.out.println(credit);
             return;
         }
         String action = args[0];

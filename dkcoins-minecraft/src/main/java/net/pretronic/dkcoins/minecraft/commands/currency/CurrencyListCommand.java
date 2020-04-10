@@ -19,7 +19,6 @@ public class CurrencyListCommand extends BasicCommand {
 
     @Override
     public void execute(CommandSender commandSender, String[] args) {
-        System.out.println("currency list");
         if(!(commandSender instanceof OnlineMinecraftPlayer)) {
             commandSender.sendMessage(Messages.ERROR_NOT_FROM_CONSOLE);
             return;

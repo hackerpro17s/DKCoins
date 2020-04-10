@@ -51,7 +51,6 @@ public class DefaultCurrency implements Currency {
 
     @Override
     public String getSymbol() {
-        System.out.println("ssymbol:" + symbol);
         return this.symbol;
     }
 

@@ -31,7 +31,6 @@ public class BankAdminCommand extends ObjectCommand<BankAccount> {
 
     @Override
     public void execute(CommandSender commandSender, BankAccount account, String[] args) {
-        System.out.println(Arrays.toString(args));
         if(args.length < 3) {
             commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_HELP);
             return;

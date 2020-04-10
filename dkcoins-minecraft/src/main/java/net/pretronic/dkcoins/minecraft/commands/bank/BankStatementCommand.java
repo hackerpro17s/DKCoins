@@ -37,7 +37,6 @@ public class BankStatementCommand extends ObjectCommand<BankAccount> {
             appendFilterOption(sender, filter, key, value);
         }
         Collection<AccountTransaction> transactions = DKCoins.getInstance().getAccountManager().filterAccountTransactions(filter);
-        System.out.println("statement size:"+transactions.size());
         sender.sendMessage(Messages.COMMAND_BANK_BANK_STATEMENT, new ReflectVariableSet()
                     .add("transactions", transactions));
 

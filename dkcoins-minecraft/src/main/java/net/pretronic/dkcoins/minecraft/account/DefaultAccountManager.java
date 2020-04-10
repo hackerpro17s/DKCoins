@@ -349,11 +349,8 @@ public class DefaultAccountManager implements AccountManager {
 
     private void createMissingAccountCredits(BankAccount account) {
         Validate.notNull(account);
-        System.out.println("create missing");
         for (Currency currency : DKCoins.getInstance().getCurrencyManager().getCurrencies()) {
-            System.out.println(currency.getName());
             if(account.getCredit(currency) == null) {
-                System.out.println("add credit");
                 account.addCredit(currency, DKCoinsConfig.getAccountTypeStartAmount(account.getType()));
             }
         }
@@ -460,7 +457,6 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public BankAccount load(Object[] identifiers) {
-                System.out.println("Load account:" + Arrays.toString(identifiers));
                 return DKCoins.getInstance().getStorage().searchAccount(identifiers[0]);
             }
         }).registerQuery("byId", new CacheQuery<BankAccount>() {
