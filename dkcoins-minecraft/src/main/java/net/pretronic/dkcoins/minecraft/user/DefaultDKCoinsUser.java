@@ -41,12 +41,22 @@ public class DefaultDKCoinsUser implements DKCoinsUser {
 
     @Override
     public String getName() {
-        return getAsPlayer().getName();
+        MinecraftPlayer player = getAsPlayer();
+        if(player == null) {
+            DKCoins.getInstance().getLogger().warn("Player with uuid [{}] is not in McNative registered", uniqueId);
+            return null;
+        }
+        return player.getName();
     }
 
     @Override
     public String getDisplayName() {
-        return getAsPlayer().getDisplayName();
+        MinecraftPlayer player = getAsPlayer();
+        if(player == null) {
+            DKCoins.getInstance().getLogger().warn("Player with uuid [{}] is not in McNative registered", uniqueId);
+            return null;
+        }
+        return player.getDisplayName();
     }
 
     @Override
@@ -56,8 +66,13 @@ public class DefaultDKCoinsUser implements DKCoinsUser {
 
     @Override
     public BankAccount getDefaultAccount() {
+        MinecraftPlayer player = getAsPlayer();
+        if(player == null) {
+            DKCoins.getInstance().getLogger().warn("Player with uuid [{}] is not in McNative registered", uniqueId);
+            return null;
+        }
         AccountType accountType = DKCoins.getInstance().getAccountManager().searchAccountType("User");
-        return DKCoins.getInstance().getAccountManager().getAccount(getAsPlayer().getName(), accountType);
+        return DKCoins.getInstance().getAccountManager().getAccount(player.getName(), accountType);
     }
 
     @Override
@@ -79,10 +94,16 @@ public class DefaultDKCoinsUser implements DKCoinsUser {
     }
 
     public BankAccount initAccount() {
+        MinecraftPlayer player = getAsPlayer();
+        if(player == null) {
+            DKCoins.getInstance().getLogger().warn("Player with uuid [{}] is not in McNative registered", uniqueId);
+            return null;
+        }
+
         AccountType accountType = DKCoins.getInstance().getAccountManager().searchAccountType("User");
-        BankAccount account = DKCoins.getInstance().getAccountManager().getAccount(getAsPlayer().getName(), accountType);
+        BankAccount account = DKCoins.getInstance().getAccountManager().getAccount(player.getName(), accountType);
         if(account == null) {
-            account = DKCoins.getInstance().getAccountManager().createAccount(getAsPlayer().getName(),
+            account = DKCoins.getInstance().getAccountManager().createAccount(player.getName(),
                     accountType, false, null, this);
         }
         return account;

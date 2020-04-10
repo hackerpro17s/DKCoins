@@ -57,15 +57,20 @@ public class EssentialsXMigration implements Migration {
 
                 DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(uniqueId);
 
-                if(DKCoins.getInstance().getAccountManager().getAccount(user.getName(), "User") == null) {
-                    BankAccount account = DKCoins.getInstance().getStorage().createAccount(user.getName(),
-                            DKCoins.getInstance().getAccountManager().searchAccountType("User"),
-                            false, null, DKCoins.getInstance().getUserManager().getUser(uniqueId));
-                    account.getCredit(currency).setAmount(balance);
-                    dkcoinsCount.incrementAndGet();
-                }
+                if(user.getName() == null) {
+                    DKCoins.getInstance().getLogger().warn("Skipped migration for user with uuid [{}] and name [{}]", uniqueId, name);
+                    skipped.incrementAndGet();
+                } else {
+                    if(DKCoins.getInstance().getAccountManager().getAccount(user.getName(), "User") == null) {
+                        BankAccount account = DKCoins.getInstance().getStorage().createAccount(user.getName(),
+                                DKCoins.getInstance().getAccountManager().searchAccountType("User"),
+                                false, null, DKCoins.getInstance().getUserManager().getUser(uniqueId));
+                        account.getCredit(currency).setAmount(balance);
+                        dkcoinsCount.incrementAndGet();
+                    }
 
-                totalCount.getAndIncrement();
+                    totalCount.getAndIncrement();
+                }
             } else {
                 skipped.incrementAndGet();
             }
