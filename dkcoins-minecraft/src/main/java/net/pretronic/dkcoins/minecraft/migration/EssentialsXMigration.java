@@ -49,7 +49,8 @@ public class EssentialsXMigration implements Migration {
             long lastLogin = document.getLong("timestamps.logout");
 
             if(name != null) {
-                if(McNative.getInstance().getPlayerManager().getPlayer(uniqueId) == null) {
+                if(McNative.getInstance().getPlayerManager().getPlayer(name) == null
+                        && McNative.getInstance().getPlayerManager().getPlayer(uniqueId) == null) {
                     playerDataProvider.createPlayerData(name, uniqueId, -1, firstLogin, lastLogin, null);
                     mcNativeCount.incrementAndGet();
                 }
