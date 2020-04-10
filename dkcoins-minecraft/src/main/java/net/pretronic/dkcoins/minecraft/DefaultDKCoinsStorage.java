@@ -119,7 +119,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     @Override
     public Collection<Integer> getAccountIds(UUID userId) {
         Collection<Integer> accountIds = new ArrayList<>();
-        this.account.find().get("DKCoinsAccount.Id")
+        this.account.find().get("dkcoins_account.Id")
                 .join(this.accountMember).on("Id", this.accountMember, "AccountId")
                 .where("UserId", userId).execute().loadIn(accountIds, entry -> entry.getInt("Id"));
         return accountIds;
