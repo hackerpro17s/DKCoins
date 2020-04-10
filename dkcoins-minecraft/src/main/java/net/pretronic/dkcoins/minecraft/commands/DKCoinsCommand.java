@@ -54,8 +54,8 @@ public class DKCoinsCommand extends BasicCommand {
                         Migration.Result result = migration.migrate(currency);
                         if(result.isSuccess()) {
                             DKCoinsPlugin.getInstance().getLogger().info("Migration was successful");
-                            DKCoins.getInstance().getLogger().info("A total of {} was migrated. {} McNative user data and {} DKCoins account were created",
-                                    result.getTotalMigrateCount(), result.getMcNativeMigrateCount(), result.getDKCoinsAccountMigrateCount());
+                            DKCoins.getInstance().getLogger().info("A total of {} was migrated. {} users skipped. {} McNative user data and {} DKCoins account were created",
+                                    result.getTotalMigrateCount(), result.getSkipped(), result.getMcNativeMigrateCount(), result.getDKCoinsAccountMigrateCount());
 
                             long millis = result.getTime();
                             String time = String.format("%02d:%02d:%02d",

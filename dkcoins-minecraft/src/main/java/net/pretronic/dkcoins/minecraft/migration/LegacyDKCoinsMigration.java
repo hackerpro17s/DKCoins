@@ -26,7 +26,7 @@ public class LegacyDKCoinsMigration implements Migration {
         File location = new File("plugins/DKCoins/legacy-config.yml");
         if(!location.exists()) {
             DKCoins.getInstance().getLogger().error("No dkcoins legacy config was found");
-            return new Result(false, 0, 0, 0, -1);
+            return new Result(false, 0, 0, 0, 0, -1);
         }
         if(DKCoinsLegacy.getInstance() == null) {
             DKCoinsLegacy.setInstance(new DKCoinsLegacy());
@@ -35,6 +35,7 @@ public class LegacyDKCoinsMigration implements Migration {
         AtomicInteger totalCount = new AtomicInteger();
         AtomicInteger mcNativeCount = new AtomicInteger();
         AtomicInteger dkcoinsCount = new AtomicInteger();
+
         for (CoinPlayer player : DKCoinsLegacy.getInstance().getStorage().getPlayers()) {
 
             if(DKCoins.getInstance().getAccountManager().getAccount(player.getName(), "User") == null) {
@@ -54,6 +55,6 @@ public class LegacyDKCoinsMigration implements Migration {
             totalCount.incrementAndGet();
         }
 
-        return new Result(true, totalCount.get(), dkcoinsCount.get(), mcNativeCount.get(), System.currentTimeMillis()-start);
+        return new Result(true, totalCount.get(), dkcoinsCount.get(), mcNativeCount.get(), 0,System.currentTimeMillis()-start);
     }
 }

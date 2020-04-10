@@ -14,13 +14,15 @@ public interface Migration {
         private final int totalMigrateCount;
         private final int dkcoinsAccountMigrateCount;
         private final int mcNativeMigrateCount;
+        private final int skipped;
         private final long time;
 
-        public Result(boolean success, int totalMigrateCount, int dkcoinsAccountMigrateCount, int mcNativeMigrateCount, long time) {
+        public Result(boolean success, int totalMigrateCount, int dkcoinsAccountMigrateCount, int mcNativeMigrateCount, int skipped, long time) {
             this.success = success;
             this.totalMigrateCount = totalMigrateCount;
             this.dkcoinsAccountMigrateCount = dkcoinsAccountMigrateCount;
             this.mcNativeMigrateCount = mcNativeMigrateCount;
+            this.skipped = skipped;
             this.time = time;
         }
 
@@ -42,6 +44,10 @@ public interface Migration {
 
         public int getMcNativeMigrateCount() {
             return mcNativeMigrateCount;
+        }
+
+        public int getSkipped() {
+            return skipped;
         }
 
         public long getTime() {
