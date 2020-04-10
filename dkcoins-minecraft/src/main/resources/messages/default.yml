@@ -129,8 +129,8 @@ messages:
   dkcoins.command.bank.bankStatement.filterOption.notFound: '${dkcoins.prefix} &e{filterOption} &cis not a valid filter option'
 
   dkcoins.command.bank.bankStatement: '${dkcoins.prefix} &7Bank statements&8:
-  @for("transaction" in {transactions}, ${dkcoins.command.bank.bankStatement.loop},"\n")'
-  dkcoins.command.bank.bankStatement.loop: '&8» &7Transaction on {transaction.formattedTime}
+  @for("transaction" in {transactions}, ${dkcoins.command.bank.bankStatement.loop},,"\n-------------------------------\n","\n")'
+  dkcoins.command.bank.bankStatement.loop: '&8» &7Time&8: &e{transaction.formattedTime}
   &8» &7Sender&8: &e{transaction.sender.name}
   &8» &7Receiver&8: &e{transaction.receiver.account.name}
   &8» &7Amount&8: &e{transaction.formattedAmount}
@@ -175,7 +175,7 @@ messages:
   dkcoins.command.currency.edit.disable.exchangeRate: '${dkcoins.prefix} &cYou have disabled the exchange from &e{currency.name} &cto &e{targetCurrency.name}'
   dkcoins.command.currency.edit.exchangeRate.amountNotValid: '${dkcoins.prefix} &e{value} &cas a exchange rate is not valid'
 
-  dkcoins.command.userBank.amount: '&8» &7You have &e{credit.formattedAmount}&8{credit.currency.symbol}'
+  dkcoins.command.userBank.amount: '${dkcoins.prefix} &8» &7You have &e{credit.formattedAmount}&8{credit.currency.symbol}'
   dkcoins.command.userBank.amount.other: '${dkcoins.prefix} &e{other.name} &7has &e{credit.formattedAmount}{credit.currency.symbol}'
   dkcoins.command.userBank.help: '${dkcoins.prefix} &cInvalid usage of {currency.name} command&8:
   &8» &7/{currency.name}
