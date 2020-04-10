@@ -45,6 +45,11 @@ public class DefaultDKCoinsUser implements DKCoinsUser {
     }
 
     @Override
+    public String getDisplayName() {
+        return getAsPlayer().getDisplayName();
+    }
+
+    @Override
     public Collection<BankAccount> getAccounts() {
         return DKCoins.getInstance().getAccountManager().getAccounts(this);
     }

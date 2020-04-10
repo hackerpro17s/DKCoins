@@ -25,7 +25,7 @@ messages:
   dkcoins.error.account.member.yourself: '${dkcoins.prefix} &cIt is not possible to revoke access to yourself'
   dkcoins.error.account.noAccess: '${dkcoins.prefix} &cYou have no access to this account'
   dkcoins.error.user.notExists: '${dkcoins.prefix} &cThe user &e{name} &cdoes not exist'
-  dkcoins.error.member.already: '${dkcoins.prefix} &e{member.name} &cis already a member of this account'
+  dkcoins.error.member.already: '${dkcoins.prefix} &e{member.displayName} &cis already a member of this account'
   dkcoins.error.account.user.notPossible: '${dkcoins.prefix} &cThis action is not possible on an user account'
 
   dkcoins.command.account.exchange.help: '${dkcoins.prefix} &cInvalid usage of exchange command&8:
@@ -84,20 +84,20 @@ messages:
 
   dkcoins.command.bank.member.list: '${dkcoins.prefix} &7Account members&8:
   @for("member" in {members}, ${dkcoins.command.bank.member.list.loop},"\n")'
-  dkcoins.command.bank.member.list.loop: '&8» &7{member.name} &e{member.role.name}'
+  dkcoins.command.bank.member.list.loop: '&8» &7{member.displayName} &e{member.role.name}'
 
-  dkcoins.command.bank.member.info: '${dkcoins.prefix} &7Member&8: &e{member.name} &7Role&8: 6e{member.role.name}'
+  dkcoins.command.bank.member.info: '${dkcoins.prefix} &7Member&8: &e{member.displayName} &7Role&8: 6e{member.role.name}'
   dkcoins.command.bank.member.info.limitation: '${dkcoins.prefix} &7Limitations&8: @for("limitation" in {limitations}, ${dkcoins.command.bank.member.info.limitation.loop},"\n", "\n")'
   dkcoins.command.bank.member.info.limitation.loop: '&8» 67{limitation.formattedAmount}{limitation.comparativeCurrency.name} &7in an interval of &e{limitation.formattedInterval}'
-  dkcoins.command.bank.member.info.noLimitation: '${dkcoins.prefix} &e{member.name} &7has no limitations'
+  dkcoins.command.bank.member.info.noLimitation: '${dkcoins.prefix} &e{member.displayName} &7has no limitations'
 
-  dkcoins.command.bank.member.role: '${dkcoins.prefix} &aYou have set &e{member.role.name} &afor member &e{member.name}'
-  dkcoins.command.bank.member.remove: '${dkcoins.prefix} &e{user.name} &cwas removed from the bank account'
+  dkcoins.command.bank.member.role: '${dkcoins.prefix} &aYou have set &e{member.role.name} &afor member &e{member.displayName}'
+  dkcoins.command.bank.member.remove: '${dkcoins.prefix} &e{user.displayName} &cwas removed from the bank account'
   dkcoins.command.bank.member.role.help: '${dkcoins.prefix} &cInvalid usage of role command&8:
   &7/bank <name> member <name> role <role>'
 
-  dkcoins.command.bank.member.limit.set: '${dkcoins.prefix} &aYou have set a limit of &e{limitation.amount} &ain an interval of &e{limitation.interval} &7for player &e{member.name}'
-  dkcoins.command.bank.member.limit.remove: '${dkcoins.prefix} &cYou removed a limit of &e{limitation.amount} &cin an interval of &e{limitation.interval} &7for player &e{member.name}'
+  dkcoins.command.bank.member.limit.set: '${dkcoins.prefix} &aYou have set a limit of &e{limitation.amount} &ain an interval of &e{limitation.interval} &7for player &e{member.displayName}'
+  dkcoins.command.bank.member.limit.remove: '${dkcoins.prefix} &cYou removed a limit of &e{limitation.amount} &cin an interval of &e{limitation.interval} &7for player &e{member.displayName}'
   dkcoins.command.bank.member.limit.remove.failure: '${dkcoins.prefix} &cFailed to remove limit'
   dkcoins.command.bank.member.limit.help: '${dkcoins.prefix} &cInvalid usage of limit command&8:
   &7/bank <name> member <member> limit list
@@ -114,7 +114,7 @@ messages:
   &7/bank <name> member <name> limit set <interval> <amount>
   &7/bank <name> member <name> add'
 
-  dkcoins.command.bank.member.add: '${dkcoins.prefix} &e{member.name} &awas added to this bank'
+  dkcoins.command.bank.member.add: '${dkcoins.prefix} &e{member.displayName} &awas added to this bank'
 
   dkcoins.command.bank.admin.add: '${dkcoins.prefix} &aYou have added &e{transaction.amount}{transaction.currency.symbol}'
   dkcoins.command.bank.admin.remove: '${dkcoins.prefix} &aYou have removed &e{transaction.amount}{transaction.currency.symbol}'

@@ -31,6 +31,10 @@ public interface AccountMember {
         return getUser().getName();
     }
 
+    default String getDisplayName() {
+        return getUser().getDisplayName();
+    }
+
     AccountMemberRole getRole();
 
     void setRole(AccountMemberRole role);
