@@ -2,6 +2,7 @@ package net.pretronic.dkcoins.minecraft;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
+import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.account.TransferCause;
@@ -165,7 +166,9 @@ public class DKCoinsEconomyProvider implements EconomyProvider {
 
     private AccountCredit getDefaultAccountCredit(MinecraftPlayer player) {
         Validate.notNull(player);
-        return player.getAs(DKCoinsUser.class).getDefaultAccount().getCredit(DKCoinsConfig.ECONOMY_PROVIDER_CURRENCY);
+        BankAccount account = player.getAs(DKCoinsUser.class).getDefaultAccount();
+        Validate.notNull(account);
+        return account.getCredit(DKCoinsConfig.ECONOMY_PROVIDER_CURRENCY);
     }
 
     private AccountCredit getBankAccountCredit(String name) {
