@@ -261,7 +261,8 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
         List<Integer> accountIds = new ArrayList<>();
         FindQuery query = this.accountCredit.find().get("AccountId")
                 .join(this.account).on("AccountId", this.account, "Id")
-                .where("CurrencyId", currency.getId());
+                .where("CurrencyId", currency.getId())
+                .orderBy("Amount", SearchOrder.DESC);
         for (AccountType type : excludedAccountTypes) {
             query.whereNot("TypeId", type.getId());
         }
