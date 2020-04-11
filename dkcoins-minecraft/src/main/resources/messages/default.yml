@@ -60,13 +60,12 @@ messages:
   &7/bank <name> create <accountType>
   &7/bank <name> delete
   &7/bank <name> settings <setting> <value>
-  &7/bank list
+  &7/bank [list]
 
   &7/bank <name> member list
   &7/bank <name> member <name> help
   &7/bank <name> member <name> role <role>
   &7/bank <name> member <name> remove
-  &7/bank <name> member <name> help
   &7/bank <name> member <name> limit [list]
   &7/bank <name> member <name> limit set <interval> <amount>
   &7/bank <name> member <name> limit remove <interval> <amount>

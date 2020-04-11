@@ -127,7 +127,7 @@ public class DKCoinsConfig {
 
         ACCOUNT_USER_CREDIT_ALIASES.forEach((currency, command)-> {
             McNative.getInstance().getLocal().getCommandManager().registerCommand(new UserBankCommand(DKCoinsPlugin.getInstance()
-                    , CommandConfiguration.name(command), currency));
+                    , CommandConfiguration.newBuilder().name(command).permission("dkcoins.command."+command).create(), currency));
         });
 
         ECONOMY_PROVIDER_CURRENCY = DKCoins.getInstance().getCurrencyManager().searchCurrency(ECONOMY_PROVIDER_CURRENCY0);

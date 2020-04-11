@@ -22,7 +22,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
 
     Top:
     dkcoins_top_(rank)_name_[currency]
-    dkcoins_top_(rank)_amount_[currency]
+    dkcoins_top_(rank)_balance_[currency]
 
     Bank:
     dkcoins_bank_(bank)_balance_[currency]
@@ -63,7 +63,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                                 BankAccount account = DKCoins.getInstance().getAccountManager().getAccountByRank(currency, rank);
                                 return account.getName();
                             }
-                            case "amount": {
+                            case "balance": {
                                 BankAccount account = DKCoins.getInstance().getAccountManager().getAccountByRank(currency, rank);
                                 return account.getCredit(currency).getAmount();
                             }

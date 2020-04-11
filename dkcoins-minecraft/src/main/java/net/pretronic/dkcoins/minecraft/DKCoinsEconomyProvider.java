@@ -55,7 +55,9 @@ public class DKCoinsEconomyProvider implements EconomyProvider {
     @Override
     public double getPlayerBalance(MinecraftPlayer player) {
         Validate.notNull(player);
-        return getDefaultAccountCredit(player).getAmount();
+        AccountCredit credit = getDefaultAccountCredit(player);
+        Validate.notNull(credit);
+        return credit.getAmount();
     }
 
     @Override
