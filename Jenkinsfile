@@ -97,6 +97,7 @@ pipeline {
                     withCredentials([string(credentialsId: '120a9a64-81a7-4557-80bf-161e3ab8b976', variable: 'SECRET')]) {
 
                         //Temporary because project is in beta state
+
                         String qualifier = QUALIFIER;
                         if(qualifier == "BETA") qualifier = "RELEASE"
 
