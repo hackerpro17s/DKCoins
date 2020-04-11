@@ -563,7 +563,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     @Override
     public void updateCurrencyName(int id, String name) {
-        this.currency.update().set("Mame", name)
+        this.currency.update().set("Name", name)
                 .where("Id", id)
                 .execute();
     }
