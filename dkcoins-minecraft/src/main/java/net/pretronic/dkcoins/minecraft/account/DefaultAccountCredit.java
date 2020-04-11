@@ -79,7 +79,7 @@ public class DefaultAccountCredit implements AccountCredit {
 
     @Override
     public AccountTransaction setAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
-        Validate.notNull(executor, cause);
+        Validate.notNull(cause);
         if(properties == null) properties = new ArrayList<>();
         if(reason == null) reason = "none";
         DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
