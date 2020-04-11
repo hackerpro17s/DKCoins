@@ -9,6 +9,7 @@ import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
@@ -25,11 +26,14 @@ import java.util.Arrays;
 
 public class UserBankCommand extends BasicCommand {
 
+    private final String currencyName;
     private final ObjectCommand<Currency> topCommand;
 
-    public UserBankCommand(ObjectOwner owner, CommandConfiguration configuration) {
+    public UserBankCommand(ObjectOwner owner, CommandConfiguration configuration, String currencyName) {
         super(owner, configuration);
+        Validate.notNull(currencyName);
         this.topCommand = new AccountTopCommand(owner);
+        this.currencyName = currencyName;
     }
 
     @Override
@@ -92,6 +96,6 @@ public class UserBankCommand extends BasicCommand {
     }
 
     private Currency getCurrency() {
-        return DKCoins.getInstance().getCurrencyManager().searchCurrency(getConfiguration().getName());
+        return DKCoins.getInstance().getCurrencyManager().searchCurrency(this.currencyName);
     }
 }

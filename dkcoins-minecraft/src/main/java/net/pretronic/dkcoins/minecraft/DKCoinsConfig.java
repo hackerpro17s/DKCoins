@@ -71,7 +71,7 @@ public class DKCoinsConfig {
     private static Map<AccountType, Integer> ACCOUNT_TYPE_START_AMOUNT = new HashMap<>();
 
     @DocumentKey("account.user.creditAliases")
-    public static String[] ACCOUNT_USER_CREDIT_ALIASES = new String[]{"coins"};
+    public static Map<String, String> ACCOUNT_USER_CREDIT_ALIASES = Maps.ofValues(new Pair<>("coins", "coins"));
 
     @DocumentKey("economyProvider.enabled")
     public static boolean ECONOMY_PROVIDER_ENABLED = true;
@@ -124,10 +124,11 @@ public class DKCoinsConfig {
         ACCOUNT_TYPE_START_AMOUNT0.forEach((type, startAmount) ->
                 ACCOUNT_TYPE_START_AMOUNT.put(DKCoins.getInstance().getAccountManager().searchAccountType(type), startAmount));
 
-        for (String userBankCommand : ACCOUNT_USER_CREDIT_ALIASES) {
+
+        ACCOUNT_USER_CREDIT_ALIASES.forEach((currency, command)-> {
             McNative.getInstance().getLocal().getCommandManager().registerCommand(new UserBankCommand(DKCoinsPlugin.getInstance()
-                    , CommandConfiguration.name(userBankCommand)));
-        }
+                    , CommandConfiguration.name(command), currency));
+        });
 
         ECONOMY_PROVIDER_CURRENCY = DKCoins.getInstance().getCurrencyManager().searchCurrency(ECONOMY_PROVIDER_CURRENCY0);
 
