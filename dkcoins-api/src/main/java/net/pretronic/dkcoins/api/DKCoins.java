@@ -20,38 +20,37 @@ import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 
 import java.util.Collection;
 
-public interface DKCoins {
+public abstract class DKCoins {
 
-    PretronicLogger getLogger();
+    private static DKCoins INSTANCE;
 
-    AccountManager getAccountManager();
+    public abstract PretronicLogger getLogger();
 
-    CurrencyManager getCurrencyManager();
+    public abstract AccountManager getAccountManager();
 
-    DKCoinsUserManager getUserManager();
+    public abstract CurrencyManager getCurrencyManager();
 
-    DKCoinsStorage getStorage();
+    public abstract DKCoinsUserManager getUserManager();
 
-    TransactionPropertyBuilder getTransactionPropertyBuilder();
+    public abstract DKCoinsStorage getStorage();
 
-    TransactionFilter newTransactionFilter();
+    public abstract TransactionPropertyBuilder getTransactionPropertyBuilder();
 
-    Collection<Migration> getMigrations();
+    public abstract TransactionFilter newTransactionFilter();
 
-    Migration getMigration(String name);
+    public abstract Collection<Migration> getMigrations();
 
-    void registerMigration(Migration migration);
+    public abstract Migration getMigration(String name);
+
+    public abstract void registerMigration(Migration migration);
 
 
-    static DKCoins getInstance() {
-        return InstanceHolder.INSTANCE;
+    public static DKCoins getInstance() {
+        return INSTANCE;
     }
 
-    static void setInstance(DKCoins instance) {
-        InstanceHolder.INSTANCE = instance;
-    }
-
-    class InstanceHolder {
-        public static DKCoins INSTANCE;
+    public static void setInstance(DKCoins instance) {
+        if(INSTANCE != null) throw new IllegalArgumentException("DKCoins instance already set");
+        INSTANCE = instance;
     }
 }
