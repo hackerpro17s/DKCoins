@@ -96,6 +96,8 @@ public class UserBankCommand extends BasicCommand {
     }
 
     private Currency getCurrency() {
-        return DKCoins.getInstance().getCurrencyManager().searchCurrency(this.currencyName);
+        Currency currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(this.currencyName);
+        Validate.notNull(currency);
+        return currency;
     }
 }

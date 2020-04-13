@@ -258,13 +258,16 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     @Override
     public List<Integer> getTopAccountIds(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page) {
+        Validate.notNull(currency);
         List<Integer> accountIds = new ArrayList<>();
         FindQuery query = this.accountCredit.find().get("AccountId")
                 .join(this.account).on("AccountId", this.account, "Id")
                 .where("CurrencyId", currency.getId())
                 .orderBy("Amount", SearchOrder.DESC);
-        for (AccountType type : excludedAccountTypes) {
-            query.whereNot("TypeId", type.getId());
+        if(excludedAccountTypes != null) {
+            for (AccountType type : excludedAccountTypes) {
+                query.whereNot("TypeId", type.getId());
+            }
         }
         query.page(page, entriesPerPage);
         query.execute().loadIn(accountIds, entry -> entry.getInt("AccountId"));
