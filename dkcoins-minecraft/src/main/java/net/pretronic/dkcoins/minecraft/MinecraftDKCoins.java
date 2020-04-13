@@ -36,8 +36,7 @@ import net.pretronic.dkcoins.minecraft.migration.LegacyDKCoinsMigration;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUser;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUserManager;
 import net.pretronic.libraries.logging.PretronicLogger;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableDescriber;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableDescriberRegistry;
+import net.pretronic.libraries.message.bml.variable.describer.VariableDescriberRegistry;
 import net.pretronic.libraries.utility.Iterators;
 import org.mcnative.common.McNative;
 import org.mcnative.common.plugin.configuration.ConfigurationProvider;
@@ -165,14 +164,14 @@ public class MinecraftDKCoins extends DKCoins {
     }
 
     private void registerVariableDescribers() {
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class, ReflectVariableDescriber.ofSuper(DefaultAccountTransaction.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultCurrency.class, ReflectVariableDescriber.ofSuper(DefaultCurrency.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultCurrencyExchangeRate.class, ReflectVariableDescriber.ofSuper(DefaultCurrencyExchangeRate.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultBankAccount.class, ReflectVariableDescriber.ofSuper(DefaultBankAccount.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountMember.class, ReflectVariableDescriber.ofSuper(DefaultAccountMember.class));
-        ReflectVariableDescriberRegistry.registerDescriber(AccountMemberRole.class, ReflectVariableDescriber.ofSuper(AccountMemberRole.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountCredit.class, ReflectVariableDescriber.ofSuper(DefaultAccountCredit.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultAccountLimitation.class, ReflectVariableDescriber.ofSuper(DefaultAccountLimitation.class));
-        ReflectVariableDescriberRegistry.registerDescriber(DefaultDKCoinsUser.class, ReflectVariableDescriber.ofSuper(DefaultDKCoinsUser.class));
+        VariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class);
+        VariableDescriberRegistry.registerDescriber(DefaultCurrency.class);
+        VariableDescriberRegistry.registerDescriber(DefaultCurrencyExchangeRate.class);
+        VariableDescriberRegistry.registerDescriber(DefaultBankAccount.class);
+        VariableDescriberRegistry.registerDescriber(DefaultAccountMember.class);
+        VariableDescriberRegistry.registerDescriber(AccountMemberRole.class);
+        VariableDescriberRegistry.registerDescriber(DefaultAccountCredit.class);
+        VariableDescriberRegistry.registerDescriber(DefaultAccountLimitation.class);
+        VariableDescriberRegistry.registerDescriber(DefaultDKCoinsUser.class);
     }
 }
