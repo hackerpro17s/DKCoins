@@ -38,7 +38,7 @@ public class UserBankCommand extends BasicCommand {
         Validate.notNull(currencyName);
         this.topCommand = new AccountTopCommand(owner);
         this.currencyName = currencyName;
-        this.disabledWorlds = Arrays.asList(disabledWorlds);
+        this.disabledWorlds = Arrays.asList(disabledWorlds == null ? new String[0] : disabledWorlds);
     }
 
     @Override
