@@ -231,6 +231,7 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public void removeAccountCreditAmount(AccountCredit credit, double amount) {
+        DKCoins.getInstance().getStorage().removeAccountCreditAmount(credit.getId(), amount);
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_REMOVE_AMOUNT)
                 .add("creditId", credit.getId())
