@@ -47,7 +47,7 @@ import org.mcnative.common.serviceprovider.placeholder.PlaceholderService;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MinecraftDKCoins implements DKCoins {
+public class MinecraftDKCoins extends DKCoins {
 
     private final PretronicLogger logger;
     private final DKCoinsStorage storage;

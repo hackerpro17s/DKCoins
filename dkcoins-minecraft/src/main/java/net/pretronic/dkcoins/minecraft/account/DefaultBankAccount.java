@@ -13,6 +13,7 @@ package net.pretronic.dkcoins.minecraft.account;
 import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.type.DocumentFileType;
+import net.pretronic.libraries.synchronisation.Synchronizable;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
@@ -30,7 +31,7 @@ import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DefaultBankAccount implements BankAccount {
+public class DefaultBankAccount implements BankAccount, Synchronizable {
 
     private final int id;
     private String name;

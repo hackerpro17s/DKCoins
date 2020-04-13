@@ -171,7 +171,7 @@ messages:
   dkcoins.command.currency.edit.disable.exchangeRate: '${dkcoins.prefix} &cYou have disabled the exchange from &e{currency.name} &cto &e{targetCurrency.name}'
   dkcoins.command.currency.edit.exchangeRate.amountNotValid: '${dkcoins.prefix} &e{value} &cas a exchange rate is not valid'
 
-  dkcoins.command.userBank.amount: '${dkcoins.prefix} &8» &7You have &e{credit.formattedAmount}&8{credit.currency.symbol}'
+  dkcoins.command.userBank.amount: '${dkcoins.prefix} &7You have &e{credit.formattedAmount}&8{credit.currency.symbol}'
   dkcoins.command.userBank.amount.other: '${dkcoins.prefix} &e{other.name} &7has &e{credit.formattedAmount}{credit.currency.symbol}'
   dkcoins.command.userBank.help: '${dkcoins.prefix} &cInvalid usage of {currency.name} command&8:
   &7/{currency.name}

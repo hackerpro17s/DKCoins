@@ -193,7 +193,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     public void onUpdate(Integer id, Document document) {
         if(connected && !currencies.isEmpty()) {
             Currency currency = getCurrency(id);
-            if(currency != null) currency.onUpdate(document);
+            if(currency != null) ((DefaultCurrency)currency).onUpdate(document);
         }
     }
 

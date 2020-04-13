@@ -15,7 +15,7 @@
     <parent>
         <artifactId>DKCoins</artifactId>
         <groupId>net.pretronic.dkcoins</groupId>
-        <version>1.1.0.38-SNAPSHOT</version>
+        <version>1.1.3.43-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -45,12 +45,6 @@
         <dependency>
             <groupId>net.pretronic.libraries</groupId>
             <artifactId>pretroniclibraries-utility</artifactId>
-            <version>${dependency.pretronic.libraries}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.pretronic.libraries</groupId>
-            <artifactId>pretroniclibraries-synchronisation</artifactId>
             <version>${dependency.pretronic.libraries}</version>
             <scope>provided</scope>
         </dependency>
