@@ -161,8 +161,8 @@ public class DefaultAccountManager implements AccountManager {
     }
 
     @Override
-    public List<BankAccount> getTopAccounts(Currency currency, AccountType[] excludedAccountTypes, int limit) {
-        return Iterators.map(DKCoins.getInstance().getStorage().getTopAccountIds(currency, excludedAccountTypes, limit), this::getAccount);
+    public List<BankAccount> getTopAccounts(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page) {
+        return Iterators.map(DKCoins.getInstance().getStorage().getTopAccountIds(currency, excludedAccountTypes, entriesPerPage, page), this::getAccount);
     }
 
     @Override

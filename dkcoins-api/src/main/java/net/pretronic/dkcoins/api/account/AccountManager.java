@@ -62,7 +62,7 @@ public interface AccountManager {
 
     void deleteAccount(BankAccount account, DKCoinsUser user);
 
-    List<BankAccount> getTopAccounts(Currency currency, AccountType[] excludedAccountTypes, int limit);
+    List<BankAccount> getTopAccounts(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page);
 
     BankAccount getAccountByRank(Currency currency, int rank);
 

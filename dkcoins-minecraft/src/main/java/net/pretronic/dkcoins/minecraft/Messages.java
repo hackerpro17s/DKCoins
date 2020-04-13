@@ -129,8 +129,8 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_USER_BANK_AMOUNT_OTHER = Text.ofMessageKey("dkcoins.command.userBank.amount.other");
     public static final MessageKeyComponent COMMAND_USER_BANK_HELP = Text.ofMessageKey("dkcoins.command.userBank.help");
 
-    public static final MessageKeyComponent TOP_REACH_LIMIT = Text.ofMessageKey("dkcoins.top.reach.limit");
     public static final MessageKeyComponent TOP = Text.ofMessageKey("dkcoins.top");
+    public static final MessageKeyComponent TOP_PAGE_NO_ENTRIES = Text.ofMessageKey("dkcoins.top.pageNoEntries");
 
 
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_HELP = Text.ofMessageKey("dkcoins.bank.settings.help");

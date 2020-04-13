@@ -11,6 +11,7 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.Iterators;
@@ -26,23 +27,24 @@ public class AccountTopCommand extends ObjectCommand<Currency> {
 
     @Override
     public void execute(CommandSender sender, Currency currency, String[] args) {
-        int limit = DKCoinsConfig.TOP_LIMIT_DEFAULT;
+        int page = 1;
         if(args.length > 0) {
-            String limitValue = args[0];
-            if(!GeneralUtil.isNaturalNumber(limitValue)) {
-                sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", limitValue));
+            String page0 = args[0];
+            if(!GeneralUtil.isNaturalNumber(page0)) {
+                sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", page0));
                 return;
             }
-            limit = Integer.parseInt(limitValue);
-            if(limit > DKCoinsConfig.TOP_LIMIT_MAX) {
-                sender.sendMessage(Messages.TOP_REACH_LIMIT);
-                return;
-            }
+            page = Integer.parseInt(page0);
         }
-        List<BankAccount> accounts = DKCoins.getInstance().getAccountManager().getTopAccounts(currency, new AccountType[0], limit);
+        List<BankAccount> accounts = DKCoins.getInstance().getAccountManager().getTopAccounts(currency, new AccountType[0], DKCoinsConfig.TOP_LIMIT_ENTRIES_PER_PAGE, page);
+        if(accounts.isEmpty()) {
+            sender.sendMessage(Messages.TOP_PAGE_NO_ENTRIES);
+            return;
+        }
         List<AccountCredit> credits = Iterators.map(accounts, account -> account.getCredit(currency));
-        sender.sendMessage(Messages.TOP, new ReflectVariableSet()
-                .add("amount", limit)
-                .add("credits", credits));
+        sender.sendMessage(Messages.TOP, new DescribedHashVariableSet()
+                .add("amount", -1)
+                .add("credits", credits)
+                .add("page", page));
     }
 }

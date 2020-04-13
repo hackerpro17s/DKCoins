@@ -85,11 +85,8 @@ public class DKCoinsConfig {
     @DocumentIgnored
     public static Currency ECONOMY_PROVIDER_CURRENCY = null;
 
-    @DocumentKey("command.top.limit.default")
-    public static int TOP_LIMIT_DEFAULT = 5;
-
-    @DocumentKey("command.top.limit.max")
-    public static int TOP_LIMIT_MAX = 10;
+    @DocumentKey("command.top.entriesPerPage")
+    public static int TOP_LIMIT_ENTRIES_PER_PAGE = 5;
 
     @DocumentKey("command.bank")
     public static CommandConfiguration COMMAND_BANK = CommandConfiguration.newBuilder()
