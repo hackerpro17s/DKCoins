@@ -27,6 +27,7 @@ import net.pretronic.dkcoins.minecraft.commands.DKCoinsCommand;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
 import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrency;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrencyExchangeRate;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrencyManager;

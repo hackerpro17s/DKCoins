@@ -3,18 +3,14 @@ package net.pretronic.dkcoins.minecraft.commands;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.migration.Migration;
-import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.Messages;
-import net.pretronic.dkcoins.minecraft.MinecraftDKCoins;
 import net.pretronic.libraries.command.command.BasicCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
-import org.mcnative.common.text.Text;
 
 import java.util.concurrent.TimeUnit;
 

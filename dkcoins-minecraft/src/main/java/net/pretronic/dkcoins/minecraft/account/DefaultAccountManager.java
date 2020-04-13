@@ -10,7 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;

@@ -1,7 +1,6 @@
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
@@ -20,7 +19,6 @@ import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import org.mcnative.common.player.MinecraftPlayer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class BankAdminCommand extends ObjectCommand<BankAccount> {

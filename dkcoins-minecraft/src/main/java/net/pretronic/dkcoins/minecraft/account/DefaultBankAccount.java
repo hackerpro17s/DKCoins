@@ -12,7 +12,6 @@ package net.pretronic.dkcoins.minecraft.account;
 
 import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.synchronisation.Synchronizable;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
@@ -26,7 +25,7 @@ import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 
 import java.util.ArrayList;
 import java.util.Collection;

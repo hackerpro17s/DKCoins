@@ -1,6 +1,6 @@
 package net.pretronic.dkcoins.minecraft.commands.currency;
 
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
@@ -13,8 +13,6 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.minecraft.Messages;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
-
-import java.util.Arrays;
 
 public class CurrencyEditCommand extends ObjectCommand<Currency> {
 

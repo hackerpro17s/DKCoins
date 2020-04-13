@@ -1,9 +1,7 @@
 package net.pretronic.dkcoins.minecraft.commands.currency;
 
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
-import net.pretronic.libraries.command.NotFindable;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.Command;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.DefinedNotFindable;
 import net.pretronic.libraries.command.command.object.MainObjectCommand;
 import net.pretronic.libraries.command.command.object.ObjectCommand;

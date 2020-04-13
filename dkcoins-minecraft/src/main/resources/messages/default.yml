@@ -177,6 +177,7 @@ messages:
   &7/{currency.name}
   &7/{currency.name} transfer <receiver> <amount>
   &7/{currency.name} top <limit>'
+  dkcoins.command.userBank.world.disabled: '${dkcoins.prefix} &e{world} &cis disabled for this currency'
 
   dkcoins.top: '${dkcoins.prefix} &7Top {start}-{end}&8:
   @for("rank" in {ranks}, ${dkcoins.top.loop},"\n")'

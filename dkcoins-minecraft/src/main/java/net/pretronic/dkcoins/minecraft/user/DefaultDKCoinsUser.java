@@ -11,13 +11,10 @@
 package net.pretronic.dkcoins.minecraft.user;
 
 import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
-import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import org.mcnative.common.McNative;
 import org.mcnative.common.player.MinecraftPlayer;
 

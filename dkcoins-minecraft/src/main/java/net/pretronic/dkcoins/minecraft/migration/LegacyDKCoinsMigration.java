@@ -6,7 +6,6 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.migration.Migration;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import org.mcnative.common.McNative;
 import org.mcnative.common.player.data.PlayerDataProvider;
 

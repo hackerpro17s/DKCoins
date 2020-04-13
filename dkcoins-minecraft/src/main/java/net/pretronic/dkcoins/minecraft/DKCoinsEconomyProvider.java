@@ -6,6 +6,7 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.account.TransferCause;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.utility.Validate;
 import org.mcnative.common.player.MinecraftPlayer;
 import org.mcnative.common.serviceprovider.economy.EconomyProvider;

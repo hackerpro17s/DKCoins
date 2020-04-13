@@ -122,6 +122,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.mcnative</groupId>
+            <artifactId>mcnative-service</artifactId>
+            <version>${dependency.mcnative.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
             <version>${dependency.essentialsX}</version>

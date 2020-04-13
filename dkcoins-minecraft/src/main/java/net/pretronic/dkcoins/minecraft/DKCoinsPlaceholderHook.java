@@ -1,10 +1,10 @@
 package net.pretronic.dkcoins.minecraft;
 
 import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.utility.GeneralUtil;
 import org.mcnative.common.player.MinecraftPlayer;
 import org.mcnative.common.serviceprovider.placeholder.PlaceholderHook;

@@ -17,23 +17,28 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.TransferResult;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.account.TransferCause;
+import org.mcnative.common.McNative;
 import org.mcnative.common.player.MinecraftPlayer;
+import org.mcnative.service.entity.living.Player;
+import org.mcnative.service.world.World;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 public class UserBankCommand extends BasicCommand {
 
     private final String currencyName;
+    private final Collection<String> disabledWorlds;
     private final ObjectCommand<Currency> topCommand;
 
-    public UserBankCommand(ObjectOwner owner, CommandConfiguration configuration, String currencyName) {
+    public UserBankCommand(ObjectOwner owner, CommandConfiguration configuration, String currencyName, String[] disabledWorlds) {
         super(owner, configuration);
         Validate.notNull(currencyName);
         this.topCommand = new AccountTopCommand(owner);
         this.currencyName = currencyName;
+        this.disabledWorlds = Arrays.asList(disabledWorlds);
     }
 
     @Override
@@ -42,6 +47,15 @@ public class UserBankCommand extends BasicCommand {
             commandSender.sendMessage(Messages.ERROR_NOT_FROM_CONSOLE);
             return;
         }
+        if(McNative.getInstance().getPlatform().isService() && commandSender instanceof Player) {
+            Player player = (Player) commandSender;
+            World world = player.getLocation().getWorld();
+            if(this.disabledWorlds.contains(world.getName())) {
+                player.sendMessage(Messages.COMMAND_USER_BANK_WORLD_DISABLED, VariableSet.create().add("world", world.getName()));
+                return;
+            }
+        }
+
         DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer)commandSender).getUniqueId());
         if(args.length == 0) {
             AccountCredit credit = user.getDefaultAccount().getCredit(getCurrency());
