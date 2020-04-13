@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultAccountManager implements AccountManager {
 
@@ -161,8 +162,10 @@ public class DefaultAccountManager implements AccountManager {
     }
 
     @Override
-    public List<BankAccount> getTopAccounts(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page) {
-        return Iterators.map(DKCoins.getInstance().getStorage().getTopAccountIds(currency, excludedAccountTypes, entriesPerPage, page), this::getAccount);
+    public List<RankedAccountCredit> getTopAccountCredits(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page) {
+        AtomicInteger rank = new AtomicInteger(entriesPerPage * (page - 1) + 1);
+        return Iterators.map(DKCoins.getInstance().getStorage().getTopAccountCreditIds(currency, excludedAccountTypes, entriesPerPage, page),
+                (creditId) -> new DefaultRankedAccountCredit(rank.getAndIncrement(), creditId));
     }
 
     @Override
@@ -513,6 +516,22 @@ public class DefaultAccountManager implements AccountManager {
                 String name = (String) identifiers[0];
                 AccountType type = (AccountType) identifiers[1];
                 return account.getName().equalsIgnoreCase(name) && account.getType().equals(type);
+            }
+        }).registerQuery("byCreditId", new CacheQuery<BankAccount>() {
+            @Override
+            public void validate(Object[] identifiers) {
+                Validate.isTrue(identifiers.length == 1 && identifiers[0] instanceof Integer);
+            }
+
+            @Override
+            public BankAccount load(Object[] identifiers) {
+                //@Todo direct via join
+                int accountId = DKCoins.getInstance().getStorage().getAccountCreditAccountId((int) identifiers[0]);
+                return DKCoins.getInstance().getAccountManager().getAccount(accountId);
+            }
+            @Override
+            public boolean check(BankAccount account, Object[] identifiers) {
+                return account.getCredit((int) identifiers[0]) != null;
             }
         }).setInsertListener(this::createMissingAccountCredits);
 

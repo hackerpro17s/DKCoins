@@ -173,5 +173,6 @@ public class MinecraftDKCoins extends DKCoins {
         VariableDescriberRegistry.registerDescriber(DefaultAccountCredit.class);
         VariableDescriberRegistry.registerDescriber(DefaultAccountLimitation.class);
         VariableDescriberRegistry.registerDescriber(DefaultDKCoinsUser.class);
+        VariableDescriberRegistry.registerDescriber(DefaultRankedAccountCredit.class);
     }
 }

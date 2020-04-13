@@ -178,9 +178,9 @@ messages:
   &7/{currency.name} transfer <receiver> <amount>
   &7/{currency.name} top <limit>'
 
-  dkcoins.top: '${dkcoins.prefix} &7Top {amount}&8:
-  @for("credit" in {credits}, ${dkcoins.top.loop},"\n")'
-  dkcoins.top.loop: '&8» &7#{position} &7{credit.name} &e{credit.formattedAmount}{credit.currency.symbol}'
+  dkcoins.top: '${dkcoins.prefix} &7Top {start}-{end}&8:
+  @for("rank" in {ranks}, ${dkcoins.top.loop},"\n")'
+  dkcoins.top.loop: '&8» &7#{rank.position} &7{rank.credit.name} &e{rank.credit.formattedAmount}{rank.credit.currency.symbol}'
   dkcoins.top.pageNoEntries: '${dkcoins.prefix} &cThis page does''t exist'
 
   dkcoins.bank.settings.help: '${dkcoins.prefix} &cInvalid usage of command bank settings&8:

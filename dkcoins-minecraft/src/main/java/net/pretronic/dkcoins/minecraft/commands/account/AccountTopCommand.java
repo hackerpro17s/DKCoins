@@ -3,7 +3,7 @@ package net.pretronic.dkcoins.minecraft.commands.account;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.AccountType;
-import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.RankedAccountCredit;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.dkcoins.minecraft.Messages;
@@ -12,7 +12,6 @@ import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
@@ -36,15 +35,18 @@ public class AccountTopCommand extends ObjectCommand<Currency> {
             }
             page = Integer.parseInt(page0);
         }
-        List<BankAccount> accounts = DKCoins.getInstance().getAccountManager().getTopAccounts(currency, new AccountType[0], DKCoinsConfig.TOP_LIMIT_ENTRIES_PER_PAGE, page);
-        if(accounts.isEmpty()) {
+        List<RankedAccountCredit> ranks = DKCoins.getInstance().getAccountManager()
+                .getTopAccountCredits(currency, new AccountType[0], DKCoinsConfig.TOP_LIMIT_ENTRIES_PER_PAGE, page);
+        if(ranks.isEmpty()) {
             sender.sendMessage(Messages.TOP_PAGE_NO_ENTRIES);
             return;
         }
-        List<AccountCredit> credits = Iterators.map(accounts, account -> account.getCredit(currency));
+        int start = DKCoinsConfig.TOP_LIMIT_ENTRIES_PER_PAGE * (page - 1) + 1;
+        int end = page * DKCoinsConfig.TOP_LIMIT_ENTRIES_PER_PAGE;
         sender.sendMessage(Messages.TOP, new DescribedHashVariableSet()
-                .add("amount", -1)
-                .add("credits", credits)
+                .add("start", start)
+                .add("end", end)
+                .add("ranks", ranks)
                 .add("page", page));
     }
 }

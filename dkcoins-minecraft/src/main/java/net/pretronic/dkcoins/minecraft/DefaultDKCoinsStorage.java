@@ -257,10 +257,10 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
-    public List<Integer> getTopAccountIds(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page) {
+    public List<Integer> getTopAccountCreditIds(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page) {
         Validate.notNull(currency);
-        List<Integer> accountIds = new ArrayList<>();
-        FindQuery query = this.accountCredit.find().get("AccountId")
+        List<Integer> accountCreditIds = new ArrayList<>();
+        FindQuery query = this.accountCredit.find().get("dkoins_account_credit.Id")
                 .join(this.account).on("AccountId", this.account, "Id")
                 .where("CurrencyId", currency.getId())
                 .orderBy("Amount", SearchOrder.DESC);
@@ -270,8 +270,8 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
             }
         }
         query.page(page, entriesPerPage);
-        query.execute().loadIn(accountIds, entry -> entry.getInt("AccountId"));
-        return accountIds;
+        query.execute().loadIn(accountCreditIds, entry -> entry.getInt("Id"));
+        return accountCreditIds;
     }
 
     @Override

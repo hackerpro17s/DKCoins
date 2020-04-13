@@ -11,7 +11,6 @@
 package net.pretronic.dkcoins.api.account;
 
 import net.pretronic.libraries.utility.annonations.Nullable;
-import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
@@ -62,7 +61,7 @@ public interface AccountManager {
 
     void deleteAccount(BankAccount account, DKCoinsUser user);
 
-    List<BankAccount> getTopAccounts(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page);
+    List<RankedAccountCredit> getTopAccountCredits(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page);
 
     BankAccount getAccountByRank(Currency currency, int rank);
 
