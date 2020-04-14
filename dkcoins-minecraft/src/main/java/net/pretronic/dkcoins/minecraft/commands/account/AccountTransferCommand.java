@@ -10,24 +10,24 @@
 
 package net.pretronic.dkcoins.minecraft.commands.account;
 
-import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
-import net.pretronic.libraries.utility.GeneralUtil;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.TransferResult;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
+import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
@@ -87,7 +87,7 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
                     CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
                     DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
             if(result.isSuccess()) {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new ReflectVariableSet()
+                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new DescribedHashVariableSet()
                         .add("transaction", result.getTransaction()));
             } else {
                 CommandUtil.handleTransferFailCauses(result, commandSender);

@@ -1,19 +1,18 @@
 package net.pretronic.dkcoins.minecraft.commands.bank.member;
 
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.command.sender.ConsoleCommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
-import org.mcnative.common.McNative;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.command.sender.ConsoleCommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.player.MinecraftPlayer;
 
 public class BankMemberRoleCommand extends ObjectCommand<AccountMember> {
@@ -44,7 +43,7 @@ public class BankMemberRoleCommand extends ObjectCommand<AccountMember> {
                     return;
                 }
                 member.setRole(role);
-                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ROLE, new ReflectVariableSet()
+                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ROLE, new DescribedHashVariableSet()
                         .add("member", member));
                 if(role == AccountMemberRole.OWNER) {
                     if(self != null) {
@@ -53,7 +52,7 @@ public class BankMemberRoleCommand extends ObjectCommand<AccountMember> {
                 }
             } else {
                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER,
-                        new ReflectVariableSet().add("targetRole", member.getRole()));
+                        new DescribedHashVariableSet().add("targetRole", member.getRole()));
             }
         }
     }

@@ -1,6 +1,14 @@
 package net.pretronic.dkcoins.minecraft.commands;
 
+import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.account.AccountCredit;
+import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.TransferResult;
+import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.dkcoins.minecraft.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountTopCommand;
 import net.pretronic.dkcoins.minecraft.config.CreditAlias;
 import net.pretronic.libraries.command.command.BasicCommand;
@@ -8,25 +16,16 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountCredit;
-import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.account.TransferResult;
-import net.pretronic.dkcoins.api.account.member.AccountMember;
-import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import net.pretronic.dkcoins.minecraft.Messages;
-import net.pretronic.dkcoins.minecraft.account.TransferCause;
 import org.mcnative.common.McNative;
 import org.mcnative.common.player.MinecraftPlayer;
 import org.mcnative.service.entity.living.Player;
 import org.mcnative.service.world.World;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 public class UserBankCommand extends BasicCommand {
 
@@ -61,7 +60,7 @@ public class UserBankCommand extends BasicCommand {
         DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer)commandSender).getUniqueId());
         if(args.length == 0) {
             AccountCredit credit = user.getDefaultAccount().getCredit(getCurrency());
-            commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, new ReflectVariableSet()
+            commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, new DescribedHashVariableSet()
                     .add("credit", credit));
             return;
         }
@@ -88,7 +87,7 @@ public class UserBankCommand extends BasicCommand {
                         CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
                         DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
                 if(result.isSuccess()) {
-                    commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new ReflectVariableSet()
+                    commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new DescribedHashVariableSet()
                             .add("transaction", result.getTransaction()));
                 } else {
                     CommandUtil.handleTransferFailCauses(result, commandSender);
@@ -108,7 +107,7 @@ public class UserBankCommand extends BasicCommand {
                 commandSender.sendMessage(Messages.ERROR_NO_PERMISSION);
             }
             AccountCredit credit = target.getDefaultAccount().getCredit(getCurrency());
-            commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT_OTHER, new ReflectVariableSet()
+            commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT_OTHER, new DescribedHashVariableSet()
                     .add("other", target.getDefaultAccount().getMember(target))
                     .add("credit", credit));
         }

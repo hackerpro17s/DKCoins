@@ -1,20 +1,20 @@
 package net.pretronic.dkcoins.minecraft.commands.bank.member;
 
+import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.account.AccountLimitation;
+import net.pretronic.dkcoins.api.account.access.AccessRight;
+import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountLimitation;
-import net.pretronic.dkcoins.api.account.access.AccessRight;
-import net.pretronic.dkcoins.api.account.member.AccountMember;
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
-import net.pretronic.dkcoins.minecraft.Messages;
-import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import org.mcnative.common.player.MinecraftPlayer;
 
 public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
@@ -60,13 +60,13 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
 
                             if(args[0].equalsIgnoreCase("set")) {
                                 AccountLimitation limitation = member.addLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
-                                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_SET, new ReflectVariableSet()
+                                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_SET, new DescribedHashVariableSet()
                                         .add("limitation", limitation)
                                         .add("member", member));
                             } else {
                                 AccountLimitation limitation = member.getLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
                                 if(member.removeLimitation(limitation)) {
-                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE, new ReflectVariableSet()
+                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE, new DescribedHashVariableSet()
                                             .add("limitation", limitation)
                                             .add("member", member));
                                 } else {
@@ -84,10 +84,10 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
 
     private void listLimitations(CommandSender commandSender, AccountMember member) {
         if(member.getLimitations().isEmpty()) {
-            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION, new ReflectVariableSet()
+            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION, new DescribedHashVariableSet()
                     .add("member", member));
         } else {
-            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, new ReflectVariableSet()
+            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, new DescribedHashVariableSet()
                     .add("limitations", member.getLimitations()));
         }
     }

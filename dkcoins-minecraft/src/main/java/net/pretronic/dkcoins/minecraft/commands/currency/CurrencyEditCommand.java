@@ -1,17 +1,17 @@
 package net.pretronic.dkcoins.minecraft.commands.currency;
 
+import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
+import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
-import net.pretronic.dkcoins.minecraft.Messages;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
 public class CurrencyEditCommand extends ObjectCommand<Currency> {
@@ -32,7 +32,7 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
                 final String oldName = currency.getName();
                 String name = args[1];
                 currency.setName(name);
-                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_NAME, new ReflectVariableSet()
+                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_NAME, new DescribedHashVariableSet()
                         .add("oldName", oldName)
                         .add("currency", currency));
                 return;
@@ -40,7 +40,7 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
                 final String oldSymbol = currency.getSymbol();
                 String symbol = args[1];
                 currency.setSymbol(symbol);
-                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_SYMBOL, new ReflectVariableSet()
+                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_SYMBOL, new DescribedHashVariableSet()
                         .add("oldSymbol", oldSymbol)
                         .add("currency", currency));
                 return;
@@ -56,7 +56,7 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
             String argument = args[2];
             if(argument.equalsIgnoreCase("disable")) {
                 currency.setExchangeRate(targetCurrency, -1);
-                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DISABLE_EXCHANGE_RATE, new ReflectVariableSet()
+                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DISABLE_EXCHANGE_RATE, new DescribedHashVariableSet()
                         .add("currency", currency)
                         .add("targetCurrency", targetCurrency));
                 return;
@@ -72,7 +72,7 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
                 return;
             }
             CurrencyExchangeRate exchangeRate = currency.setExchangeRate(targetCurrency, amount);
-            commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_EXCHANGE_RATE, new ReflectVariableSet()
+            commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_EXCHANGE_RATE, new DescribedHashVariableSet()
                     .add("exchangeRate", exchangeRate));
             return;
         }

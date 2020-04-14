@@ -1,22 +1,21 @@
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
-import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
-import net.pretronic.libraries.utility.GeneralUtil;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
+import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.player.MinecraftPlayer;
 
 import java.util.ArrayList;
