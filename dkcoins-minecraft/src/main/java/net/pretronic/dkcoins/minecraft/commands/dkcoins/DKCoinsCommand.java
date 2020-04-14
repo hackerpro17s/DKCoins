@@ -19,15 +19,10 @@ public class DKCoinsCommand extends MainCommand implements NotFindable {
     @Override
     public void commandNotFound(CommandSender sender, String command, String[] args) {
         if(sender.hasPermission("dkcoins.admin")) {
-            printHelpMessage(sender);
+            sender.sendMessage(Messages.COMMAND_DKCOINS_HELP);
         } else {
             sender.sendMessage(String.format("DKCoins v%s was programmed by Pretronic (https://pretronic.net)",
                     DKCoinsPlugin.getInstance().getDescription().getVersion().getName()));
         }
-    }
-
-    private void printHelpMessage(CommandSender sender) {
-        sender.sendMessage(Messages.PREFIX + " Invalid usage of dkcoins command:");
-        sender.sendMessage("&7/dkcoins migrate <name> [currency] &8- &7Migrate old coin system to DKCoins");
     }
 }
