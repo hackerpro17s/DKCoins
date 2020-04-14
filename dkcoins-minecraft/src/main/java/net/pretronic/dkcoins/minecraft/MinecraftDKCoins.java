@@ -23,7 +23,7 @@ import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 import net.pretronic.dkcoins.minecraft.account.*;
 import net.pretronic.dkcoins.minecraft.account.transaction.DefaultAccountTransaction;
 import net.pretronic.dkcoins.minecraft.account.transaction.DefaultTransactionFilter;
-import net.pretronic.dkcoins.minecraft.commands.DKCoinsCommand;
+import net.pretronic.dkcoins.minecraft.commands.dkcoins.DKCoinsCommand;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
 import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;

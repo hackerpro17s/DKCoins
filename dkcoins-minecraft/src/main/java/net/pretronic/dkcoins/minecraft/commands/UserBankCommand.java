@@ -82,12 +82,8 @@ public class UserBankCommand extends BasicCommand {
 
 
                 if(receiver0.equalsIgnoreCase("@all")) {
-                    for (ConnectedMinecraftPlayer connectedPlayer : McNative.getInstance().getLocal().getConnectedPlayers()) {
-                        BankAccount receiver = DKCoins.getInstance().getAccountManager().getAccount(connectedPlayer.getName(), "User");
-                        if(receiver == null) continue;
-
-                        transact(commandSender, member, credit, receiver, amount, args);
-                    }
+                    CommandUtil.loopThroughUserBanks(user.getDefaultAccount(), receiver ->
+                            transfer(commandSender, member, credit, receiver, amount, args));
                     return;
                 }
 
@@ -96,7 +92,7 @@ public class UserBankCommand extends BasicCommand {
                     commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
                     return;
                 }
-                transact(commandSender, member, credit, receiver, amount, args);
+                transfer(commandSender, member, credit, receiver, amount, args);
             } else {
                 commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create().add("currency", getCurrency().getName()));
             }
@@ -124,7 +120,7 @@ public class UserBankCommand extends BasicCommand {
         return currency;
     }
 
-    private void transact(CommandSender commandSender, AccountMember member, AccountCredit credit, BankAccount receiver, double amount, String[] args) {
+    private void transfer(CommandSender commandSender, AccountMember member, AccountCredit credit, BankAccount receiver, double amount, String[] args) {
         TransferResult result = credit.transfer(member, amount, receiver.getCredit(credit.getCurrency()),
                 CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
                 DKCoins.getInstance().getTransactionPropertyBuilder().build(member));

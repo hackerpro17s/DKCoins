@@ -21,7 +21,10 @@ import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
 import org.mcnative.common.McNative;
+import org.mcnative.common.player.ConnectedMinecraftPlayer;
 import org.mcnative.common.player.MinecraftPlayer;
+
+import java.util.function.Consumer;
 
 public final class CommandUtil {
 
@@ -135,5 +138,13 @@ public final class CommandUtil {
             return DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer) commandSender).getUniqueId());
         }
         return null;
+    }
+
+    public static void loopThroughUserBanks(BankAccount own, Consumer<BankAccount> accountConsumer) {
+        for (ConnectedMinecraftPlayer connectedPlayer : McNative.getInstance().getLocal().getConnectedPlayers()) {
+            BankAccount account = DKCoins.getInstance().getAccountManager().getAccount(connectedPlayer.getName(), "User");
+            if(account == null || account.equals(own)) continue;
+            accountConsumer.accept(account);
+        }
     }
 }

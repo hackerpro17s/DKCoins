@@ -78,11 +78,7 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
             }
 
             if(receiver0.equalsIgnoreCase("@all")) {
-                for (ConnectedMinecraftPlayer connectedPlayer : McNative.getInstance().getLocal().getConnectedPlayers()) {
-                    BankAccount receiver = DKCoins.getInstance().getAccountManager().getAccount(connectedPlayer.getName(), "User");
-                    if(receiver == null) continue;
-                    transact(commandSender, account, receiver, amount, currency, args);
-                }
+                CommandUtil.loopThroughUserBanks(account, receiver -> transfer(commandSender, account, receiver, amount, currency, args));
                 return;
             }
             BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
@@ -90,11 +86,11 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
                 return;
             }
-            transact(commandSender, account, receiver, amount, currency, args);
+            transfer(commandSender, account, receiver, amount, currency, args);
         }
     }
 
-    private void transact(CommandSender commandSender, BankAccount account, BankAccount receiver, double amount, Currency currency,  String[] args) {
+    private void transfer(CommandSender commandSender, BankAccount account, BankAccount receiver, double amount, Currency currency, String[] args) {
 
         OnlineMinecraftPlayer player = (OnlineMinecraftPlayer) commandSender;
         AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));

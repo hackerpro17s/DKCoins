@@ -15,7 +15,7 @@ import org.mcnative.common.text.components.MessageKeyComponent;
 
 public class Messages {
 
-    public static final MessageKeyComponent PREFIX = Text.ofMessageKey("dkcoins.prefix");
+    public static final String PREFIX = "&8» &6DKCoins &8|&f";
 
 
     public static final MessageKeyComponent ERROR_NOT_FROM_CONSOLE = Text.ofMessageKey("dkcoins.error.notFromConsole");
@@ -138,4 +138,6 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_RECEIVE_NOTIFICATIONS_ON = Text.ofMessageKey("dkcoins.bank.settings.receiveNotifications.on");
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_RECEIVE_NOTIFICATIONS_OFF = Text.ofMessageKey("dkcoins.bank.settings.receiveNotifications.off");
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_NOT_VALID = Text.ofMessageKey("dkcoins.bank.settings.notValid");
+
+    public static final MessageKeyComponent COMMAND_DKCOINS_ADMIN_HELP = Text.ofMessageKey("dkcoins.command.dkcoins.admin.help");
 }
