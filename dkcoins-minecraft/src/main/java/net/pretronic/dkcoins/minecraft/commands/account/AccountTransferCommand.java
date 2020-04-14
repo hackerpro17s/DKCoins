@@ -57,6 +57,7 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
             commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_HELP);
             return;
         }
+        // /pay <bank> amount currency
         if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.WITHDRAW)) {
             String receiver0 = args[0];
             String amount0 = args[1];

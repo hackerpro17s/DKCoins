@@ -75,6 +75,7 @@ public class DKCoinsConfig {
     @DocumentKey("account.user.creditAliases")
     public static CreditAlias[] ACCOUNT_USER_CREDIT_ALIASES = new CreditAlias[]{new CreditAlias("Coins",
             "dkcoins.command.coins",
+            "dkcoins.command.coins.other",
             new String[]{"coins", "money"},
             new String[0])};
 
@@ -150,7 +151,7 @@ public class DKCoinsConfig {
             commandConfigurationBuilder.permission(creditAlias.getPermission());
 
             McNative.getInstance().getLocal().getCommandManager().registerCommand(new UserBankCommand(DKCoinsPlugin.getInstance(),
-                    commandConfigurationBuilder.create(), creditAlias.getCurrency(), creditAlias.getDisabledWorlds()));
+                    commandConfigurationBuilder.create(), creditAlias));
         }
 
         ECONOMY_PROVIDER_CURRENCY = DKCoins.getInstance().getCurrencyManager().searchCurrency(ECONOMY_PROVIDER_CURRENCY0);

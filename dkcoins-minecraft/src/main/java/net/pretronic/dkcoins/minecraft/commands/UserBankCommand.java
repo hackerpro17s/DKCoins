@@ -2,6 +2,7 @@ package net.pretronic.dkcoins.minecraft.commands;
 
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountTopCommand;
+import net.pretronic.dkcoins.minecraft.config.CreditAlias;
 import net.pretronic.libraries.command.command.BasicCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
@@ -29,16 +30,14 @@ import java.util.Collection;
 
 public class UserBankCommand extends BasicCommand {
 
-    private final String currencyName;
-    private final Collection<String> disabledWorlds;
+    private final CreditAlias creditAlias;
     private final ObjectCommand<Currency> topCommand;
 
-    public UserBankCommand(ObjectOwner owner, CommandConfiguration configuration, String currencyName, String[] disabledWorlds) {
+    public UserBankCommand(ObjectOwner owner, CommandConfiguration configuration, CreditAlias creditAlias) {
         super(owner, configuration);
-        Validate.notNull(currencyName);
+        Validate.notNull(creditAlias);
+        this.creditAlias = creditAlias;
         this.topCommand = new AccountTopCommand(owner);
-        this.currencyName = currencyName;
-        this.disabledWorlds = Arrays.asList(disabledWorlds == null ? new String[0] : disabledWorlds);
     }
 
     @Override
@@ -51,10 +50,11 @@ public class UserBankCommand extends BasicCommand {
             Player player = (Player) commandSender;
             World world = player.getLocation().getWorld();
             System.out.println(world.getName());
-            System.out.println(disabledWorlds);
-            if(this.disabledWorlds.contains(world.getName())) {
-                player.sendMessage(Messages.COMMAND_USER_BANK_WORLD_DISABLED, VariableSet.create().add("world", world.getName()));
-                return;
+            for (String disabledWorld : creditAlias.getDisabledWorlds()) {
+                if(disabledWorld.equalsIgnoreCase(world.getName())) {
+                    player.sendMessage(Messages.COMMAND_USER_BANK_WORLD_DISABLED, VariableSet.create().add("world", world.getName()));
+                    return;
+                }
             }
         }
 
@@ -104,6 +104,9 @@ public class UserBankCommand extends BasicCommand {
                 commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS, VariableSet.create().add("name", action));
                 return;
             }
+            if(!commandSender.hasPermission(creditAlias.getOtherPermission())) {
+                commandSender.sendMessage(Messages.ERROR_NO_PERMISSION);
+            }
             AccountCredit credit = target.getDefaultAccount().getCredit(getCurrency());
             commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT_OTHER, new ReflectVariableSet()
                     .add("other", target.getDefaultAccount().getMember(target))
@@ -112,7 +115,7 @@ public class UserBankCommand extends BasicCommand {
     }
 
     private Currency getCurrency() {
-        Currency currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(this.currencyName);
+        Currency currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(this.creditAlias.getCurrency());
         Validate.notNull(currency);
         return currency;
     }

@@ -5,6 +5,7 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
@@ -59,21 +60,21 @@ public class BankAdminCommand extends ObjectCommand<BankAccount> {
                     case "addamount": {
                         AccountTransaction transaction = account.getCredit(currency).addAmount(member, amount,
                                 CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, new ReflectVariableSet()
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, new DescribedHashVariableSet()
                                 .add("transaction", transaction));
                         return;
                     }
                     case "removeamount": {
                         AccountTransaction transaction = account.getCredit(currency).removeAmount(member, amount,
                                 CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, new ReflectVariableSet()
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, new DescribedHashVariableSet()
                                 .add("transaction", transaction));
                         return;
                     }
                     case "setamount": {
                         AccountTransaction transaction = account.getCredit(currency)
                                 .setAmount(member, amount, CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, new ReflectVariableSet()
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, new DescribedHashVariableSet()
                                 .add("transaction", transaction));
                         return;
                     }
