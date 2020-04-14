@@ -42,19 +42,6 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
         String amount0 = args[2];
         String currency0 = args.length == 4 ? args[3] : null;
 
-        if(bankAccount.equalsIgnoreCase("@all")) {
-            CommandUtil.loopThroughUserBanks(null, receiver -> transfer(commandSender, args, action, bankAccount, amount0, currency0));
-        } else {
-            BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(bankAccount);
-            if(receiver == null) {
-                commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", bankAccount));
-                return;
-            }
-            transfer(commandSender, args, action, bankAccount, amount0, currency0);
-        }
-    }
-
-    private void transfer(CommandSender commandSender, String[] args, String action, String bankAccount, String amount0, String currency0) {
         if(!GeneralUtil.isNumber(amount0)) {
             commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", amount0));
             return;
@@ -73,18 +60,14 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
         }
 
         if(bankAccount.equalsIgnoreCase("@all")) {
-            for (ConnectedMinecraftPlayer connectedPlayer : McNative.getInstance().getLocal().getConnectedPlayers()) {
-                BankAccount receiver = DKCoins.getInstance().getAccountManager().getAccount(connectedPlayer.getName(), "User");
-                if(receiver == null) continue;
-                transfer(commandSender, receiver, currency, amount, action, args);
-            }
+            CommandUtil.loopThroughUserBanks(null, receiver -> transfer(commandSender, receiver, currency, amount, action, args));
         } else {
-            BankAccount account = DKCoins.getInstance().getAccountManager().searchAccount(bankAccount);
-            if(account == null) {
+            BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(bankAccount);
+            if(receiver == null) {
                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", bankAccount));
                 return;
             }
-            transfer(commandSender, account, currency, amount, action, args);
+            transfer(commandSender, receiver, currency, amount, action, args);
         }
     }
 
