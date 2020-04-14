@@ -48,11 +48,12 @@ public class UserBankCommand extends BasicCommand {
         if(McNative.getInstance().getPlatform().isService() && commandSender instanceof Player) {
             Player player = (Player) commandSender;
             World world = player.getLocation().getWorld();
-            System.out.println(world.getName());
-            for (String disabledWorld : creditAlias.getDisabledWorlds()) {
-                if(disabledWorld.equalsIgnoreCase(world.getName())) {
-                    player.sendMessage(Messages.COMMAND_USER_BANK_WORLD_DISABLED, VariableSet.create().add("world", world.getName()));
-                    return;
+            if(world != null) {
+                for (String disabledWorld : creditAlias.getDisabledWorlds()) {
+                    if(disabledWorld.equalsIgnoreCase(world.getName())) {
+                        player.sendMessage(Messages.COMMAND_USER_BANK_WORLD_DISABLED, VariableSet.create().add("world", world.getName()));
+                        return;
+                    }
                 }
             }
         }
