@@ -194,7 +194,7 @@ messages:
   dkcoins.bank.settings.notValid: '${dkcoins.prefix} &e{value} &cis not a valid setting'
 
   dkcoins.command.dkcoins.help: '${dkcoins.prefix} &cInvalid usage of dkcoins bankAdmin command&8:
-  &7/dkcoins migrate <name> [currency]
+  &7/dkcoins migrate <name> [currency] (Only executable from console)
 
   &7/dkcoins bankAdmin <bank> setAmount <amount> [currency]
   &7/dkcoins bankAdmin <bank> addAmount <amount> [currency]
