@@ -34,7 +34,7 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
     @Override
     public void execute(CommandSender commandSender, String[] args) {
         if(args.length < 3) {
-            printHelpMessage(commandSender);
+            commandSender.sendMessage(Messages.COMMAND_DKCOINS_ADMIN_HELP);
             return;
         }
         String bankAccount = args[0];
@@ -116,13 +116,5 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
             commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, new DescribedHashVariableSet()
                     .add("transaction", transaction));
         }
-    }
-
-    private void printHelpMessage(CommandSender commandSender) {
-        /*
-        /dkcoins bankAdmin <name, @all> <addAmount, setAmount, removeAmount> <amount> [currency]
-         */
-        commandSender.sendMessage(Messages.PREFIX + "§cInvalid usage of dkcoins admin command&8:");
-        commandSender.sendMessage(Messages.PREFIX + "");
     }
 }
