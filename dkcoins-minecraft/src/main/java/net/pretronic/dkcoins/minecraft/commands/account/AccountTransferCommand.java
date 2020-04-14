@@ -29,6 +29,7 @@ import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVaria
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
+import org.mcnative.common.player.ConnectedMinecraftPlayer;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
 public class AccountTransferCommand extends ObjectCommand<BankAccount> {
@@ -63,11 +64,6 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
             String amount0 = args[1];
             String currency0 = args.length == 3 ? args[2] : null;
 
-            BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
-            if(receiver == null) {
-                commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
-                return;
-            }
             if(!GeneralUtil.isNumber(amount0)) {
                 commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", amount0));
                 return;
@@ -80,18 +76,37 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
                 commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create().add("name", currency0));
                 return;
             }
-            OnlineMinecraftPlayer player = (OnlineMinecraftPlayer) commandSender;
-            AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
 
-            TransferResult result = account.getCredit(currency).transfer(member, amount, receiver.getCredit(currency),
-                    CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
-                    DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
-            if(result.isSuccess()) {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new DescribedHashVariableSet()
-                        .add("transaction", result.getTransaction()));
-            } else {
-                CommandUtil.handleTransferFailCauses(result, commandSender);
+            if(receiver0.equalsIgnoreCase("@all")) {
+                for (ConnectedMinecraftPlayer connectedPlayer : McNative.getInstance().getLocal().getConnectedPlayers()) {
+                    BankAccount receiver = DKCoins.getInstance().getAccountManager().getAccount(connectedPlayer.getName(), "User");
+                    if(receiver == null) continue;
+                    transact(commandSender, account, receiver, amount, currency, args);
+                }
+                return;
             }
+            BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
+            if(receiver == null) {
+                commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
+                return;
+            }
+            transact(commandSender, account, receiver, amount, currency, args);
+        }
+    }
+
+    private void transact(CommandSender commandSender, BankAccount account, BankAccount receiver, double amount, Currency currency,  String[] args) {
+
+        OnlineMinecraftPlayer player = (OnlineMinecraftPlayer) commandSender;
+        AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
+
+        TransferResult result = account.getCredit(currency).transfer(member, amount, receiver.getCredit(currency),
+                CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
+                DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
+        if(result.isSuccess()) {
+            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new DescribedHashVariableSet()
+                    .add("transaction", result.getTransaction()));
+        } else {
+            CommandUtil.handleTransferFailCauses(result, commandSender);
         }
     }
 }

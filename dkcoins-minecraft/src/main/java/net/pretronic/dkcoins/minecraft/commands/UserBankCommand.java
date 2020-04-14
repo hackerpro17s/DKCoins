@@ -21,6 +21,7 @@ import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
+import org.mcnative.common.player.ConnectedMinecraftPlayer;
 import org.mcnative.common.player.MinecraftPlayer;
 import org.mcnative.service.entity.living.Player;
 import org.mcnative.service.world.World;
@@ -71,11 +72,6 @@ public class UserBankCommand extends BasicCommand {
                 AccountCredit credit = user.getDefaultAccount().getCredit(getCurrency());
                 AccountMember member = user.getDefaultAccount().getMember(user);
                 String receiver0 = args[1];
-                BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
-                if(receiver == null) {
-                    commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
-                    return;
-                }
 
                 String amount0 = args[2];
                 if(!GeneralUtil.isNumber(amount0)) {
@@ -84,15 +80,23 @@ public class UserBankCommand extends BasicCommand {
                 }
                 double amount = Double.parseDouble(amount0);
 
-                TransferResult result = credit.transfer(member, amount, receiver.getCredit(credit.getCurrency()),
-                        CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
-                        DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
-                if(result.isSuccess()) {
-                    commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new DescribedHashVariableSet()
-                            .add("transaction", result.getTransaction()));
-                } else {
-                    CommandUtil.handleTransferFailCauses(result, commandSender);
+
+                if(receiver0.equalsIgnoreCase("@all")) {
+                    for (ConnectedMinecraftPlayer connectedPlayer : McNative.getInstance().getLocal().getConnectedPlayers()) {
+                        BankAccount receiver = DKCoins.getInstance().getAccountManager().getAccount(connectedPlayer.getName(), "User");
+                        if(receiver == null) continue;
+
+                        transact(commandSender, member, credit, receiver, amount, args);
+                    }
+                    return;
                 }
+
+                BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
+                if(receiver == null) {
+                    commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
+                    return;
+                }
+                transact(commandSender, member, credit, receiver, amount, args);
             } else {
                 commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create().add("currency", getCurrency().getName()));
             }
@@ -118,5 +122,17 @@ public class UserBankCommand extends BasicCommand {
         Currency currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(this.creditAlias.getCurrency());
         Validate.notNull(currency);
         return currency;
+    }
+
+    private void transact(CommandSender commandSender, AccountMember member, AccountCredit credit, BankAccount receiver, double amount, String[] args) {
+        TransferResult result = credit.transfer(member, amount, receiver.getCredit(credit.getCurrency()),
+                CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
+                DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
+        if(result.isSuccess()) {
+            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new DescribedHashVariableSet()
+                    .add("transaction", result.getTransaction()));
+        } else {
+            CommandUtil.handleTransferFailCauses(result, commandSender);
+        }
     }
 }
