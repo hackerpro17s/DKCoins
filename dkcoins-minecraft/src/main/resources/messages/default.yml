@@ -27,6 +27,8 @@ messages:
   dkcoins.error.user.notExists: '${dkcoins.prefix} &cThe user &e{name} &cdoes not exist'
   dkcoins.error.member.already: '${dkcoins.prefix} &e{member.displayName} &cis already a member of this account'
   dkcoins.error.account.user.notPossible: '${dkcoins.prefix} &cThis action is not possible on an user account'
+  dkcoins.error.account.payment.user.too.little: '${dkcoins.prefix} &cThe payment amount is too little'
+  dkcoins.error.account.payment.all.too.little: '${dkcoins.prefix} &cThe payment amount is too little'
 
   dkcoins.command.account.exchange.help: '${dkcoins.prefix} &cInvalid usage of exchange command&8:
   &7/bank <name> exchange <source> <target> <amount>'

@@ -59,7 +59,7 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
             }
         }
 
-        if(bankAccount.equalsIgnoreCase("@all")) {
+        if(DKCoinsConfig.isPaymentAllAlias(bankAccount)) {
             CommandUtil.loopThroughUserBanks(null, receiver -> transfer(commandSender, receiver, currency, amount, action, args));
         } else {
             BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(bankAccount);

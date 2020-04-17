@@ -11,6 +11,7 @@ import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountTopCommand;
 import net.pretronic.dkcoins.minecraft.config.CreditAlias;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.BasicCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
@@ -21,7 +22,6 @@ import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
-import org.mcnative.common.player.ConnectedMinecraftPlayer;
 import org.mcnative.common.player.MinecraftPlayer;
 import org.mcnative.service.entity.living.Player;
 import org.mcnative.service.world.World;
@@ -81,9 +81,11 @@ public class UserBankCommand extends BasicCommand {
                 double amount = Double.parseDouble(amount0);
 
 
-                if(receiver0.equalsIgnoreCase("@all")) {
-                    CommandUtil.loopThroughUserBanks(user.getDefaultAccount(), receiver ->
-                            transfer(commandSender, member, credit, receiver, amount, args));
+                if(DKCoinsConfig.isPaymentAllAlias(receiver0)) {
+                    if(CommandUtil.canTransferAndSendMessage(commandSender, amount, true)) {
+                        CommandUtil.loopThroughUserBanks(user.getDefaultAccount(), receiver ->
+                                transfer(commandSender, member, credit, receiver, amount, args));
+                    }
                     return;
                 }
 
@@ -92,7 +94,9 @@ public class UserBankCommand extends BasicCommand {
                     commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
                     return;
                 }
-                transfer(commandSender, member, credit, receiver, amount, args);
+                if(CommandUtil.canTransferAndSendMessage(commandSender, amount, false)) {
+                    transfer(commandSender, member, credit, receiver, amount, args);
+                }
             } else {
                 commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create().add("currency", getCurrency().getName()));
             }

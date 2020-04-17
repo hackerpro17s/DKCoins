@@ -29,7 +29,6 @@ import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVaria
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
-import org.mcnative.common.player.ConnectedMinecraftPlayer;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
 public class AccountTransferCommand extends ObjectCommand<BankAccount> {
@@ -77,8 +76,10 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
                 return;
             }
 
-            if(receiver0.equalsIgnoreCase("@all")) {
-                CommandUtil.loopThroughUserBanks(account, receiver -> transfer(commandSender, account, receiver, amount, currency, args));
+            if(DKCoinsConfig.isPaymentAllAlias(receiver0)) {
+                if(CommandUtil.canTransferAndSendMessage(commandSender, amount, true)) {
+                    CommandUtil.loopThroughUserBanks(account, receiver -> transfer(commandSender, account, receiver, amount, currency, args));
+                }
                 return;
             }
             BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
@@ -86,7 +87,9 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
                 return;
             }
-            transfer(commandSender, account, receiver, amount, currency, args);
+            if(CommandUtil.canTransferAndSendMessage(commandSender, amount, false)) {
+                transfer(commandSender, account, receiver, amount, currency, args);
+            }
         }
     }
 

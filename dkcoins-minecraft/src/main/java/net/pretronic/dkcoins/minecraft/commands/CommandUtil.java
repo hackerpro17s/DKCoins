@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.minecraft.commands;
 
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
@@ -146,5 +147,21 @@ public final class CommandUtil {
             if(account == null || account.equals(own)) continue;
             accountConsumer.accept(account);
         }
+    }
+
+    public static boolean canTransferAndSendMessage(CommandSender commandSender, double amount, boolean all) {
+        if(all && !(commandSender.hasPermission("dkcoins.transfer.all"))) {
+            commandSender.sendMessage(Messages.ERROR_NO_PERMISSION);
+            return false;
+        }
+        if(all && amount < DKCoinsConfig.MINIMUM_PAYMENT_ALL) {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_PAYMENT_ALL_TOO_LITTLE);
+            return false;
+        }
+        if(!all && amount < DKCoinsConfig.MINIMUM_PAYMENT_USER) {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_PAYMENT_USER_TOO_LITTLE);
+            return false;
+        }
+        return true;
     }
 }

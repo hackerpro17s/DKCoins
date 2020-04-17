@@ -38,6 +38,9 @@ public class Messages {
     public static final MessageKeyComponent ERROR_USER_NOT_EXISTS = Text.ofMessageKey("dkcoins.error.user.notExists");
     public static final MessageKeyComponent ERROR_ACCOUNT_MEMBER_ALREADY = Text.ofMessageKey("dkcoins.error.member.already");
     public static final MessageKeyComponent ERROR_ACCOUNT_USER_NOT_POSSIBLE = Text.ofMessageKey("dkcoins.error.account.user.notPossible");
+    public static final MessageKeyComponent ERROR_ACCOUNT_PAYMENT_USER_TOO_LITTLE = Text.ofMessageKey("dkcoins.error.account.payment.user.too.little");
+    public static final MessageKeyComponent ERROR_ACCOUNT_PAYMENT_ALL_TOO_LITTLE = Text.ofMessageKey("dkcoins.error.account.payment.all.too.little");
+
 
     public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_HELP = Text.ofMessageKey("dkcoins.command.account.exchange.help");
     public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_SUCCESS = Text.ofMessageKey("dkcoins.command.account.exchange.success");

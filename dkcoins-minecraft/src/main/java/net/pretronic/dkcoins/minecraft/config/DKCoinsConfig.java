@@ -91,6 +91,16 @@ public class DKCoinsConfig {
     @DocumentIgnored
     public static Currency ECONOMY_PROVIDER_CURRENCY = null;
 
+
+    @DocumentKey("account.payment.minimum.user")
+    public static double MINIMUM_PAYMENT_USER = 0.01;
+
+    @DocumentKey("account.payment.minimum.all")
+    public static double MINIMUM_PAYMENT_ALL = 1;
+
+    public static String[] PAYMENT_ALL_ALIASES = new String[]{"*"};
+
+
     @DocumentKey("command.top.entriesPerPage")
     public static int TOP_LIMIT_ENTRIES_PER_PAGE = 5;
 
@@ -173,5 +183,12 @@ public class DKCoinsConfig {
             if(entry.getKey().equals(type)) return entry.getValue();
         }
         return 0.0D;
+    }
+
+    public static boolean isPaymentAllAlias(String value) {
+        for (String alias : PAYMENT_ALL_ALIASES) {
+            if(alias.equalsIgnoreCase(value)) return true;
+        }
+        return false;
     }
 }
