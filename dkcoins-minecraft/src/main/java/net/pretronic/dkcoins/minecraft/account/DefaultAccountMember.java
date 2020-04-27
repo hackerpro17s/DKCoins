@@ -63,8 +63,7 @@ public class DefaultAccountMember implements AccountMember {
 
     @Override
     public void setRole(AccountMemberRole role) {
-        this.role = role;
-        DKCoins.getInstance().getAccountManager().updateAccountMemberRole(this);
+        DKCoins.getInstance().getAccountManager().updateAccountMemberRole(this, role);
     }
 
     @Override
@@ -90,18 +89,13 @@ public class DefaultAccountMember implements AccountMember {
 
     @Override
     public AccountLimitation addLimitation(Currency comparativeCurrency, double amount, long interval) {
-        AccountLimitation limitation = DKCoins.getInstance().getAccountManager()
+        return DKCoins.getInstance().getAccountManager()
                 .addAccountLimitation(getAccount(), this, null, comparativeCurrency, amount, interval);
-        this.limitations.add(limitation);
-        return limitation;
     }
 
     @Override
     public boolean removeLimitation(AccountLimitation limitation) {
-        if(limitation == null) return false;
-        DKCoins.getInstance().getAccountManager().removeAccountLimitation(limitation);
-        this.limitations.remove(limitation);
-        return true;
+        return DKCoins.getInstance().getAccountManager().removeAccountLimitation(this, limitation);
     }
 
     @Override
@@ -111,13 +105,23 @@ public class DefaultAccountMember implements AccountMember {
 
     @Override
     public void setReceiveNotifications(boolean receiveNotifications) {
-        this.receiveNotifications = receiveNotifications;
-        DKCoins.getInstance().getAccountManager().updateAccountMemberReceiveNotifications(this);
+        DKCoins.getInstance().getAccountManager().updateAccountMemberReceiveNotifications(this, receiveNotifications);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AccountMember && ((AccountMember)obj).getId() == getId();
+    }
+
 
     @Internal
     public void addLoadedLimitation(AccountLimitation limitation) {
         this.limitations.add(limitation);
+    }
+
+    @Internal
+    public boolean removeLoadedLimitation(AccountLimitation limitation) {
+        return this.limitations.remove(limitation);
     }
 
     @Internal
@@ -128,10 +132,5 @@ public class DefaultAccountMember implements AccountMember {
     @Internal
     public void updateReceiveNotifications(boolean receiveNotifications) {
         this.receiveNotifications = receiveNotifications;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof AccountMember && ((AccountMember)obj).getId() == getId();
     }
 }

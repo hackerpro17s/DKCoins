@@ -57,8 +57,7 @@ public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
 
     @Override
     public void setExchangeAmount(double amount) {
-        this.exchangeAmount = amount;
-        DKCoins.getInstance().getCurrencyManager().updateCurrencyExchangeRateAmount(this);
+        DKCoins.getInstance().getCurrencyManager().updateCurrencyExchangeRateAmount(this, amount);
     }
 
     @Override
@@ -71,13 +70,13 @@ public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
         setExchangeAmount(this.exchangeAmount-amount);
     }
 
-    @Internal
-    public void updateExchangeAmount(double amount) {
-        this.exchangeAmount = amount;
-    }
-
     @Override
     public boolean equals(Object obj) {
         return obj instanceof CurrencyExchangeRate && ((CurrencyExchangeRate)obj).getId() == this.id;
+    }
+
+    @Internal
+    public void updateExchangeAmount(double amount) {
+        this.exchangeAmount = amount;
     }
 }

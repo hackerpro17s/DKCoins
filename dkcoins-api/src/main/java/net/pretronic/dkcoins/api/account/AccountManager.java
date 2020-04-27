@@ -55,9 +55,9 @@ public interface AccountManager {
 
     MasterBankAccount createMasterAccount(String name, AccountType type, boolean disabled, MasterBankAccount parent, DKCoinsUser creator);
 
-    void updateAccountName(BankAccount account);
+    void updateAccountName(BankAccount account, String name);
 
-    void updateAccountDisabled(BankAccount account);
+    void updateAccountDisabled(BankAccount account, boolean disabled);
 
     void deleteAccount(BankAccount account, DKCoinsUser user);
 
@@ -85,11 +85,11 @@ public interface AccountManager {
 
     AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMember adder, AccountMemberRole memberRole, boolean receiveNotifications);
 
-    void updateAccountMemberRole(AccountMember member);
+    void updateAccountMemberRole(AccountMember member, AccountMemberRole role);
 
-    void updateAccountMemberReceiveNotifications(AccountMember member);
+    void updateAccountMemberReceiveNotifications(AccountMember member, boolean receiveNotification);
 
-    void removeAccountMember(AccountMember member, AccountMember remover);
+    boolean removeAccountMember(AccountMember member, AccountMember remover);
 
 
     List<AccountTransaction> filterAccountTransactions(TransactionFilter filter);
@@ -110,5 +110,7 @@ public interface AccountManager {
     AccountLimitation addAccountLimitation(BankAccount account, @Nullable AccountMember member, @Nullable AccountMemberRole memberRole,
                                            Currency comparativeCurrency, double amount, long interval);
 
-    void removeAccountLimitation(AccountLimitation accountLimitation);
+    boolean removeAccountLimitation(AccountMember member, AccountLimitation accountLimitation);
+
+    boolean removeAccountLimitation(BankAccount account, AccountLimitation accountLimitation);
 }

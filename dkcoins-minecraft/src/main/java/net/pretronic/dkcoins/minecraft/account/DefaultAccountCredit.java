@@ -81,9 +81,7 @@ public class DefaultAccountCredit implements AccountCredit {
         if(properties == null) properties = new ArrayList<>();
         if(reason == null) reason = "none";
         DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
-        AccountTransaction transaction = getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
-        this.amount = amount;
-        return transaction;
+        return getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
     }
 
     @Override
@@ -92,9 +90,7 @@ public class DefaultAccountCredit implements AccountCredit {
         if(properties == null) properties = new ArrayList<>();
         if(reason == null) reason = "none";
         DKCoins.getInstance().getAccountManager().addAccountCreditAmount(this, amount);
-        AccountTransaction transaction = getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
-        this.amount+=amount;
-        return transaction;
+        return getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
     }
 
     @Override
@@ -103,27 +99,22 @@ public class DefaultAccountCredit implements AccountCredit {
         if(properties == null) properties = new ArrayList<>();
         if(reason == null) reason = "none";
         DKCoins.getInstance().getAccountManager().removeAccountCreditAmount(this, amount);
-        AccountTransaction transaction = getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
-        this.amount-=amount;
-        return transaction;
+        return getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
     }
 
     @Override
     public void setAmount(double amount) {
         DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
-        this.amount = amount;
     }
 
     @Override
     public void addAmount(double amount) {
         DKCoins.getInstance().getAccountManager().addAccountCreditAmount(this, amount);
-        this.amount+=amount;
     }
 
     @Override
     public void removeAmount(double amount) {
         DKCoins.getInstance().getAccountManager().removeAccountCreditAmount(this, amount);
-        this.amount-=amount;
     }
 
     @Override

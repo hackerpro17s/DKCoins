@@ -57,14 +57,12 @@ public class DefaultCurrency implements Currency, Synchronizable {
 
     @Override
     public void setName(String name) {
-        this.name = name;
-        DKCoins.getInstance().getCurrencyManager().updateCurrencyName(this);
+        DKCoins.getInstance().getCurrencyManager().updateCurrencyName(this, name);
     }
 
     @Override
     public void setSymbol(String symbol) {
-        this.symbol = symbol;
-        DKCoins.getInstance().getCurrencyManager().updateCurrencySymbol(this);
+        DKCoins.getInstance().getCurrencyManager().updateCurrencySymbol(this, symbol);
     }
 
     @Override
@@ -81,6 +79,7 @@ public class DefaultCurrency implements Currency, Synchronizable {
         CurrencyExchangeRate exchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate0 -> exchangeRate0.getId() == id);
         if(exchangeRate == null) {
             exchangeRate = DKCoins.getInstance().getCurrencyManager().getCurrencyExchangeRate(id);
+            this.exchangeRates.add(exchangeRate);
         }
         return exchangeRate;
     }
@@ -95,6 +94,7 @@ public class DefaultCurrency implements Currency, Synchronizable {
             if(exchangeRate == null) {
                 exchangeRate = DKCoins.getInstance().getCurrencyManager().createCurrencyExchangeRate(this, targetCurrency, 1);
             }
+            this.exchangeRates.add(exchangeRate);
         }
         return exchangeRate;
     }
@@ -122,11 +122,6 @@ public class DefaultCurrency implements Currency, Synchronizable {
         return obj instanceof Currency && ((Currency)obj).getId() == getId();
     }
 
-    @Internal
-    public void addLoadedExchangeRate(CurrencyExchangeRate exchangeRate) {
-        this.exchangeRates.add(exchangeRate);
-    }
-
     @Override
     public void onUpdate(Document data) {
         switch (data.getString("action")) {
@@ -152,6 +147,20 @@ public class DefaultCurrency implements Currency, Synchronizable {
                 break;
             }
         }
+    }
 
+    @Internal
+    public void addLoadedExchangeRate(CurrencyExchangeRate exchangeRate) {
+        this.exchangeRates.add(exchangeRate);
+    }
+
+    @Internal
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    @Internal
+    public void updateSymbol(String symbol) {
+        this.symbol = symbol;
     }
 }

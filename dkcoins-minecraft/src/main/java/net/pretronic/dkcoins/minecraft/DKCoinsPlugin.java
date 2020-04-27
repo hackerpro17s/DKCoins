@@ -65,7 +65,6 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         getLogger().info("DKCoins config loaded");
     }
 
-
     public static DKCoinsPlugin getInstance() {
         return INSTANCE;
     }
