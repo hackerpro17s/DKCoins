@@ -10,10 +10,6 @@
 
 package net.pretronic.dkcoins.minecraft.commands;
 
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.command.sender.ConsoleCommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.TransferResult;
@@ -21,6 +17,10 @@ import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.command.sender.ConsoleCommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
 import org.mcnative.common.McNative;
 import org.mcnative.common.player.ConnectedMinecraftPlayer;
 import org.mcnative.common.player.MinecraftPlayer;

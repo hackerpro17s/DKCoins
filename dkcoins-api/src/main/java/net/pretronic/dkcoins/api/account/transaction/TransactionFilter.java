@@ -11,7 +11,6 @@
 package net.pretronic.dkcoins.api.account.transaction;
 
 import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 

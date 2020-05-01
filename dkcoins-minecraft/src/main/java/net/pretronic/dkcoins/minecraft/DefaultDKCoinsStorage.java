@@ -14,20 +14,12 @@ import net.pretronic.databasequery.api.Database;
 import net.pretronic.databasequery.api.collection.DatabaseCollection;
 import net.pretronic.databasequery.api.collection.field.FieldOption;
 import net.pretronic.databasequery.api.datatype.DataType;
-import net.pretronic.databasequery.api.driver.DatabaseDriver;
 import net.pretronic.databasequery.api.query.ForeignKey;
 import net.pretronic.databasequery.api.query.SearchOrder;
-import net.pretronic.databasequery.api.query.result.QueryResult;
 import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.databasequery.api.query.type.FindQuery;
 import net.pretronic.databasequery.api.query.type.InsertQuery;
-import net.pretronic.databasequery.api.query.type.SearchQuery;
 import net.pretronic.databasequery.api.query.type.join.JoinType;
-import net.pretronic.dkcoins.minecraft.account.transaction.DefaultAccountTransactionProperty;
-import net.pretronic.libraries.logging.PretronicLogger;
-import net.pretronic.libraries.logging.PretronicLoggerFactory;
-import net.pretronic.libraries.logging.level.LogLevel;
-import net.pretronic.libraries.utility.Validate;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.DKCoinsStorage;
 import net.pretronic.dkcoins.api.account.*;
@@ -40,16 +32,18 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.account.*;
-import net.pretronic.dkcoins.minecraft.account.DefaultBankAccount;
 import net.pretronic.dkcoins.minecraft.account.transaction.DefaultAccountTransaction;
+import net.pretronic.dkcoins.minecraft.account.transaction.DefaultAccountTransactionProperty;
 import net.pretronic.dkcoins.minecraft.account.transaction.DefaultTransactionFilter;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrency;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrencyExchangeRate;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUser;
-import net.pretronic.libraries.utility.reflect.ReflectionUtil;
+import net.pretronic.libraries.utility.Validate;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 public class DefaultDKCoinsStorage implements DKCoinsStorage {
 

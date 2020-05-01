@@ -10,11 +10,11 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
-import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.utility.annonations.Internal;
 
 public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
 

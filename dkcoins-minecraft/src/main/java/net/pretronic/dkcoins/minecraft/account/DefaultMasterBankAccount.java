@@ -10,12 +10,12 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.MasterBankAccount;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.libraries.utility.Iterators;
 
 import java.util.ArrayList;
 import java.util.Collection;

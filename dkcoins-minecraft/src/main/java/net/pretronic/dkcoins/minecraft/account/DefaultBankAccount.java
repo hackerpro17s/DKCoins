@@ -10,13 +10,6 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.pretronic.dkcoins.minecraft.SyncAction;
-import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.synchronisation.Synchronizable;
-import net.pretronic.libraries.utility.Iterators;
-import net.pretronic.libraries.utility.Validate;
-import net.pretronic.libraries.utility.annonations.Internal;
-import net.pretronic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
@@ -25,7 +18,14 @@ import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.synchronisation.Synchronizable;
+import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.annonations.Internal;
+import net.pretronic.libraries.utility.annonations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;

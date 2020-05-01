@@ -1,10 +1,10 @@
 package net.pretronic.dkcoins.minecraft.account;
 
+import net.pretronic.dkcoins.api.account.TransferResult;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveHashMap;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveMap;
-import net.pretronic.dkcoins.api.account.TransferResult;
 
 public class DefaultTransferResult implements TransferResult {
 

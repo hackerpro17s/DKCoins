@@ -10,8 +10,8 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.AccountLimitation;
+import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;

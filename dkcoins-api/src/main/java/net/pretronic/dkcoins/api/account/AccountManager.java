@@ -10,7 +10,6 @@
 
 package net.pretronic.dkcoins.api.account;
 
-import net.pretronic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
@@ -18,6 +17,7 @@ import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.libraries.utility.annonations.Nullable;
 
 import java.util.Collection;
 import java.util.List;

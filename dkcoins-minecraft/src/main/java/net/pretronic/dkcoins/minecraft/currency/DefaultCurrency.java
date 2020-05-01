@@ -10,21 +10,18 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
+import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.document.entry.DocumentEntry;
 import net.pretronic.libraries.synchronisation.Synchronizable;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
-import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
-import net.pretronic.libraries.document.Document;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class DefaultCurrency implements Currency, Synchronizable {
 

@@ -10,12 +10,12 @@
 
 package net.pretronic.dkcoins.minecraft.account.transaction;
 
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
-import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.utility.Iterators;
 
 import java.util.Collection;
 

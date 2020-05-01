@@ -19,7 +19,6 @@ import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVaria
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
-import org.mcnative.common.player.ConnectedMinecraftPlayer;
 import org.mcnative.common.player.MinecraftPlayer;
 
 import java.util.ArrayList;

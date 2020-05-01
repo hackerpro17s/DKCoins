@@ -1,5 +1,8 @@
 package net.pretronic.dkcoins.minecraft.commands.currency;
 
+import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.object.DefinedNotFindable;
@@ -9,9 +12,6 @@ import net.pretronic.libraries.command.command.object.ObjectNotFindable;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.minecraft.Messages;
 
 import java.util.Arrays;
 

@@ -10,9 +10,6 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
-import net.pretronic.libraries.utility.Validate;
-import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
@@ -23,6 +20,9 @@ import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.minecraft.events.DKCoinsAccountTransactEvent;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.annonations.Internal;
 import org.mcnative.common.McNative;
 
 import java.util.ArrayList;

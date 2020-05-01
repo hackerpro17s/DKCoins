@@ -1,9 +1,9 @@
 package net.pretronic.dkcoins.minecraft.listener;
 
-import net.pretronic.libraries.event.Listener;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUser;
+import net.pretronic.libraries.event.Listener;
 import org.mcnative.common.event.player.login.MinecraftPlayerLoginEvent;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 

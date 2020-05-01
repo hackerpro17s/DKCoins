@@ -10,10 +10,10 @@
 
 package net.pretronic.dkcoins.api.account;
 
-import net.pretronic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.libraries.utility.annonations.Nullable;
 
 public interface AccountLimitation {
 

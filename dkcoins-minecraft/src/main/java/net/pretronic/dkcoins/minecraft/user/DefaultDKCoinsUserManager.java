@@ -10,13 +10,12 @@
 
 package net.pretronic.dkcoins.minecraft.user;
 
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 import net.pretronic.libraries.caching.ArrayCache;
 import net.pretronic.libraries.caching.Cache;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.utility.Validate;
-import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 import org.mcnative.common.McNative;
 import org.mcnative.common.player.MinecraftPlayer;
 

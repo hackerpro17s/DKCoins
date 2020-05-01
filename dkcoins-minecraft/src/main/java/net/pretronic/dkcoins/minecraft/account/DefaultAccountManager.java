@@ -10,15 +10,6 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
-import net.pretronic.dkcoins.minecraft.SyncAction;
-import net.pretronic.libraries.caching.CacheQuery;
-import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
-import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
-import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.utility.Iterators;
-import net.pretronic.libraries.utility.Validate;
-import net.pretronic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
@@ -33,7 +24,16 @@ import net.pretronic.dkcoins.api.minecraft.events.DKCoinsAccountMemberAddEvent;
 import net.pretronic.dkcoins.api.minecraft.events.DKCoinsAccountMemberRemoveEvent;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
+import net.pretronic.dkcoins.minecraft.SyncAction;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUser;
+import net.pretronic.libraries.caching.CacheQuery;
+import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
+import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
+import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.annonations.Nullable;
 import org.mcnative.common.McNative;
 
 import java.util.ArrayList;

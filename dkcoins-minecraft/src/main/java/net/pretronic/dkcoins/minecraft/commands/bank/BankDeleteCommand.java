@@ -10,16 +10,16 @@
 
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
 public class BankDeleteCommand extends ObjectCommand<BankAccount> {

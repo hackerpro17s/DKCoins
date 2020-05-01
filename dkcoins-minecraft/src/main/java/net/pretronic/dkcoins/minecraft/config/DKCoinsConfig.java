@@ -10,14 +10,14 @@
 
 package net.pretronic.dkcoins.minecraft.config;
 
+import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountType;
+import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
+import net.pretronic.dkcoins.minecraft.commands.UserBankCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.configuration.DefaultCommandConfigurationBuilder;
 import net.pretronic.libraries.document.annotations.DocumentIgnored;
-import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.minecraft.commands.UserBankCommand;
 import net.pretronic.libraries.document.annotations.DocumentKey;
 import net.pretronic.libraries.plugin.service.ServicePriority;
 import net.pretronic.libraries.utility.Validate;
