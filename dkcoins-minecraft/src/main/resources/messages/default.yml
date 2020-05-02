@@ -27,6 +27,8 @@ messages:
   dkcoins.error.user.notExists: '${dkcoins.prefix} &cThe user &e{name} &cdoes not exist'
   dkcoins.error.member.already: '${dkcoins.prefix} &e{member.displayName} &cis already a member of this account'
   dkcoins.error.account.user.notPossible: '${dkcoins.prefix} &cThis action is not possible on an user account'
+  dkcoins.error.account.payment.user.too.little: '${dkcoins.prefix} &cThe payment amount is too little'
+  dkcoins.error.account.payment.all.too.little: '${dkcoins.prefix} &cThe payment amount is too little'
 
   dkcoins.command.account.exchange.help: '${dkcoins.prefix} &cInvalid usage of exchange command&8:
   &7/bank <name> exchange <source> <target> <amount>'
@@ -171,17 +173,18 @@ messages:
   dkcoins.command.currency.edit.disable.exchangeRate: '${dkcoins.prefix} &cYou have disabled the exchange from &e{currency.name} &cto &e{targetCurrency.name}'
   dkcoins.command.currency.edit.exchangeRate.amountNotValid: '${dkcoins.prefix} &e{value} &cas a exchange rate is not valid'
 
-  dkcoins.command.userBank.amount: '${dkcoins.prefix} &8» &7You have &e{credit.formattedAmount}&8{credit.currency.symbol}'
+  dkcoins.command.userBank.amount: '${dkcoins.prefix} &7You have &e{credit.formattedAmount}&8{credit.currency.symbol}'
   dkcoins.command.userBank.amount.other: '${dkcoins.prefix} &e{other.name} &7has &e{credit.formattedAmount}{credit.currency.symbol}'
   dkcoins.command.userBank.help: '${dkcoins.prefix} &cInvalid usage of {currency.name} command&8:
   &7/{currency.name}
   &7/{currency.name} transfer <receiver> <amount>
   &7/{currency.name} top <limit>'
+  dkcoins.command.userBank.world.disabled: '${dkcoins.prefix} &e{world} &cis disabled for this currency'
 
-  dkcoins.top.reach.limit: '${dkcoins.prefix} &cYou can not see so much credit top'
-  dkcoins.top: '${dkcoins.prefix} &7Top {amount}&8:
-  @for("credit" in {credits}, ${dkcoins.top.loop},"\n")'
-  dkcoins.top.loop: '&8» &7#{position} &7{credit.name} &e{credit.formattedAmount}{credit.currency.symbol}'
+  dkcoins.top: '${dkcoins.prefix} &7Top {start}-{end}&8:
+  @for("rank" in {ranks}, ${dkcoins.top.loop},"\n")'
+  dkcoins.top.loop: '&7#{rank.position} &7{rank.credit.name} &e{rank.credit.formattedAmount}{rank.credit.currency.symbol}'
+  dkcoins.top.pageNoEntries: '${dkcoins.prefix} &cThis page does''t exist'
 
   dkcoins.bank.settings.help: '${dkcoins.prefix} &cInvalid usage of command bank settings&8:
   &7/bank <name> settings <setting> <value>
@@ -191,3 +194,14 @@ messages:
   dkcoins.bank.settings.receiveNotifications.on: '${dkcoins.prefix} &aYou have turn on your notifications'
   dkcoins.bank.settings.receiveNotifications.off: '${dkcoins.prefix} &aYou have turn off your notifications'
   dkcoins.bank.settings.notValid: '${dkcoins.prefix} &e{value} &cis not a valid setting'
+
+  dkcoins.command.dkcoins.help: '${dkcoins.prefix} &cInvalid usage of dkcoins bankAdmin command&8:
+  &7/dkcoins migrate <name> [currency] (Only executable from console)
+
+  &7/dkcoins bankAdmin <bank> setAmount <amount> [currency]
+  &7/dkcoins bankAdmin <bank> addAmount <amount> [currency]
+  &7/dkcoins bankAdmin <bank> removeAmount <amount> [currency]'
+  dkcoins.command.dkcoins.admin.help: '${dkcoins.prefix} &cInvalid usage of dkcoins bankAdmin command&8:
+  &7/dkcoins bankAdmin <bank> setAmount <amount> [currency]
+  &7/dkcoins bankAdmin <bank> addAmount <amount> [currency]
+  &7/dkcoins bankAdmin <bank> removeAmount <amount> [currency]'

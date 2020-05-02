@@ -9,10 +9,9 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import org.mcnative.common.McNative;
 
 import java.util.Collection;
 
@@ -37,8 +36,8 @@ public class BankStatementCommand extends ObjectCommand<BankAccount> {
             appendFilterOption(sender, filter, key, value);
         }
         Collection<AccountTransaction> transactions = DKCoins.getInstance().getAccountManager().filterAccountTransactions(filter);
-        sender.sendMessage(Messages.COMMAND_BANK_BANK_STATEMENT, new ReflectVariableSet()
-                    .add("transactions", transactions));
+        sender.sendMessage(Messages.COMMAND_BANK_BANK_STATEMENT, VariableSet.create()
+                    .addDescribed("transactions", transactions));
 
     }
 
@@ -54,7 +53,8 @@ public class BankStatementCommand extends ObjectCommand<BankAccount> {
             }
             case "time": {
                 if(!GeneralUtil.isNaturalNumber(value)) {
-                    sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", value));
+                    sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create()
+                            .add("value", value));
                     return;
                 }
                 long time = Long.parseLong(value);
@@ -79,7 +79,8 @@ public class BankStatementCommand extends ObjectCommand<BankAccount> {
             }
             case "page": {
                 if(!GeneralUtil.isNaturalNumber(value)) {
-                    sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", value));
+                    sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create()
+                            .add("value", value));
                     return;
                 }
                 int page = Integer.parseInt(value);

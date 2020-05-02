@@ -69,7 +69,7 @@ public interface DKCoinsStorage {
 
     void deleteAccount(int id);
 
-    List<Integer> getTopAccountIds(Currency currency, AccountType[] excludedAccountTypes, int limit);
+    List<Integer> getTopAccountCreditIds(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page);
 
     int getAccountIdByRank(Currency currency, int rank);
 

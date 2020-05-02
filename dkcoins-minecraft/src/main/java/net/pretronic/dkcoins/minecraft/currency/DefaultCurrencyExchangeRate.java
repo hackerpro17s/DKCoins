@@ -10,11 +10,11 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
-import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.utility.annonations.Internal;
 
 public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
 
@@ -57,8 +57,7 @@ public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
 
     @Override
     public void setExchangeAmount(double amount) {
-        this.exchangeAmount = amount;
-        DKCoins.getInstance().getCurrencyManager().updateCurrencyExchangeRateAmount(this);
+        DKCoins.getInstance().getCurrencyManager().updateCurrencyExchangeRateAmount(this, amount);
     }
 
     @Override
@@ -71,13 +70,13 @@ public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
         setExchangeAmount(this.exchangeAmount-amount);
     }
 
-    @Internal
-    public void updateExchangeAmount(double amount) {
-        this.exchangeAmount = amount;
-    }
-
     @Override
     public boolean equals(Object obj) {
         return obj instanceof CurrencyExchangeRate && ((CurrencyExchangeRate)obj).getId() == this.id;
+    }
+
+    @Internal
+    public void updateExchangeAmount(double amount) {
+        this.exchangeAmount = amount;
     }
 }

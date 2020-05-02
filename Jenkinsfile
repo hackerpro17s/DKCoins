@@ -95,13 +95,18 @@ pipeline {
             steps {
                 script {
                     withCredentials([string(credentialsId: '120a9a64-81a7-4557-80bf-161e3ab8b976', variable: 'SECRET')]) {
-                        //Full version
+
+                        //Temporary because project is in beta state
+
+                        String qualifier = QUALIFIER;
+                        if(qualifier == "BETA") qualifier = "RELEASE"
+
                         httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_JSON',
                                 httpMode: 'POST', ignoreSslErrors: true,timeout: 3000,
                                 responseHandle: 'NONE',
                                 customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
                                 url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/create?name=$VERSION" +
-                                        "&qualifier=$QUALIFIER&buildNumber=$BUILD_NUMBER")
+                                        "&qualifier=$qualifier&buildNumber=$BUILD_NUMBER")
 
                         httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_OCTETSTREAM',
                                 httpMode: 'POST', ignoreSslErrors: true, timeout: 3000,

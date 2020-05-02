@@ -10,13 +10,6 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.pretronic.dkcoins.minecraft.SyncAction;
-import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.document.type.DocumentFileType;
-import net.pretronic.libraries.utility.Iterators;
-import net.pretronic.libraries.utility.Validate;
-import net.pretronic.libraries.utility.annonations.Internal;
-import net.pretronic.libraries.utility.annonations.Nullable;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
@@ -25,12 +18,19 @@ import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
+import net.pretronic.dkcoins.minecraft.SyncAction;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.synchronisation.Synchronizable;
+import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.annonations.Internal;
+import net.pretronic.libraries.utility.annonations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DefaultBankAccount implements BankAccount {
+public class DefaultBankAccount implements BankAccount, Synchronizable {
 
     private final int id;
     private String name;
@@ -181,57 +181,45 @@ public class DefaultBankAccount implements BankAccount {
 
     @Override
     public void setName(String name) {
-        DKCoins.getInstance().getAccountManager().updateAccountName(this);
-        this.name = name;
+        DKCoins.getInstance().getAccountManager().updateAccountName(this, name);
     }
 
     @Override
     public void setDisabled(boolean disabled) {
-        DKCoins.getInstance().getAccountManager().updateAccountDisabled(this);
-        this.disabled = disabled;
+        DKCoins.getInstance().getAccountManager().updateAccountDisabled(this, disabled);
     }
 
     @Override
     public AccountCredit addCredit(Currency currency, double amount) {
-        AccountCredit accountCredit = DKCoins.getInstance().getAccountManager().addAccountCredit(this, currency, amount);
-        this.credits.add(accountCredit);
-        return accountCredit;
+        return DKCoins.getInstance().getAccountManager().addAccountCredit(this, currency, amount);
     }
 
     @Override
     public void deleteCredit(Currency currency) {
         AccountCredit credit = getCredit(currency);
         DKCoins.getInstance().getAccountManager().deleteAccountCredit(credit);
-        this.credits.remove(credit);
     }
 
     @Override
     public void addLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
                               double amount, long interval) {
-        AccountLimitation limitation = DKCoins.getInstance().getAccountManager()
-                .addAccountLimitation(this, member, role, comparativeCurrency, amount, interval);
-        this.limitations.add(limitation);
+        DKCoins.getInstance().getAccountManager().addAccountLimitation(this, member, role, comparativeCurrency, amount, interval);
     }
 
     @Override
     public boolean removeLimitation(AccountLimitation limitation) {
         if(limitation == null) return false;
-        DKCoins.getInstance().getAccountManager().removeAccountLimitation(limitation);
-        this.limitations.remove(limitation);
-        return true;
+        return DKCoins.getInstance().getAccountManager().removeAccountLimitation(this, limitation);
     }
 
     @Override
     public AccountMember addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role, boolean receiveNotifications) {
-        AccountMember member = DKCoins.getInstance().getAccountManager().addAccountMember(this, user, adder, role, receiveNotifications);
-        this.members.add(member);
-        return member;
+        return DKCoins.getInstance().getAccountManager().addAccountMember(this, user, adder, role, receiveNotifications);
     }
 
     @Override
     public boolean removeMember(AccountMember member, AccountMember remover) {
-        DKCoins.getInstance().getAccountManager().removeAccountMember(member, remover);
-        return this.members.remove(member);
+        return DKCoins.getInstance().getAccountManager().removeAccountMember(member, remover);
     }
 
     @Override
@@ -254,13 +242,38 @@ public class DefaultBankAccount implements BankAccount {
     }
 
     @Internal
+    public boolean deleteLoadedAccountCredit(AccountCredit credit) {
+        return this.credits.remove(credit);
+    }
+
+    @Internal
     public void addLoadedLimitation(AccountLimitation limitation) {
         this.limitations.add(limitation);
     }
 
     @Internal
+    public boolean removeLoadedLimitation(AccountLimitation limitation) {
+        return this.limitations.remove(limitation);
+    }
+
+    @Internal
     public void addLoadedMember(AccountMember member) {
         this.members.add(member);
+    }
+
+    @Internal
+    public boolean removeLoadedMember(AccountMember member) {
+        return this.members.remove(member);
+    }
+
+    @Internal
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    @Internal
+    public void updateDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     @Override

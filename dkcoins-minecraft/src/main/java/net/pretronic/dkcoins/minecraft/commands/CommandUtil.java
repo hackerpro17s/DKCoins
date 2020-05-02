@@ -10,9 +10,6 @@
 
 package net.pretronic.dkcoins.minecraft.commands;
 
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.command.sender.ConsoleCommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.TransferResult;
@@ -20,8 +17,15 @@ import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.command.sender.ConsoleCommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
 import org.mcnative.common.McNative;
+import org.mcnative.common.player.ConnectedMinecraftPlayer;
 import org.mcnative.common.player.MinecraftPlayer;
+
+import java.util.function.Consumer;
 
 public final class CommandUtil {
 
@@ -135,5 +139,29 @@ public final class CommandUtil {
             return DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer) commandSender).getUniqueId());
         }
         return null;
+    }
+
+    public static void loopThroughUserBanks(BankAccount own, Consumer<BankAccount> accountConsumer) {
+        for (ConnectedMinecraftPlayer connectedPlayer : McNative.getInstance().getLocal().getConnectedPlayers()) {
+            BankAccount account = DKCoins.getInstance().getAccountManager().getAccount(connectedPlayer.getName(), "User");
+            if(account == null || account.equals(own)) continue;
+            accountConsumer.accept(account);
+        }
+    }
+
+    public static boolean canTransferAndSendMessage(CommandSender commandSender, double amount, boolean all) {
+        if(all && !(commandSender.hasPermission("dkcoins.transfer.all"))) {
+            commandSender.sendMessage(Messages.ERROR_NO_PERMISSION);
+            return false;
+        }
+        if(all && amount < DKCoinsConfig.MINIMUM_PAYMENT_ALL) {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_PAYMENT_ALL_TOO_LITTLE);
+            return false;
+        }
+        if(!all && amount < DKCoinsConfig.MINIMUM_PAYMENT_USER) {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_PAYMENT_USER_TOO_LITTLE);
+            return false;
+        }
+        return true;
     }
 }

@@ -10,22 +10,20 @@
 
 package net.pretronic.dkcoins.minecraft.currency;
 
-import net.pretronic.dkcoins.minecraft.SyncAction;
-import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.document.entry.DocumentEntry;
-import net.pretronic.libraries.utility.Iterators;
-import net.pretronic.libraries.utility.Validate;
-import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
+import net.pretronic.dkcoins.minecraft.SyncAction;
 import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.synchronisation.Synchronizable;
+import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.annonations.Internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-public class DefaultCurrency implements Currency {
+public class DefaultCurrency implements Currency, Synchronizable {
 
     private final int id;
     private String name;
@@ -56,14 +54,12 @@ public class DefaultCurrency implements Currency {
 
     @Override
     public void setName(String name) {
-        this.name = name;
-        DKCoins.getInstance().getCurrencyManager().updateCurrencyName(this);
+        DKCoins.getInstance().getCurrencyManager().updateCurrencyName(this, name);
     }
 
     @Override
     public void setSymbol(String symbol) {
-        this.symbol = symbol;
-        DKCoins.getInstance().getCurrencyManager().updateCurrencySymbol(this);
+        DKCoins.getInstance().getCurrencyManager().updateCurrencySymbol(this, symbol);
     }
 
     @Override
@@ -80,6 +76,7 @@ public class DefaultCurrency implements Currency {
         CurrencyExchangeRate exchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate0 -> exchangeRate0.getId() == id);
         if(exchangeRate == null) {
             exchangeRate = DKCoins.getInstance().getCurrencyManager().getCurrencyExchangeRate(id);
+            this.exchangeRates.add(exchangeRate);
         }
         return exchangeRate;
     }
@@ -94,6 +91,7 @@ public class DefaultCurrency implements Currency {
             if(exchangeRate == null) {
                 exchangeRate = DKCoins.getInstance().getCurrencyManager().createCurrencyExchangeRate(this, targetCurrency, 1);
             }
+            this.exchangeRates.add(exchangeRate);
         }
         return exchangeRate;
     }
@@ -121,11 +119,6 @@ public class DefaultCurrency implements Currency {
         return obj instanceof Currency && ((Currency)obj).getId() == getId();
     }
 
-    @Internal
-    public void addLoadedExchangeRate(CurrencyExchangeRate exchangeRate) {
-        this.exchangeRates.add(exchangeRate);
-    }
-
     @Override
     public void onUpdate(Document data) {
         switch (data.getString("action")) {
@@ -151,6 +144,20 @@ public class DefaultCurrency implements Currency {
                 break;
             }
         }
+    }
 
+    @Internal
+    public void addLoadedExchangeRate(CurrencyExchangeRate exchangeRate) {
+        this.exchangeRates.add(exchangeRate);
+    }
+
+    @Internal
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    @Internal
+    public void updateSymbol(String symbol) {
+        this.symbol = symbol;
     }
 }

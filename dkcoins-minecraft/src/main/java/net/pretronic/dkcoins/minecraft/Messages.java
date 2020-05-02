@@ -15,7 +15,8 @@ import org.mcnative.common.text.components.MessageKeyComponent;
 
 public class Messages {
 
-    public static final MessageKeyComponent PREFIX = Text.ofMessageKey("dkcoins.prefix");
+    public static final String PREFIX = "&8» &6DKCoins &8|&f";
+
 
     public static final MessageKeyComponent ERROR_NOT_FROM_CONSOLE = Text.ofMessageKey("dkcoins.error.notFromConsole");
     public static final MessageKeyComponent ERROR_ONLY_FROM_CONSOLE = Text.ofMessageKey("dkcoins.error.onlyFromConsole");
@@ -37,6 +38,9 @@ public class Messages {
     public static final MessageKeyComponent ERROR_USER_NOT_EXISTS = Text.ofMessageKey("dkcoins.error.user.notExists");
     public static final MessageKeyComponent ERROR_ACCOUNT_MEMBER_ALREADY = Text.ofMessageKey("dkcoins.error.member.already");
     public static final MessageKeyComponent ERROR_ACCOUNT_USER_NOT_POSSIBLE = Text.ofMessageKey("dkcoins.error.account.user.notPossible");
+    public static final MessageKeyComponent ERROR_ACCOUNT_PAYMENT_USER_TOO_LITTLE = Text.ofMessageKey("dkcoins.error.account.payment.user.too.little");
+    public static final MessageKeyComponent ERROR_ACCOUNT_PAYMENT_ALL_TOO_LITTLE = Text.ofMessageKey("dkcoins.error.account.payment.all.too.little");
+
 
     public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_HELP = Text.ofMessageKey("dkcoins.command.account.exchange.help");
     public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_SUCCESS = Text.ofMessageKey("dkcoins.command.account.exchange.success");
@@ -127,13 +131,17 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_USER_BANK_AMOUNT = Text.ofMessageKey("dkcoins.command.userBank.amount");
     public static final MessageKeyComponent COMMAND_USER_BANK_AMOUNT_OTHER = Text.ofMessageKey("dkcoins.command.userBank.amount.other");
     public static final MessageKeyComponent COMMAND_USER_BANK_HELP = Text.ofMessageKey("dkcoins.command.userBank.help");
+    public static final MessageKeyComponent COMMAND_USER_BANK_WORLD_DISABLED = Text.ofMessageKey("dkcoins.command.userBank.world.disabled");
 
-    public static final MessageKeyComponent TOP_REACH_LIMIT = Text.ofMessageKey("dkcoins.top.reach.limit");
     public static final MessageKeyComponent TOP = Text.ofMessageKey("dkcoins.top");
+    public static final MessageKeyComponent TOP_PAGE_NO_ENTRIES = Text.ofMessageKey("dkcoins.top.pageNoEntries");
 
 
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_HELP = Text.ofMessageKey("dkcoins.bank.settings.help");
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_RECEIVE_NOTIFICATIONS_ON = Text.ofMessageKey("dkcoins.bank.settings.receiveNotifications.on");
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_RECEIVE_NOTIFICATIONS_OFF = Text.ofMessageKey("dkcoins.bank.settings.receiveNotifications.off");
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_NOT_VALID = Text.ofMessageKey("dkcoins.bank.settings.notValid");
+
+    public static final MessageKeyComponent COMMAND_DKCOINS_HELP = Text.ofMessageKey("dkcoins.command.dkcoins.help");
+    public static final MessageKeyComponent COMMAND_DKCOINS_ADMIN_HELP = Text.ofMessageKey("dkcoins.command.dkcoins.admin.help");
 }

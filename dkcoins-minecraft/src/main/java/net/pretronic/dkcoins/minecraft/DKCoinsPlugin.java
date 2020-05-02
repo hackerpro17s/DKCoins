@@ -10,18 +10,14 @@
 
 package net.pretronic.dkcoins.minecraft;
 
+import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.logging.level.LogLevel;
 import net.pretronic.libraries.plugin.lifecycle.Lifecycle;
 import net.pretronic.libraries.plugin.lifecycle.LifecycleState;
-import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
-import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
-import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;
-import net.pretronic.dkcoins.minecraft.listener.MinecraftPlayerListener;
 import net.pretronic.libraries.utility.io.FileUtil;
-import org.mcnative.common.McNative;
 import org.mcnative.common.plugin.MinecraftPlugin;
 
 import java.io.File;
@@ -68,7 +64,6 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         getConfiguration().load(DKCoinsConfig.class);
         getLogger().info("DKCoins config loaded");
     }
-
 
     public static DKCoinsPlugin getInstance() {
         return INSTANCE;

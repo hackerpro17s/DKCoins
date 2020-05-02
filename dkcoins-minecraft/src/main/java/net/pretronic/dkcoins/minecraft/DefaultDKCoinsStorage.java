@@ -14,20 +14,12 @@ import net.pretronic.databasequery.api.Database;
 import net.pretronic.databasequery.api.collection.DatabaseCollection;
 import net.pretronic.databasequery.api.collection.field.FieldOption;
 import net.pretronic.databasequery.api.datatype.DataType;
-import net.pretronic.databasequery.api.driver.DatabaseDriver;
 import net.pretronic.databasequery.api.query.ForeignKey;
 import net.pretronic.databasequery.api.query.SearchOrder;
-import net.pretronic.databasequery.api.query.result.QueryResult;
 import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.databasequery.api.query.type.FindQuery;
 import net.pretronic.databasequery.api.query.type.InsertQuery;
-import net.pretronic.databasequery.api.query.type.SearchQuery;
 import net.pretronic.databasequery.api.query.type.join.JoinType;
-import net.pretronic.dkcoins.minecraft.account.transaction.DefaultAccountTransactionProperty;
-import net.pretronic.libraries.logging.PretronicLogger;
-import net.pretronic.libraries.logging.PretronicLoggerFactory;
-import net.pretronic.libraries.logging.level.LogLevel;
-import net.pretronic.libraries.utility.Validate;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.DKCoinsStorage;
 import net.pretronic.dkcoins.api.account.*;
@@ -40,16 +32,18 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.account.*;
-import net.pretronic.dkcoins.minecraft.account.DefaultBankAccount;
 import net.pretronic.dkcoins.minecraft.account.transaction.DefaultAccountTransaction;
+import net.pretronic.dkcoins.minecraft.account.transaction.DefaultAccountTransactionProperty;
 import net.pretronic.dkcoins.minecraft.account.transaction.DefaultTransactionFilter;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrency;
 import net.pretronic.dkcoins.minecraft.currency.DefaultCurrencyExchangeRate;
 import net.pretronic.dkcoins.minecraft.user.DefaultDKCoinsUser;
-import net.pretronic.libraries.utility.reflect.ReflectionUtil;
+import net.pretronic.libraries.utility.Validate;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
@@ -257,17 +251,21 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
-    public List<Integer> getTopAccountIds(Currency currency, AccountType[] excludedAccountTypes, int limit) {
-        List<Integer> accountIds = new ArrayList<>();
-        FindQuery query = this.accountCredit.find().get("AccountId")
+    public List<Integer> getTopAccountCreditIds(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page) {
+        Validate.notNull(currency);
+        List<Integer> accountCreditIds = new ArrayList<>();
+        FindQuery query = this.accountCredit.find().get("dkoins_account_credit.Id")
                 .join(this.account).on("AccountId", this.account, "Id")
-                .where("CurrencyId", currency.getId());
-        for (AccountType type : excludedAccountTypes) {
-            query.whereNot("TypeId", type.getId());
+                .where("CurrencyId", currency.getId())
+                .orderBy("Amount", SearchOrder.DESC);
+        if(excludedAccountTypes != null) {
+            for (AccountType type : excludedAccountTypes) {
+                query.whereNot("TypeId", type.getId());
+            }
         }
-        query.limit(limit);
-        query.execute().loadIn(accountIds, entry -> entry.getInt("AccountId"));
-        return accountIds;
+        query.page(page, entriesPerPage);
+        query.execute().loadIn(accountCreditIds, entry -> entry.getInt("Id"));
+        return accountCreditIds;
     }
 
     @Override
@@ -416,8 +414,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                 .get("dkcoins_account_transaction.Id", "SourceId", "SenderId","ReceiverId", "dkcoins_account_transaction.Amount",
                         "ExchangeRate", "Reason", "Cause", "Time", "Key", "Value")
                 .join(this.accountCredit, JoinType.INNER).on("SourceId", this.accountCredit, "Id")
-                .join(this.accountTransactionProperty, JoinType.LEFT).on("Id", this.accountTransactionProperty, "TransactionId")
-                ;
+                .join(this.accountTransactionProperty, JoinType.LEFT).on("Id", this.accountTransactionProperty, "TransactionId");
         //.where("accountId", filter.getAccount().getId())
 
         if(filter.getWorld() != null) {

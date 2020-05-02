@@ -38,7 +38,8 @@ public class BankSettingsCommand extends ObjectCommand<BankAccount> {
                 try {
                     receiveNotifications = Convert.toBoolean(args[1]);
                 } catch (IllegalArgumentException ignored) {
-                    commandSender.sendMessage(Messages.ERROR_NOT_BOOLEAN, VariableSet.create().add("value", args[1]));
+                    commandSender.sendMessage(Messages.ERROR_NOT_BOOLEAN, VariableSet.create()
+                            .add("value", args[1]));
                     return;
                 }
                 member.setReceiveNotifications(receiveNotifications);
@@ -50,7 +51,8 @@ public class BankSettingsCommand extends ObjectCommand<BankAccount> {
                 return;
             }
             default: {
-                commandSender.sendMessage(Messages.COMMAND_BANK_SETTINGS_NOT_VALID, VariableSet.create().add("value", args[1]));
+                commandSender.sendMessage(Messages.COMMAND_BANK_SETTINGS_NOT_VALID, VariableSet.create()
+                        .add("value", args[1]));
             }
         }
     }

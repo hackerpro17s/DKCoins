@@ -12,18 +12,18 @@ package net.pretronic.dkcoins.minecraft.commands.bank;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountExchangeCommand;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.member.BankMemberCommand;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.*;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Arrays;
@@ -56,8 +56,8 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
         if(account != null) {
             if(command == null) {
                 if(CommandUtil.hasAccountAccessAndSendMessage(commandSender, account)) {
-                    commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS, new ReflectVariableSet()
-                            .add("credits", account.getCredits()));
+                    commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS, VariableSet.create()
+                            .addDescribed("credits", account.getCredits()));
                 }
             } else {
                 commandSender.sendMessage(Messages.COMMAND_BANK_HELP);
@@ -81,7 +81,8 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
                 return;
             }
         }
-        commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", command));
+        commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create()
+                .add("name", command));
     }
 
     @Override

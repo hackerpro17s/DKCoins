@@ -1,26 +1,24 @@
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
-import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
-import net.pretronic.libraries.utility.GeneralUtil;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
+import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.player.MinecraftPlayer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class BankAdminCommand extends ObjectCommand<BankAccount> {
@@ -61,22 +59,22 @@ public class BankAdminCommand extends ObjectCommand<BankAccount> {
                     case "addamount": {
                         AccountTransaction transaction = account.getCredit(currency).addAmount(member, amount,
                                 CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, new ReflectVariableSet()
-                                .add("transaction", transaction));
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, VariableSet.create()
+                                .addDescribed("transaction", transaction));
                         return;
                     }
                     case "removeamount": {
                         AccountTransaction transaction = account.getCredit(currency).removeAmount(member, amount,
                                 CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, new ReflectVariableSet()
-                                .add("transaction", transaction));
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, VariableSet.create()
+                                .addDescribed("transaction", transaction));
                         return;
                     }
                     case "setamount": {
                         AccountTransaction transaction = account.getCredit(currency)
                                 .setAmount(member, amount, CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, new ReflectVariableSet()
-                                .add("transaction", transaction));
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, VariableSet.create()
+                                .addDescribed("transaction", transaction));
                         return;
                     }
                 }

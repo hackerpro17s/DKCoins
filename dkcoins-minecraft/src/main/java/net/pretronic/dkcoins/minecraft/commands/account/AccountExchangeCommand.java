@@ -10,14 +10,6 @@
 
 package net.pretronic.dkcoins.minecraft.commands.account;
 
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
-import net.pretronic.libraries.utility.GeneralUtil;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.TransferResult;
@@ -26,6 +18,15 @@ import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.Variable;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
+import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
 public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
@@ -72,9 +73,9 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
             TransferResult result = account.exchangeAccountCredit(member, sourceCurrency, targetCurrency, amount,
                     CommandUtil.buildReason(args, 3), DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
             if(result.isSuccess()) {
-                player.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_SUCCESS, new ReflectVariableSet()
-                        .add("sourceCurrency", sourceCurrency)
-                        .add("targetCurrency", targetCurrency)
+                player.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_SUCCESS, VariableSet.create()
+                        .addDescribed("sourceCurrency", sourceCurrency)
+                        .addDescribed("targetCurrency", targetCurrency)
                         .add("sourceAmount", DKCoinsConfig.formatCurrencyAmount(amount))
                         .add("targetAmount", sourceCurrency.exchange(amount, targetCurrency)));
             } else {
@@ -97,7 +98,7 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
                     }
                     case TRANSFER_DISABLED: {
                         commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_FAILURE_DISABLED, VariableSet.create()
-                                .add("sourceCurrency", sourceCurrency).add("targetCurrency", targetCurrency));
+                                .addDescribed("sourceCurrency", sourceCurrency).addDescribed("targetCurrency", targetCurrency));
                         break;
                     }
                 }

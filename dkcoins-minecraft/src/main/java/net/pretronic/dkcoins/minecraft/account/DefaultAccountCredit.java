@@ -10,21 +10,19 @@
 
 package net.pretronic.dkcoins.minecraft.account;
 
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
-import net.pretronic.libraries.utility.Validate;
-import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.TransferResult;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
-import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.api.minecraft.events.DKCoinsAccountMemberAddEvent;
 import net.pretronic.dkcoins.api.minecraft.events.DKCoinsAccountTransactEvent;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.annonations.Internal;
 import org.mcnative.common.McNative;
 
 import java.util.ArrayList;
@@ -83,49 +81,40 @@ public class DefaultAccountCredit implements AccountCredit {
         if(properties == null) properties = new ArrayList<>();
         if(reason == null) reason = "none";
         DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
-        AccountTransaction transaction = getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
-        this.amount = amount;
-        return transaction;
+        return getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
     }
 
     @Override
     public AccountTransaction addAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
-        Validate.notNull(executor, cause);
+        Validate.notNull(cause);
         if(properties == null) properties = new ArrayList<>();
         if(reason == null) reason = "none";
         DKCoins.getInstance().getAccountManager().addAccountCreditAmount(this, amount);
-        AccountTransaction transaction = getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
-        this.amount+=amount;
-        return transaction;
+        return getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
     }
 
     @Override
     public AccountTransaction removeAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties) {
-        Validate.notNull(executor, cause);
+        Validate.notNull(cause);
         if(properties == null) properties = new ArrayList<>();
         if(reason == null) reason = "none";
         DKCoins.getInstance().getAccountManager().removeAccountCreditAmount(this, amount);
-        AccountTransaction transaction = getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
-        this.amount-=amount;
-        return transaction;
+        return getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
     }
 
     @Override
     public void setAmount(double amount) {
         DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
-        this.amount = amount;
     }
 
     @Override
     public void addAmount(double amount) {
         DKCoins.getInstance().getAccountManager().addAccountCreditAmount(this, amount);
-        this.amount+=amount;
     }
 
     @Override
     public void removeAmount(double amount) {
         DKCoins.getInstance().getAccountManager().removeAccountCreditAmount(this, amount);
-        this.amount-=amount;
     }
 
     @Override

@@ -1,9 +1,10 @@
 package net.pretronic.dkcoins.minecraft.commands.currency;
 
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
-import net.pretronic.libraries.command.NotFindable;
+import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.Command;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.DefinedNotFindable;
 import net.pretronic.libraries.command.command.object.MainObjectCommand;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
@@ -11,9 +12,6 @@ import net.pretronic.libraries.command.command.object.ObjectNotFindable;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.minecraft.Messages;
 
 import java.util.Arrays;
 
@@ -62,7 +60,8 @@ public class CurrencyCommand extends MainObjectCommand<Currency> implements Defi
                 createCommand.execute(commandSender, command, args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : args);
             }
         } else {
-            commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create().add("name", command));
+            commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create()
+                    .add("name", command));
         }
     }
 }

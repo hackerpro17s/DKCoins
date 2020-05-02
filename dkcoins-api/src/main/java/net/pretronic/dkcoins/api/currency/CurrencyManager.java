@@ -28,9 +28,9 @@ public interface CurrencyManager {
 
     Currency createCurrency(String name, String symbol);
 
-    void updateCurrencyName(Currency currency);
+    void updateCurrencyName(Currency currency, String name);
 
-    void updateCurrencySymbol(Currency currency);
+    void updateCurrencySymbol(Currency currency, String symbol);
 
     void deleteCurrency(Currency currency);
 
@@ -41,7 +41,7 @@ public interface CurrencyManager {
 
     CurrencyExchangeRate createCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount);
 
-    void updateCurrencyExchangeRateAmount(CurrencyExchangeRate currencyExchangeRate);
+    void updateCurrencyExchangeRateAmount(CurrencyExchangeRate currencyExchangeRate, double exchangeAmount);
 
     void deleteCurrencyExchangeRate(CurrencyExchangeRate exchangeRate);
 }

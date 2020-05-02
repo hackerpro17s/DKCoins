@@ -10,8 +10,6 @@
 
 package net.pretronic.dkcoins.api.account;
 
-import net.pretronic.libraries.utility.annonations.Nullable;
-import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
@@ -19,6 +17,7 @@ import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.libraries.utility.annonations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -56,13 +55,13 @@ public interface AccountManager {
 
     MasterBankAccount createMasterAccount(String name, AccountType type, boolean disabled, MasterBankAccount parent, DKCoinsUser creator);
 
-    void updateAccountName(BankAccount account);
+    void updateAccountName(BankAccount account, String name);
 
-    void updateAccountDisabled(BankAccount account);
+    void updateAccountDisabled(BankAccount account, boolean disabled);
 
     void deleteAccount(BankAccount account, DKCoinsUser user);
 
-    List<BankAccount> getTopAccounts(Currency currency, AccountType[] excludedAccountTypes, int limit);
+    List<RankedAccountCredit> getTopAccountCredits(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page);
 
     BankAccount getAccountByRank(Currency currency, int rank);
 
@@ -86,11 +85,11 @@ public interface AccountManager {
 
     AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMember adder, AccountMemberRole memberRole, boolean receiveNotifications);
 
-    void updateAccountMemberRole(AccountMember member);
+    void updateAccountMemberRole(AccountMember member, AccountMemberRole role);
 
-    void updateAccountMemberReceiveNotifications(AccountMember member);
+    void updateAccountMemberReceiveNotifications(AccountMember member, boolean receiveNotification);
 
-    void removeAccountMember(AccountMember member, AccountMember remover);
+    boolean removeAccountMember(AccountMember member, AccountMember remover);
 
 
     List<AccountTransaction> filterAccountTransactions(TransactionFilter filter);
@@ -111,5 +110,7 @@ public interface AccountManager {
     AccountLimitation addAccountLimitation(BankAccount account, @Nullable AccountMember member, @Nullable AccountMemberRole memberRole,
                                            Currency comparativeCurrency, double amount, long interval);
 
-    void removeAccountLimitation(AccountLimitation accountLimitation);
+    boolean removeAccountLimitation(AccountMember member, AccountLimitation accountLimitation);
+
+    boolean removeAccountLimitation(BankAccount account, AccountLimitation accountLimitation);
 }

@@ -10,11 +10,10 @@
 
 package net.pretronic.dkcoins.minecraft.account.transaction;
 
-import net.pretronic.libraries.utility.annonations.Internal;
-import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.libraries.utility.annonations.Internal;
 
 public class DefaultTransactionFilter implements TransactionFilter {
 

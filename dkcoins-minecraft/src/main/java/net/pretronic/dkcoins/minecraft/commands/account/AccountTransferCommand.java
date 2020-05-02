@@ -10,24 +10,24 @@
 
 package net.pretronic.dkcoins.minecraft.commands.account;
 
-import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import net.pretronic.dkcoins.minecraft.DKCoinsConfig;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
-import net.pretronic.libraries.utility.GeneralUtil;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.TransferResult;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
+import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
@@ -57,16 +57,12 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
             commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_HELP);
             return;
         }
+        // /pay <bank> amount currency
         if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.WITHDRAW)) {
             String receiver0 = args[0];
             String amount0 = args[1];
             String currency0 = args.length == 3 ? args[2] : null;
 
-            BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
-            if(receiver == null) {
-                commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
-                return;
-            }
             if(!GeneralUtil.isNumber(amount0)) {
                 commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", amount0));
                 return;
@@ -79,18 +75,37 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
                 commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create().add("name", currency0));
                 return;
             }
-            OnlineMinecraftPlayer player = (OnlineMinecraftPlayer) commandSender;
-            AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
 
-            TransferResult result = account.getCredit(currency).transfer(member, amount, receiver.getCredit(currency),
-                    CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
-                    DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
-            if(result.isSuccess()) {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new ReflectVariableSet()
-                        .add("transaction", result.getTransaction()));
-            } else {
-                CommandUtil.handleTransferFailCauses(result, commandSender);
+            if(DKCoinsConfig.isPaymentAllAlias(receiver0)) {
+                if(CommandUtil.canTransferAndSendMessage(commandSender, amount, true)) {
+                    CommandUtil.loopThroughUserBanks(account, receiver -> transfer(commandSender, account, receiver, amount, currency, args));
+                }
+                return;
             }
+            BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
+            if(receiver == null) {
+                commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
+                return;
+            }
+            if(CommandUtil.canTransferAndSendMessage(commandSender, amount, false)) {
+                transfer(commandSender, account, receiver, amount, currency, args);
+            }
+        }
+    }
+
+    private void transfer(CommandSender commandSender, BankAccount account, BankAccount receiver, double amount, Currency currency, String[] args) {
+
+        OnlineMinecraftPlayer player = (OnlineMinecraftPlayer) commandSender;
+        AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
+
+        TransferResult result = account.getCredit(currency).transfer(member, amount, receiver.getCredit(currency),
+                CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
+                DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
+        if(result.isSuccess()) {
+            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, VariableSet.create()
+                    .addDescribed("transaction", result.getTransaction()));
+        } else {
+            CommandUtil.handleTransferFailCauses(result, commandSender);
         }
     }
 }

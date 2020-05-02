@@ -8,17 +8,18 @@
  * %license%
  */
 
-package net.pretronic.dkcoins.minecraft;
+package net.pretronic.dkcoins.minecraft.config;
 
-import net.pretronic.dkcoins.api.account.AccountType;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.document.annotations.DocumentIgnored;
 import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.commands.UserBankCommand;
+import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.configuration.DefaultCommandConfigurationBuilder;
+import net.pretronic.libraries.document.annotations.DocumentIgnored;
 import net.pretronic.libraries.document.annotations.DocumentKey;
 import net.pretronic.libraries.plugin.service.ServicePriority;
-import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.map.Maps;
 import net.pretronic.libraries.utility.map.Pair;
@@ -27,6 +28,7 @@ import org.mcnative.common.McNative;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,7 +73,11 @@ public class DKCoinsConfig {
     private static Map<AccountType, Integer> ACCOUNT_TYPE_START_AMOUNT = new HashMap<>();
 
     @DocumentKey("account.user.creditAliases")
-    public static Map<String, String> ACCOUNT_USER_CREDIT_ALIASES = Maps.ofValues(new Pair<>("coins", "coins"));
+    public static CreditAlias[] ACCOUNT_USER_CREDIT_ALIASES = new CreditAlias[]{new CreditAlias("Coins",
+            "dkcoins.command.coins",
+            "dkcoins.command.coins.other",
+            new String[]{"coins", "money"},
+            new String[0])};
 
     @DocumentKey("economyProvider.enabled")
     public static boolean ECONOMY_PROVIDER_ENABLED = true;
@@ -85,11 +91,18 @@ public class DKCoinsConfig {
     @DocumentIgnored
     public static Currency ECONOMY_PROVIDER_CURRENCY = null;
 
-    @DocumentKey("command.top.limit.default")
-    public static int TOP_LIMIT_DEFAULT = 5;
 
-    @DocumentKey("command.top.limit.max")
-    public static int TOP_LIMIT_MAX = 10;
+    @DocumentKey("account.payment.minimum.user")
+    public static double MINIMUM_PAYMENT_USER = 0.01;
+
+    @DocumentKey("account.payment.minimum.all")
+    public static double MINIMUM_PAYMENT_ALL = 1;
+
+    public static String[] PAYMENT_ALL_ALIASES = new String[]{"*"};
+
+
+    @DocumentKey("command.top.entriesPerPage")
+    public static int TOP_LIMIT_ENTRIES_PER_PAGE = 5;
 
     @DocumentKey("command.bank")
     public static CommandConfiguration COMMAND_BANK = CommandConfiguration.newBuilder()
@@ -125,10 +138,31 @@ public class DKCoinsConfig {
                 ACCOUNT_TYPE_START_AMOUNT.put(DKCoins.getInstance().getAccountManager().searchAccountType(type), startAmount));
 
 
-        ACCOUNT_USER_CREDIT_ALIASES.forEach((currency, command)-> {
+        /*
+        .forEach((currency, command)-> {
             McNative.getInstance().getLocal().getCommandManager().registerCommand(new UserBankCommand(DKCoinsPlugin.getInstance()
                     , CommandConfiguration.newBuilder().name(command).permission("dkcoins.command."+command).create(), currency));
         });
+         */
+        for (CreditAlias creditAlias : ACCOUNT_USER_CREDIT_ALIASES) {
+            System.out.println(creditAlias.getCurrency());
+            System.out.println(creditAlias.getPermission());
+            System.out.println(Arrays.toString(creditAlias.getCommands()));
+            System.out.println(Arrays.toString(creditAlias.getDisabledWorlds()));
+            if(creditAlias.getCommands().length == 0) {
+                McNative.getInstance().getLogger().warn("Credit command can't be registered. Commands list is empty.");
+                continue;
+            }
+            DefaultCommandConfigurationBuilder commandConfigurationBuilder = CommandConfiguration.newBuilder();
+            commandConfigurationBuilder.name(creditAlias.getCommands()[0]);
+            if(creditAlias.getCommands().length > 1) {
+                commandConfigurationBuilder.aliases(Arrays.copyOfRange(creditAlias.getCommands(), 1, creditAlias.getCommands().length));
+            }
+            commandConfigurationBuilder.permission(creditAlias.getPermission());
+
+            McNative.getInstance().getLocal().getCommandManager().registerCommand(new UserBankCommand(DKCoinsPlugin.getInstance(),
+                    commandConfigurationBuilder.create(), creditAlias));
+        }
 
         ECONOMY_PROVIDER_CURRENCY = DKCoins.getInstance().getCurrencyManager().searchCurrency(ECONOMY_PROVIDER_CURRENCY0);
 
@@ -149,5 +183,12 @@ public class DKCoinsConfig {
             if(entry.getKey().equals(type)) return entry.getValue();
         }
         return 0.0D;
+    }
+
+    public static boolean isPaymentAllAlias(String value) {
+        for (String alias : PAYMENT_ALL_ALIASES) {
+            if(alias.equalsIgnoreCase(value)) return true;
+        }
+        return false;
     }
 }
