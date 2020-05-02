@@ -36,8 +36,8 @@ public class BankStatementCommand extends ObjectCommand<BankAccount> {
             appendFilterOption(sender, filter, key, value);
         }
         Collection<AccountTransaction> transactions = DKCoins.getInstance().getAccountManager().filterAccountTransactions(filter);
-        sender.sendMessage(Messages.COMMAND_BANK_BANK_STATEMENT, new DescribedHashVariableSet()
-                    .add("transactions", transactions));
+        sender.sendMessage(Messages.COMMAND_BANK_BANK_STATEMENT, VariableSet.create()
+                    .addDescribed("transactions", transactions));
 
     }
 
@@ -53,7 +53,8 @@ public class BankStatementCommand extends ObjectCommand<BankAccount> {
             }
             case "time": {
                 if(!GeneralUtil.isNaturalNumber(value)) {
-                    sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", value));
+                    sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create()
+                            .add("value", value));
                     return;
                 }
                 long time = Long.parseLong(value);
@@ -78,7 +79,8 @@ public class BankStatementCommand extends ObjectCommand<BankAccount> {
             }
             case "page": {
                 if(!GeneralUtil.isNaturalNumber(value)) {
-                    sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", value));
+                    sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create()
+                            .add("value", value));
                     return;
                 }
                 int page = Integer.parseInt(value);

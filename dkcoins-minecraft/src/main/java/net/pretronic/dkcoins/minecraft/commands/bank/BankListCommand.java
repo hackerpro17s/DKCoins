@@ -7,6 +7,7 @@ import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.libraries.command.command.BasicCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
@@ -29,6 +30,7 @@ public class BankListCommand extends BasicCommand {
         OnlineMinecraftPlayer player = (OnlineMinecraftPlayer) commandSender;
         DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(player.getUniqueId());
         List<AccountMember> members = Iterators.map(user.getAccounts(), account -> account.getMember(user));
-        player.sendMessage(Messages.COMMAND_BANK_LIST, new DescribedHashVariableSet().add("members", members));
+        player.sendMessage(Messages.COMMAND_BANK_LIST, VariableSet.create()
+                .addDescribed("members", members));
     }
 }

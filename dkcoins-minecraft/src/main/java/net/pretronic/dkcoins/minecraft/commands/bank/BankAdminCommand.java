@@ -59,22 +59,22 @@ public class BankAdminCommand extends ObjectCommand<BankAccount> {
                     case "addamount": {
                         AccountTransaction transaction = account.getCredit(currency).addAmount(member, amount,
                                 CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, new DescribedHashVariableSet()
-                                .add("transaction", transaction));
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, VariableSet.create()
+                                .addDescribed("transaction", transaction));
                         return;
                     }
                     case "removeamount": {
                         AccountTransaction transaction = account.getCredit(currency).removeAmount(member, amount,
                                 CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, new DescribedHashVariableSet()
-                                .add("transaction", transaction));
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, VariableSet.create()
+                                .addDescribed("transaction", transaction));
                         return;
                     }
                     case "setamount": {
                         AccountTransaction transaction = account.getCredit(currency)
                                 .setAmount(member, amount, CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, new DescribedHashVariableSet()
-                                .add("transaction", transaction));
+                        commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, VariableSet.create()
+                                .addDescribed("transaction", transaction));
                         return;
                     }
                 }

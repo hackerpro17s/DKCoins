@@ -6,6 +6,7 @@ import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
@@ -23,7 +24,7 @@ public class CurrencyDeleteCommand extends ObjectCommand<Currency> {
             return;
         }
         DKCoins.getInstance().getCurrencyManager().deleteCurrency(currency);
-        commandSender.sendMessage(Messages.COMMAND_CURRENCY_DELETE_DONE, new DescribedHashVariableSet()
-                .add("currency", currency));
+        commandSender.sendMessage(Messages.COMMAND_CURRENCY_DELETE_DONE, VariableSet.create()
+                .addDescribed("currency", currency));
     }
 }

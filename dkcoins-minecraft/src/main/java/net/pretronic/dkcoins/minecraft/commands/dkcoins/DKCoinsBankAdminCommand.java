@@ -42,7 +42,8 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
         String currency0 = args.length == 4 ? args[3] : null;
 
         if(!GeneralUtil.isNumber(amount0)) {
-            commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", amount0));
+            commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create()
+                    .add("value", amount0));
             return;
         }
         double amount = Double.parseDouble(amount0);
@@ -53,7 +54,8 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
         } else {
             currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(currency0);
             if(currency == null) {
-                commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create().add("name", args[2]));
+                commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create()
+                        .add("name", args[2]));
                 return;
             }
         }
@@ -63,7 +65,8 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
         } else {
             BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(bankAccount);
             if(receiver == null) {
-                commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", bankAccount));
+                commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create()
+                        .add("name", bankAccount));
                 return;
             }
             transfer(commandSender, receiver, currency, amount, action, args);
@@ -85,18 +88,18 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
         if(action.equalsIgnoreCase("setAmount")) {
             AccountTransaction transaction = account.getCredit(currency)
                     .setAmount(member, amount, CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-            commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, new DescribedHashVariableSet()
-                    .add("transaction", transaction));
+            commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, VariableSet.create()
+                    .addDescribed("transaction", transaction));
         } else if(action.equalsIgnoreCase("addAmount")) {
             AccountTransaction transaction = account.getCredit(currency).addAmount(member, amount,
                     CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-            commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, new DescribedHashVariableSet()
-                    .add("transaction", transaction));
+            commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, VariableSet.create()
+                    .addDescribed("transaction", transaction));
         } else if(action.equalsIgnoreCase("removeAmount")) {
             AccountTransaction transaction = account.getCredit(currency).removeAmount(member, amount,
                     CommandUtil.buildReason(args, 3), TransferCause.API, properties);
-            commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, new DescribedHashVariableSet()
-                    .add("transaction", transaction));
+            commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, VariableSet.create()
+                    .addDescribed("transaction", transaction));
         }
     }
 }

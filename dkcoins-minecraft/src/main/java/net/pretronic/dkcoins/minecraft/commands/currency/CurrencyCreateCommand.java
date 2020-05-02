@@ -6,6 +6,7 @@ import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
@@ -29,12 +30,12 @@ public class CurrencyCreateCommand extends ObjectCommand<String> {
         String symbol = args[0];
         Currency currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(currencyName);
         if(currency != null) {
-            commandSender.sendMessage(Messages.ERROR_CURRENCY_ALREADY_EXISTS, new DescribedHashVariableSet()
-                    .add("currency", currency));
+            commandSender.sendMessage(Messages.ERROR_CURRENCY_ALREADY_EXISTS, VariableSet.create()
+                    .addDescribed("currency", currency));
             return;
         }
         currency = DKCoins.getInstance().getCurrencyManager().createCurrency(currencyName, symbol);
-        commandSender.sendMessage(Messages.COMMAND_CURRENCY_CREATE_DONE, new DescribedHashVariableSet()
-                .add("currency", currency));
+        commandSender.sendMessage(Messages.COMMAND_CURRENCY_CREATE_DONE, VariableSet.create()
+                .addDescribed("currency", currency));
     }
 }

@@ -102,8 +102,8 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
                 CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
                 DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
         if(result.isSuccess()) {
-            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new DescribedHashVariableSet()
-                    .add("transaction", result.getTransaction()));
+            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, VariableSet.create()
+                    .addDescribed("transaction", result.getTransaction()));
         } else {
             CommandUtil.handleTransferFailCauses(result, commandSender);
         }

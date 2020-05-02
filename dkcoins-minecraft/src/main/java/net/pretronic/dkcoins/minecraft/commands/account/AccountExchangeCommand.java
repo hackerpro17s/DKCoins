@@ -22,6 +22,7 @@ import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.Variable;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
@@ -72,9 +73,9 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
             TransferResult result = account.exchangeAccountCredit(member, sourceCurrency, targetCurrency, amount,
                     CommandUtil.buildReason(args, 3), DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
             if(result.isSuccess()) {
-                player.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_SUCCESS, new DescribedHashVariableSet()
-                        .add("sourceCurrency", sourceCurrency)
-                        .add("targetCurrency", targetCurrency)
+                player.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_SUCCESS, VariableSet.create()
+                        .addDescribed("sourceCurrency", sourceCurrency)
+                        .addDescribed("targetCurrency", targetCurrency)
                         .add("sourceAmount", DKCoinsConfig.formatCurrencyAmount(amount))
                         .add("targetAmount", sourceCurrency.exchange(amount, targetCurrency)));
             } else {
@@ -97,7 +98,7 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
                     }
                     case TRANSFER_DISABLED: {
                         commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_FAILURE_DISABLED, VariableSet.create()
-                                .add("sourceCurrency", sourceCurrency).add("targetCurrency", targetCurrency));
+                                .addDescribed("sourceCurrency", sourceCurrency).addDescribed("targetCurrency", targetCurrency));
                         break;
                     }
                 }

@@ -41,10 +41,10 @@ public class AccountTopCommand extends ObjectCommand<Currency> {
         }
         int start = DKCoinsConfig.TOP_LIMIT_ENTRIES_PER_PAGE * (page - 1) + 1;
         int end = page * DKCoinsConfig.TOP_LIMIT_ENTRIES_PER_PAGE;
-        sender.sendMessage(Messages.TOP, new DescribedHashVariableSet()
+        sender.sendMessage(Messages.TOP, VariableSet.create()
                 .add("start", start)
                 .add("end", end)
-                .add("ranks", ranks)
+                .addDescribed("ranks", ranks)
                 .add("page", page));
     }
 }

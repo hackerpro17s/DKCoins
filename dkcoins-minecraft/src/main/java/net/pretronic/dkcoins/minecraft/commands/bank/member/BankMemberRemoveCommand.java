@@ -7,6 +7,7 @@ import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.player.MinecraftPlayer;
@@ -25,7 +26,7 @@ public class BankMemberRemoveCommand extends ObjectCommand<AccountMember> {
             return;
         }
         member.getAccount().removeMember(member, CommandUtil.getAccountMemberByCommandSender(commandSender, member.getAccount()));
-        commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_REMOVE, new DescribedHashVariableSet()
-                .add("user", member.getUser()));
+        commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_REMOVE, VariableSet.create()
+                .addDescribed("user", member.getUser()));
     }
 }

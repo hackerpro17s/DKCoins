@@ -60,7 +60,8 @@ public class CurrencyCommand extends MainObjectCommand<Currency> implements Defi
                 createCommand.execute(commandSender, command, args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : args);
             }
         } else {
-            commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create().add("name", command));
+            commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create()
+                    .add("name", command));
         }
     }
 }

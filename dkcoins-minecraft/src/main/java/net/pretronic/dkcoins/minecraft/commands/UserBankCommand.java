@@ -52,7 +52,8 @@ public class UserBankCommand extends BasicCommand {
             if(world != null) {
                 for (String disabledWorld : creditAlias.getDisabledWorlds()) {
                     if(disabledWorld.equalsIgnoreCase(world.getName())) {
-                        player.sendMessage(Messages.COMMAND_USER_BANK_WORLD_DISABLED, VariableSet.create().add("world", world.getName()));
+                        player.sendMessage(Messages.COMMAND_USER_BANK_WORLD_DISABLED, VariableSet.create()
+                                .add("world", world.getName()));
                         return;
                     }
                 }
@@ -62,8 +63,8 @@ public class UserBankCommand extends BasicCommand {
         DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer)commandSender).getUniqueId());
         if(args.length == 0) {
             AccountCredit credit = user.getDefaultAccount().getCredit(getCurrency());
-            commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, new DescribedHashVariableSet()
-                    .add("credit", credit));
+            commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, VariableSet.create()
+                    .addDescribed("credit", credit));
             return;
         }
         String action = args[0];
@@ -75,7 +76,8 @@ public class UserBankCommand extends BasicCommand {
 
                 String amount0 = args[2];
                 if(!GeneralUtil.isNumber(amount0)) {
-                    commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", amount0));
+                    commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create()
+                            .add("value", amount0));
                     return;
                 }
                 double amount = Double.parseDouble(amount0);
@@ -91,30 +93,33 @@ public class UserBankCommand extends BasicCommand {
 
                 BankAccount receiver = DKCoins.getInstance().getAccountManager().searchAccount(receiver0);
                 if(receiver == null) {
-                    commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", receiver0));
+                    commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create()
+                            .add("name", receiver0));
                     return;
                 }
                 if(CommandUtil.canTransferAndSendMessage(commandSender, amount, false)) {
                     transfer(commandSender, member, credit, receiver, amount, args);
                 }
             } else {
-                commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create().add("currency", getCurrency().getName()));
+                commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create()
+                        .add("currency", getCurrency().getName()));
             }
         } else if(action.equalsIgnoreCase("top")) {
             this.topCommand.execute(commandSender, getCurrency(), args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
         } else {
             DKCoinsUser target = DKCoins.getInstance().getUserManager().getUser(action);
             if(target == null) {
-                commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS, VariableSet.create().add("name", action));
+                commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS, VariableSet.create()
+                        .add("name", action));
                 return;
             }
             if(!commandSender.hasPermission(creditAlias.getOtherPermission())) {
                 commandSender.sendMessage(Messages.ERROR_NO_PERMISSION);
             }
             AccountCredit credit = target.getDefaultAccount().getCredit(getCurrency());
-            commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT_OTHER, new DescribedHashVariableSet()
-                    .add("other", target.getDefaultAccount().getMember(target))
-                    .add("credit", credit));
+            commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT_OTHER, VariableSet.create()
+                    .addDescribed("other", target.getDefaultAccount().getMember(target))
+                    .addDescribed("credit", credit));
         }
     }
 
@@ -129,8 +134,8 @@ public class UserBankCommand extends BasicCommand {
                 CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
                 DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
         if(result.isSuccess()) {
-            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, new DescribedHashVariableSet()
-                    .add("transaction", result.getTransaction()));
+            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, VariableSet.create()
+                    .addDescribed("transaction", result.getTransaction()));
         } else {
             CommandUtil.handleTransferFailCauses(result, commandSender);
         }

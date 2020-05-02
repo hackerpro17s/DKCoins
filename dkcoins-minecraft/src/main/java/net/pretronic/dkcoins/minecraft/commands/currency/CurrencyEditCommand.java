@@ -32,17 +32,17 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
                 final String oldName = currency.getName();
                 String name = args[1];
                 currency.setName(name);
-                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_NAME, new DescribedHashVariableSet()
+                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_NAME, VariableSet.create()
                         .add("oldName", oldName)
-                        .add("currency", currency));
+                        .addDescribed("currency", currency));
                 return;
             } else if(action.equalsIgnoreCase("symbol")) {
                 final String oldSymbol = currency.getSymbol();
                 String symbol = args[1];
                 currency.setSymbol(symbol);
-                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_SYMBOL, new DescribedHashVariableSet()
+                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_SYMBOL, VariableSet.create()
                         .add("oldSymbol", oldSymbol)
-                        .add("currency", currency));
+                        .addDescribed("currency", currency));
                 return;
             }
         } else if(args.length == 3 && (args[0].equalsIgnoreCase("exchangeRate")
@@ -50,19 +50,21 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
             String targetCurrency0 = args[1];
             Currency targetCurrency = DKCoins.getInstance().getCurrencyManager().searchCurrency(targetCurrency0);
             if(targetCurrency == null) {
-                commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create().add("name", targetCurrency0));
+                commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create()
+                        .add("name", targetCurrency0));
                 return;
             }
             String argument = args[2];
             if(argument.equalsIgnoreCase("disable")) {
                 currency.setExchangeRate(targetCurrency, -1);
-                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DISABLE_EXCHANGE_RATE, new DescribedHashVariableSet()
-                        .add("currency", currency)
-                        .add("targetCurrency", targetCurrency));
+                commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DISABLE_EXCHANGE_RATE, VariableSet.create()
+                        .addDescribed("currency", currency)
+                        .addDescribed("targetCurrency", targetCurrency));
                 return;
             }
             if(!GeneralUtil.isNumber(argument)) {
-                commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", argument));
+                commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create()
+                        .add("value", argument));
                 return;
             }
             double amount = Double.parseDouble(argument);
@@ -72,8 +74,8 @@ public class CurrencyEditCommand extends ObjectCommand<Currency> {
                 return;
             }
             CurrencyExchangeRate exchangeRate = currency.setExchangeRate(targetCurrency, amount);
-            commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_EXCHANGE_RATE, new DescribedHashVariableSet()
-                    .add("exchangeRate", exchangeRate));
+            commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_EXCHANGE_RATE, VariableSet.create()
+                    .addDescribed("exchangeRate", exchangeRate));
             return;
         }
         commandSender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_HELP);

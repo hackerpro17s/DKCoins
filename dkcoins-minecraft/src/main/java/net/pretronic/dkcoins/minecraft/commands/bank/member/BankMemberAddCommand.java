@@ -34,11 +34,11 @@ public class BankMemberAddCommand extends ObjectCommand<Pair<BankAccount, String
         AccountMember member = account.getMember(user);
         if(member == null) {
             member = account.addMember(user, CommandUtil.getAccountMemberByCommandSender(commandSender, account), AccountMemberRole.GUEST, true);
-            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ADD, new DescribedHashVariableSet()
-                    .add("member", member));
+            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ADD, VariableSet.create()
+                    .addDescribed("member", member));
         } else {
-            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ALREADY, new DescribedHashVariableSet()
-                    .add("member", member));
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ALREADY, VariableSet.create()
+                    .addDescribed("member", member));
         }
     }
 }

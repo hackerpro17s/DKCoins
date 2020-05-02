@@ -41,7 +41,7 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
                                 && member.getAccount().getMember(DKCoins.getInstance().getUserManager()
                                 .getUser(((MinecraftPlayer)commandSender).getUniqueId())).getRole().isHigher(member.getRole())))) {
                             commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER,
-                                    VariableSet.create().add("targetRole", member.getRole()));
+                                    VariableSet.create().addDescribed("targetRole", member.getRole()));
                             return;
                         }
                         if(args.length == 3) {
@@ -60,15 +60,15 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
 
                             if(args[0].equalsIgnoreCase("set")) {
                                 AccountLimitation limitation = member.addLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
-                                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_SET, new DescribedHashVariableSet()
-                                        .add("limitation", limitation)
-                                        .add("member", member));
+                                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_SET, VariableSet.create()
+                                        .addDescribed("limitation", limitation)
+                                        .addDescribed("member", member));
                             } else {
                                 AccountLimitation limitation = member.getLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
                                 if(member.removeLimitation(limitation)) {
-                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE, new DescribedHashVariableSet()
-                                            .add("limitation", limitation)
-                                            .add("member", member));
+                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE, VariableSet.create()
+                                            .addDescribed("limitation", limitation)
+                                            .addDescribed("member", member));
                                 } else {
                                     commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE_FAILURE);
                                 }
@@ -84,11 +84,11 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
 
     private void listLimitations(CommandSender commandSender, AccountMember member) {
         if(member.getLimitations().isEmpty()) {
-            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION, new DescribedHashVariableSet()
-                    .add("member", member));
+            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION, VariableSet.create()
+                    .addDescribed("member", member));
         } else {
-            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, new DescribedHashVariableSet()
-                    .add("limitations", member.getLimitations()));
+            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, VariableSet.create()
+                    .addDescribed("limitations", member.getLimitations()));
         }
     }
 }

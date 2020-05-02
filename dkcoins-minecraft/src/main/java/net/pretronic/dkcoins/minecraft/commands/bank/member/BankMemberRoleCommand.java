@@ -43,8 +43,8 @@ public class BankMemberRoleCommand extends ObjectCommand<AccountMember> {
                     return;
                 }
                 member.setRole(role);
-                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ROLE, new DescribedHashVariableSet()
-                        .add("member", member));
+                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_ROLE, VariableSet.create()
+                        .addDescribed("member", member));
                 if(role == AccountMemberRole.OWNER) {
                     if(self != null) {
                         self.setRole(AccountMemberRole.ADMIN);
@@ -52,7 +52,7 @@ public class BankMemberRoleCommand extends ObjectCommand<AccountMember> {
                 }
             } else {
                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER,
-                        new DescribedHashVariableSet().add("targetRole", member.getRole()));
+                        VariableSet.create().addDescribed("targetRole", member.getRole()));
             }
         }
     }

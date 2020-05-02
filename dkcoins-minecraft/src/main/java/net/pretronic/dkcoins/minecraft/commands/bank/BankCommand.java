@@ -56,8 +56,8 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
         if(account != null) {
             if(command == null) {
                 if(CommandUtil.hasAccountAccessAndSendMessage(commandSender, account)) {
-                    commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS, new DescribedHashVariableSet()
-                            .add("credits", account.getCredits()));
+                    commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS, VariableSet.create()
+                            .addDescribed("credits", account.getCredits()));
                 }
             } else {
                 commandSender.sendMessage(Messages.COMMAND_BANK_HELP);
@@ -81,7 +81,8 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
                 return;
             }
         }
-        commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create().add("name", command));
+        commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create()
+                .add("name", command));
     }
 
     @Override
