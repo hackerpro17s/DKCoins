@@ -17,7 +17,6 @@ public class Messages {
 
     public static final String PREFIX = "&8» &6DKCoins &8|&f";
 
-
     public static final MessageKeyComponent ERROR_NOT_FROM_CONSOLE = Text.ofMessageKey("dkcoins.error.notFromConsole");
     public static final MessageKeyComponent ERROR_ONLY_FROM_CONSOLE = Text.ofMessageKey("dkcoins.error.onlyFromConsole");
     public static final MessageKeyComponent ERROR_NO_PERMISSION = Text.ofMessageKey("dkcoins.error.notPermission");
