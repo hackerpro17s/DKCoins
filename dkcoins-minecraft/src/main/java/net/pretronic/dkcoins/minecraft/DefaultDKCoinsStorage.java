@@ -641,7 +641,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     private DatabaseCollection createAccountTypeDatabaseCollection() {
         return this.database.createCollection("dkcoins_account_type")
-                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT, FieldOption.UNIQUE)
+                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
                 .field("Name", DataType.STRING, FieldOption.NOT_NULL, FieldOption.UNIQUE)
                 .field("Symbol", DataType.STRING, FieldOption.NOT_NULL)
                 .create();
@@ -649,7 +649,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     private DatabaseCollection createCurrencyDatabaseCollection() {
         return this.database.createCollection("dkcoins_currency")
-                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT, FieldOption.UNIQUE)
+                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
                 .field("Name", DataType.STRING, FieldOption.NOT_NULL, FieldOption.UNIQUE)
                 .field("Symbol", DataType.STRING, FieldOption.NOT_NULL)
                 .create();
@@ -657,7 +657,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     private DatabaseCollection createCurrencyExchangeRateDatabaseCollection() {
         return this.database.createCollection("dkcoins_currency_exchangerate")
-                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT, FieldOption.UNIQUE)
+                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
                 .field("CurrencyId", DataType.INTEGER, ForeignKey.of(this.currency, "Id", ForeignKey.Option.CASCADE, null))
                 .field("TargetCurrencyId", DataType.INTEGER, ForeignKey.of(this.currency, "Id", ForeignKey.Option.CASCADE, null))
                 .field("ExchangeAmount", DataType.DOUBLE)
@@ -666,7 +666,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     private DatabaseCollection createAccountDatabaseCollection() {
         return this.database.createCollection("dkcoins_account")
-                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT, FieldOption.UNIQUE)
+                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
                 .field("Name", DataType.STRING, FieldOption.NOT_NULL)
                 .field("TypeId", DataType.INTEGER, ForeignKey.of(this.accountType, "Id", ForeignKey.Option.CASCADE, null), FieldOption.NOT_NULL)
                 .field("Disabled", DataType.BOOLEAN, FieldOption.NOT_NULL)
@@ -677,7 +677,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     private DatabaseCollection createAccountCreditDatabaseCollection() {
         return this.database.createCollection("dkoins_account_credit")
-                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT, FieldOption.UNIQUE)
+                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
                 .field("AccountId", DataType.INTEGER, ForeignKey.of(this.account, "Id", ForeignKey.Option.CASCADE, null), FieldOption.NOT_NULL)
                 .field("CurrencyId", DataType.INTEGER, ForeignKey.of(this.currency, "Id", ForeignKey.Option.CASCADE, null), FieldOption.NOT_NULL)
                 .field("Amount", DataType.DOUBLE, FieldOption.NOT_NULL)
@@ -686,7 +686,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     private DatabaseCollection createAccountMemberDatabaseCollection() {
         return this.database.createCollection("dkcoins_account_member")
-                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT, FieldOption.UNIQUE)
+                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
                 .field("AccountId", DataType.INTEGER, ForeignKey.of(this.account, "Id", ForeignKey.Option.CASCADE, null), FieldOption.NOT_NULL)
                 .field("UserId", DataType.UUID, FieldOption.NOT_NULL)
                 .field("RoleId", DataType.INTEGER, FieldOption.NOT_NULL)
@@ -696,7 +696,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     private DatabaseCollection createAccountTransactionDatabaseCollection() {
         return this.database.createCollection("dkcoins_account_transaction")
-                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT, FieldOption.UNIQUE)
+                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
                 .field("SourceId", DataType.INTEGER, ForeignKey.of(this.accountCredit, "Id", ForeignKey.Option.DEFAULT, null), FieldOption.NOT_NULL)
                 .field("SourceName", DataType.STRING, FieldOption.NOT_NULL)
                 .field("SenderId", DataType.INTEGER)
@@ -724,7 +724,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     private DatabaseCollection createAccountLimitationsDatabaseCollection() {
         return this.database.createCollection("dkcoins_account_limitations")
-                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT, FieldOption.UNIQUE)
+                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
                 .field("AccountId", DataType.INTEGER, ForeignKey.of(this.account, "Id", ForeignKey.Option.CASCADE, null), FieldOption.NOT_NULL)
                 .field("MemberId", DataType.INTEGER, ForeignKey.of(this.accountMember, "Id", ForeignKey.Option.CASCADE, null))
                 .field("MemberRoleId", DataType.INTEGER)
