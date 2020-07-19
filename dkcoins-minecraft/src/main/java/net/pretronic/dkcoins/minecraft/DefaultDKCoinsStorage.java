@@ -254,7 +254,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     public List<Integer> getTopAccountCreditIds(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page) {
         Validate.notNull(currency);
         List<Integer> accountCreditIds = new ArrayList<>();
-        FindQuery query = this.accountCredit.find().get("dkoins_account_credit.Id")
+        FindQuery query = this.accountCredit.find().get("dkcoins_account_credit.Id")
                 .join(this.account).on("AccountId", this.account, "Id")
                 .where("CurrencyId", currency.getId())
                 .orderBy("Amount", SearchOrder.DESC);
@@ -676,7 +676,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     private DatabaseCollection createAccountCreditDatabaseCollection() {
-        return this.database.createCollection("dkoins_account_credit")
+        return this.database.createCollection("dkcoins_account_credit")
                 .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
                 .field("AccountId", DataType.INTEGER, ForeignKey.of(this.account, "Id", ForeignKey.Option.CASCADE, null), FieldOption.NOT_NULL)
                 .field("CurrencyId", DataType.INTEGER, ForeignKey.of(this.currency, "Id", ForeignKey.Option.CASCADE, null), FieldOption.NOT_NULL)
@@ -713,7 +713,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     private DatabaseCollection createAccountTransactionPropertyCollection() {
-        return this.database.createCollection("dkoins_account_transaction_property")
+        return this.database.createCollection("dkcoins_account_transaction_property")
                 .field("TransactionId", DataType.INTEGER,
                         ForeignKey.of(this.accountTransaction, "Id", ForeignKey.Option.CASCADE, null),
                         FieldOption.NOT_NULL, FieldOption.INDEX)
