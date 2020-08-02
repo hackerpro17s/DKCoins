@@ -16,6 +16,7 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
+import net.pretronic.dkcoins.api.events.currency.DKCoinsCurrencyEditEvent;
 import net.pretronic.dkcoins.common.SyncAction;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.synchronisation.NetworkSynchronisationCallback;
@@ -99,19 +100,23 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     @Override
     public void updateCurrencyName(Currency currency, String name) {
         DKCoins.getInstance().getStorage().updateCurrencyName(currency.getId(), currency.getName());
+        String oldName = currency.getName();
         ((DefaultCurrency)currency).updateName(name);
         caller.updateAndIgnore(currency.getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_UPDATE_NAME)
                 .add("name", currency.getName()));
+        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsCurrencyEditEvent(currency, DKCoinsCurrencyEditEvent.Operation.CHANGED_NAME, oldName, name));
     }
 
     @Override
     public void updateCurrencySymbol(Currency currency, String symbol) {
         DKCoins.getInstance().getStorage().updateCurrencySymbol(currency.getId(), currency.getSymbol());
+        String oldSymbol = currency.getSymbol();
         ((DefaultCurrency)currency).updateSymbol(symbol);
         this.caller.updateAndIgnore(currency.getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_UPDATE_SYMBOL)
                 .add("symbol", currency.getSymbol()));
+        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsCurrencyEditEvent(currency, DKCoinsCurrencyEditEvent.Operation.CHANGED_SYMBOL, oldSymbol, symbol));
     }
 
     @Override
