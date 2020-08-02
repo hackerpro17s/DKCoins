@@ -57,7 +57,6 @@ public class DefaultDKCoins extends DKCoins {
         this.formatter = formatter;
         this.migrations = new ArrayList<>();
 
-        createDefaults();
         registerVariableDescribers();
     }
 
@@ -121,7 +120,7 @@ public class DefaultDKCoins extends DKCoins {
         return formatter;
     }
 
-    private void createDefaults() {
+    public void createDefaults() {
         if(getAccountManager().searchAccountType("Bank") == null) {
             getAccountManager().createAccountType("Bank", "*");
         }

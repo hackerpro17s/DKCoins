@@ -70,7 +70,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         registerCommandsAndListeners();
         registerPlayerAdapter();
 
-        initAccountManagerCaches();
+        initAccountManager(dkCoins);
         initCurrencyManager(dkCoins);
         setupMigration(dkCoins);
         DKCoinsConfig.init();
@@ -145,7 +145,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         }
     }
 
-    private void initAccountManagerCaches() {
+    private void initAccountManager(DefaultDKCoins dkCoins) {
         if(McNative.getInstance().isNetworkAvailable()) {
             McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_accountType", DKCoinsPlugin.getInstance(),
                     int.class, DefaultDKCoins.getInstance().getAccountManager().getAccountTypeCache());
@@ -162,6 +162,8 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         } else {
             DefaultDKCoins.getInstance().getAccountManager().getAccountCache().initUnconnected();
         }
+
+        dkCoins.createDefaults();
     }
 
     public static DKCoinsPlugin getInstance() {
