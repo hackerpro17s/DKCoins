@@ -21,6 +21,8 @@
 package net.pretronic.dkcoins.minecraft.listener;
 
 import net.pretronic.dkcoins.api.events.account.credit.DKCoinsAccountCreditPreCreateEvent;
+import net.pretronic.dkcoins.api.events.currency.DKCoinsCurrencyEditEvent;
+import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.event.Listener;
 
@@ -29,5 +31,14 @@ public class InternalListener {
     @Listener
     public void onAccountCreditPreCreate(DKCoinsAccountCreditPreCreateEvent event) {
         event.getAccountCredit().setAmount(DKCoinsConfig.getAccountTypeStartAmount(event.getAccount().getType()));
+    }
+
+    @Listener
+    public void onCurrencyEdit(DKCoinsCurrencyEditEvent event) {
+        if(event.getOperation() == DKCoinsCurrencyEditEvent.Operation.CHANGED_NAME) {
+            if(DKCoinsConfig.CURRENCY_DEFAULT.equals(event.getCurrency())) {
+                DKCoinsPlugin.getInstance().getConfiguration().set("currency.default", event.getCurrency().getName());
+            }
+        }
     }
 }
