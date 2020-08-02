@@ -16,6 +16,7 @@ import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
 import net.pretronic.dkcoins.api.migration.Migration;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
+import net.pretronic.libraries.event.EventBus;
 import net.pretronic.libraries.logging.PretronicLogger;
 
 import java.util.Collection;
@@ -25,6 +26,8 @@ public abstract class DKCoins {
     private static DKCoins INSTANCE;
 
     public abstract PretronicLogger getLogger();
+
+    public abstract EventBus getEventBus();
 
     public abstract AccountManager getAccountManager();
 
@@ -41,6 +44,8 @@ public abstract class DKCoins {
     public abstract Collection<Migration> getMigrations();
 
     public abstract Migration getMigration(String name);
+
+    public abstract DKCoinsFormatter getFormatter();
 
     public abstract void registerMigration(Migration migration);
 

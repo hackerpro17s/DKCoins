@@ -173,7 +173,7 @@ public class DKCoinsConfig {
         return CURRENCY_FORMAT.format(amount);
     }
 
-    public static String formatDate(long time) {
+    public static String formatTime(long time) {
         return DATE_FORMAT.format(time);
     }
 
