@@ -55,8 +55,6 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         VariableDescriberRegistry.registerDescriber(MinecraftDKCoinsUser.class);
 
         registerEconomyProvider();
-        registerCommandsAndListeners();
-        registerPlayerAdapter();
         PlaceholderService.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
         setUpdateConfiguration(DKCoinsConfig.AUTO_UPDATE_ENABLED,DKCoinsConfig.AUTO_UPDATE_QUALIFIER);
 
@@ -69,6 +67,9 @@ public class DKCoinsPlugin extends MinecraftPlugin {
                 new MinecraftDKCoinsUserManager(),
                 builder,
                 new MinecraftDKCoinsFormatter());
+        registerCommandsAndListeners();
+        registerPlayerAdapter();
+
         initAccountManagerCaches();
         initCurrencyManager(dkCoins);
         setupMigration(dkCoins);
