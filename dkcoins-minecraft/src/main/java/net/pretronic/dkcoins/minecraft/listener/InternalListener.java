@@ -38,6 +38,7 @@ public class InternalListener {
         if(event.getOperation() == DKCoinsCurrencyEditEvent.Operation.CHANGED_NAME) {
             if(DKCoinsConfig.CURRENCY_DEFAULT.equals(event.getCurrency())) {
                 DKCoinsPlugin.getInstance().getConfiguration().set("currency.default", event.getCurrency().getName());
+                DKCoinsPlugin.getInstance().getConfiguration().save();
             }
         }
     }
