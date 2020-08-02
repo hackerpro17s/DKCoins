@@ -20,7 +20,7 @@
 
 package net.pretronic.dkcoins.minecraft.listener;
 
-import net.pretronic.dkcoins.api.events.DKCoinsAccountCreditPreCreateEvent;
+import net.pretronic.dkcoins.api.events.account.credit.DKCoinsAccountCreditPreCreateEvent;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.event.Listener;
 

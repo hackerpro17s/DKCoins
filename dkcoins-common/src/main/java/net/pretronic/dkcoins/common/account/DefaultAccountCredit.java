@@ -19,7 +19,7 @@ import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.api.events.DKCoinsAccountTransactEvent;
+import net.pretronic.dkcoins.api.events.account.DKCoinsAccountTransactEvent;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;

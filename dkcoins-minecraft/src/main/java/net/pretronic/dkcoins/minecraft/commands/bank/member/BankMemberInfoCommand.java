@@ -42,7 +42,6 @@ public class BankMemberInfoCommand extends ObjectCommand<AccountMember> {
                 VariableSet.create()
                         .add("member", member));
         if(CommandUtil.hasAccess(commandSender, member.getAccount(), AccessRight.LIMIT_MANAGEMENT)) {
-            //@Todo custom bml method for check this
             if(member.getLimitations().isEmpty()) {
                 commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION, VariableSet.create()
                         .addDescribed("member", member));

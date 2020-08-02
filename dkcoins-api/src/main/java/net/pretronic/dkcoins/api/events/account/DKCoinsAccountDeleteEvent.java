@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Philipp Elvin Friedhoff
- * @since 02.08.20, 20:44
+ * @since 02.08.20, 20:48
  * @web %web%
  *
  * The DKCoins Project is under the Apache License, version 2.0 (the "License");
@@ -18,26 +18,26 @@
  * under the License.
  */
 
-package net.pretronic.dkcoins.api.events;
+package net.pretronic.dkcoins.api.events.account;
 
-import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.events.DKCoinsEvent;
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
-public class DKCoinsAccountMemberAddEvent extends DKCoinsAccountEvent {
+public class DKCoinsAccountDeleteEvent extends DKCoinsEvent {
 
-    private final AccountMember addedMember;
-    private final AccountMember adder;
+    private final int bankAccountId;
+    private final DKCoinsUser deleter;
 
-    public DKCoinsAccountMemberAddEvent(AccountMember addedMember, AccountMember adder) {
-        super(addedMember.getAccount());
-        this.addedMember = addedMember;
-        this.adder = adder;
+    public DKCoinsAccountDeleteEvent(int bankAccountId, DKCoinsUser deleter) {
+        this.deleter = deleter;
+        this.bankAccountId = bankAccountId;
     }
 
-    public AccountMember getAddedMember() {
-        return addedMember;
+    public int getBankAccountId() {
+        return bankAccountId;
     }
 
-    public AccountMember getAdder() {
-        return adder;
+    public DKCoinsUser getDeleter() {
+        return deleter;
     }
 }

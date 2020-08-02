@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Philipp Elvin Friedhoff
- * @since 02.08.20, 20:44
+ * @since 02.08.20, 20:48
  * @web %web%
  *
  * The DKCoins Project is under the Apache License, version 2.0 (the "License");
@@ -18,14 +18,20 @@
  * under the License.
  */
 
-package net.pretronic.dkcoins.api.events;
+package net.pretronic.dkcoins.api.events.account;
 
 import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.api.events.DKCoinsEvent;
 
-public class DKCoinsAccountCreateEvent extends DKCoinsAccountPreCreateEvent {
+public class DKCoinsAccountEvent extends DKCoinsEvent {
 
-    public DKCoinsAccountCreateEvent(BankAccount account, DKCoinsUser creator) {
-        super(account, creator);
+    private final BankAccount account;
+
+    public DKCoinsAccountEvent(BankAccount account) {
+        this.account = account;
+    }
+
+    public BankAccount getAccount() {
+        return account;
     }
 }
