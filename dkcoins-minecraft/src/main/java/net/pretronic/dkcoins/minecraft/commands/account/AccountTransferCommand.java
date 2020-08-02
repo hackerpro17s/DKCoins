@@ -28,6 +28,7 @@ import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
+import org.mcnative.common.player.MinecraftPlayer;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
 public class AccountTransferCommand extends ObjectCommand<BankAccount> {
@@ -103,6 +104,14 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
         if(result.isSuccess()) {
             commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, VariableSet.create()
                     .addDescribed("transaction", result.getTransaction()));
+            for (AccountMember receiverMember : receiver.getMembers()) {
+                MinecraftPlayer receiverPlayer = McNative.getInstance().getPlayerManager().getPlayer(receiverMember.getUser().getUniqueId());
+                if(receiverPlayer.isOnline()) {
+                    OnlineMinecraftPlayer receiverOnlinePlayer = receiverPlayer.getAsOnlinePlayer();
+                    receiverOnlinePlayer.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS_RECEIVER, VariableSet.create()
+                            .addDescribed("transaction", result.getTransaction()));
+                }
+            }
         } else {
             CommandUtil.handleTransferFailCauses(result, commandSender);
         }

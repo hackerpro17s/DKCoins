@@ -42,6 +42,7 @@ import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.McNative;
 import org.mcnative.common.player.MinecraftPlayer;
+import org.mcnative.common.player.OnlineMinecraftPlayer;
 import org.mcnative.service.entity.living.Player;
 import org.mcnative.service.world.World;
 
@@ -155,6 +156,14 @@ public class UserBankCommand extends BasicCommand {
         if(result.isSuccess()) {
             commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, VariableSet.create()
                     .addDescribed("transaction", result.getTransaction()));
+            for (AccountMember receiverMember : receiver.getMembers()) {
+                MinecraftPlayer receiverPlayer = McNative.getInstance().getPlayerManager().getPlayer(receiverMember.getUser().getUniqueId());
+                if(receiverPlayer.isOnline()) {
+                    OnlineMinecraftPlayer receiverOnlinePlayer = receiverPlayer.getAsOnlinePlayer();
+                    receiverOnlinePlayer.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS_RECEIVER, VariableSet.create()
+                            .addDescribed("transaction", result.getTransaction()));
+                }
+            }
         } else {
             CommandUtil.handleTransferFailCauses(result, commandSender);
         }
