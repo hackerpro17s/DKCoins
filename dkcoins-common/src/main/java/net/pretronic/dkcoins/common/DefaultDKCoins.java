@@ -29,6 +29,7 @@ import net.pretronic.libraries.event.EventBus;
 import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.libraries.message.bml.variable.describer.VariableDescriberRegistry;
 import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +47,12 @@ public class DefaultDKCoins extends DKCoins {
     private final DKCoinsFormatter formatter;
 
     public DefaultDKCoins(PretronicLogger logger, EventBus eventBus, Database database, DKCoinsUserManager userManager, TransactionPropertyBuilder transactionPropertyBuilder, DKCoinsFormatter formatter) {
+        Validate.notNull(logger,
+                eventBus,
+                database,
+                userManager,
+                transactionPropertyBuilder,
+                formatter);
         DKCoins.setInstance(this);
         this.logger = logger;
         this.eventBus = eventBus;

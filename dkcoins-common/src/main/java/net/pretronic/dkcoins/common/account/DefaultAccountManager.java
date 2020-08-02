@@ -188,7 +188,7 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public void updateAccountDisabled(BankAccount account, boolean disabled) {
         Validate.notNull(account);
-        DKCoins.getInstance().getStorage().updateAccountDisabled(account.getId(), account.isDisabled());
+        DKCoins.getInstance().getStorage().updateAccountDisabled(account.getId(), disabled);
         ((DefaultBankAccount)account).updateDisabled(disabled);
         this.accountCache.getCaller().updateAndIgnore(account.getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_UPDATE_DISABLED)
@@ -226,7 +226,7 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public void setAccountCreditAmount(AccountCredit credit, double amount) {
         DKCoins.getInstance().getStorage().setAccountCreditAmount(credit.getId(), amount);
-        ((DefaultAccountCredit)credit).updateAmount(credit.getAmount());
+        ((DefaultAccountCredit)credit).updateAmount(amount);
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_SET_AMOUNT)
                 .add("creditId", credit.getId())

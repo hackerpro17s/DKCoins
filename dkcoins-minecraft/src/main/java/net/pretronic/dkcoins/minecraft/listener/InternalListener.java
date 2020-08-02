@@ -25,6 +25,7 @@ import net.pretronic.dkcoins.api.events.currency.DKCoinsCurrencyEditEvent;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.event.Listener;
+import org.mcnative.common.plugin.configuration.Configuration;
 
 public class InternalListener {
 
@@ -37,8 +38,10 @@ public class InternalListener {
     public void onCurrencyEdit(DKCoinsCurrencyEditEvent event) {
         if(event.getOperation() == DKCoinsCurrencyEditEvent.Operation.CHANGED_NAME) {
             if(DKCoinsConfig.CURRENCY_DEFAULT.equals(event.getCurrency())) {
-                DKCoinsPlugin.getInstance().getConfiguration().set("currency.default", event.getCurrency().getName());
-                DKCoinsPlugin.getInstance().getConfiguration().save();
+                Configuration configuration = DKCoinsPlugin.getInstance().getConfiguration();//@Todo maybe cache config in mcnative
+                configuration.load(DKCoinsConfig.class);
+                configuration.set("currency.default", event.getCurrency().getName());
+                configuration.save();
             }
         }
     }

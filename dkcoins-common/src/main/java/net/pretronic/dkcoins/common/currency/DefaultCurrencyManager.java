@@ -99,7 +99,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
 
     @Override
     public void updateCurrencyName(Currency currency, String name) {
-        DKCoins.getInstance().getStorage().updateCurrencyName(currency.getId(), currency.getName());
+        DKCoins.getInstance().getStorage().updateCurrencyName(currency.getId(), name);
         String oldName = currency.getName();
         ((DefaultCurrency)currency).updateName(name);
         caller.updateAndIgnore(currency.getId(), Document.newDocument()
@@ -110,7 +110,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
 
     @Override
     public void updateCurrencySymbol(Currency currency, String symbol) {
-        DKCoins.getInstance().getStorage().updateCurrencySymbol(currency.getId(), currency.getSymbol());
+        DKCoins.getInstance().getStorage().updateCurrencySymbol(currency.getId(), symbol);
         String oldSymbol = currency.getSymbol();
         ((DefaultCurrency)currency).updateSymbol(symbol);
         this.caller.updateAndIgnore(currency.getId(), Document.newDocument()
@@ -154,7 +154,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     @Override
     public void updateCurrencyExchangeRateAmount(CurrencyExchangeRate currencyExchangeRate, double exchangeAmount) {
         DKCoins.getInstance().getStorage().updateCurrencyExchangeAmount(currencyExchangeRate.getCurrency().getId(),
-                currencyExchangeRate.getTargetCurrency().getId(), currencyExchangeRate.getExchangeAmount());
+                currencyExchangeRate.getTargetCurrency().getId(), exchangeAmount);
         ((DefaultCurrencyExchangeRate)currencyExchangeRate).updateExchangeAmount(exchangeAmount);
         caller.updateAndIgnore(currencyExchangeRate.getCurrency().getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_UPDATE_AMOUNT)
