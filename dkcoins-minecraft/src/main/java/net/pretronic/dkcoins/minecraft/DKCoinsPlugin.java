@@ -111,7 +111,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         McNative.getInstance().getLocal().getCommandManager().registerCommand(new AccountTransferCommand(DKCoinsPlugin.getInstance(), DKCoinsConfig.COMMAND_PAY));
 
 
-        DKCoins.getInstance().getEventBus().subscribe(DKCoinsPlugin.getInstance(), new MinecraftPlayerListener());
+        DKCoins.getInstance().getEventBus().subscribe(getInstance(), new MinecraftPlayerListener());
         DKCoins.getInstance().getEventBus().subscribe(getInstance(), new InternalListener());
     }
 
