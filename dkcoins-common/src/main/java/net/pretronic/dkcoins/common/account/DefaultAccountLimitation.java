@@ -23,16 +23,18 @@ public class DefaultAccountLimitation implements AccountLimitation {
     private final AccountMember member;
     private final AccountMemberRole memberRole;
     private final Currency comparativeCurrency;
+    private final CalculationType calculationType;
     private final double amount;
-    private final long interval;
+    private final Interval interval;
 
     public DefaultAccountLimitation(int id, BankAccount account, AccountMember member, AccountMemberRole memberRole,
-                                    Currency comparativeCurrency, double amount, long interval) {
+                                    Currency comparativeCurrency, CalculationType calculationType, double amount, Interval interval) {
         this.id = id;
         this.account = account;
         this.member = member;
         this.memberRole = memberRole;
         this.comparativeCurrency = comparativeCurrency;
+        this.calculationType = calculationType;
         this.amount = amount;
         this.interval = interval;
     }
@@ -63,19 +65,18 @@ public class DefaultAccountLimitation implements AccountLimitation {
     }
 
     @Override
+    public CalculationType getCalculationType() {
+        return this.calculationType;
+    }
+
+    @Override
     public double getAmount() {
         return this.amount;
     }
 
     @Override
-    public long getInterval() {
+    public Interval getInterval() {
         return this.interval;
-    }
-
-    @Override
-    public String getFormattedInterval() {
-        //@Todo format interval
-        return String.valueOf(getInterval());
     }
 
     @Override

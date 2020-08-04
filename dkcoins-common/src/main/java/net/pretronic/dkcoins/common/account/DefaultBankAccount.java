@@ -139,9 +139,11 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
             if(amount != limitation.getAmount()) {
                 return false;
             }
+            /*
             if(interval != limitation.getInterval()) {
                 return false;
             }
+             */
             return true;
         });
     }

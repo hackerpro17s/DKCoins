@@ -180,10 +180,14 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
         for (QueryResultEntry entry : this.accountLimitation.find().where("AccountId", id).whereIsNull("MemberId").execute()) {
             int memberRoleId = entry.getInt("MemberRoleId");
-            account.addLoadedLimitation(new DefaultAccountLimitation(entry.getInt("Id"), account, null,
+            account.addLoadedLimitation(new DefaultAccountLimitation(entry.getInt("Id"),
+                    account,
+                    null,
                     AccountMemberRole.byIdOrNull(memberRoleId),
                     DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("CurrencyId")),
-                    entry.getDouble("Amount"), entry.getLong("Interval")));
+                    AccountLimitation.CalculationType.valueOf(entry.getString("CalculationType")),
+                    entry.getDouble("Amount"),
+                    AccountLimitation.Interval.valueOf(entry.getString("Interval"))));
         }
         for(QueryResultEntry entry : this.accountCredit.find().where("AccountId", id).execute()) {
             account.addLoadedAccountCredit(new DefaultAccountCredit(entry.getInt("Id"), account,
@@ -324,12 +328,14 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
         InsertQuery query = this.accountLimitation.insert()
                 .set("AccountId", account.getId())
                 .set("ComparativeCurrencyId", comparativeCurrency.getId())
+                .set("")
                 .set("Amount", amount)
                 .set("Interval", interval);
         if(accountMember != null) query.set("MemberId", accountMember.getId());
         if(memberRole != null) query.set("MemberRoleId", memberRole.getId());
         int id = query.executeAndGetGeneratedKeyAsInt("Id");
-        return new DefaultAccountLimitation(id, account, accountMember, memberRole, comparativeCurrency, amount, interval);
+        //return new DefaultAccountLimitation(id, account, accountMember, memberRole, comparativeCurrency, amount, interval);
+        return null;//@Todo change
     }
 
     @Override
@@ -344,7 +350,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
         return result.getInt("AccountId");
     }
 
-    private void loadAccountMemberLimitations(DefaultAccountMember member) {
+    private void loadAccountMemberLimitations(DefaultAccountMember member) {//@Todo
         for (QueryResultEntry entry : this.accountLimitation.find()
                 .where("AccountId", member.getAccount().getId())
                 .where("MemberId", member.getId())
@@ -354,7 +360,8 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                     member,
                     null,
                     DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("ComparativeCurrencyId")),
-                    entry.getDouble("Amount"), entry.getLong("Interval")));
+                    AccountLimitation.CalculationType.valueOf(entry.getString("CalculationType")),
+                    entry.getDouble("Amount"), AccountLimitation.Interval.valueOf(entry.getString("Interval"))));
         }
     }
 
@@ -638,6 +645,42 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
         return DKCoins.getInstance().getUserManager().constructNewUser(uniqueId);
     }
 
+    public DatabaseCollection getAccountType() {
+        return accountType;
+    }
+
+    public DatabaseCollection getAccount() {
+        return account;
+    }
+
+    public DatabaseCollection getAccountCredit() {
+        return accountCredit;
+    }
+
+    public DatabaseCollection getAccountMember() {
+        return accountMember;
+    }
+
+    public DatabaseCollection getAccountTransaction() {
+        return accountTransaction;
+    }
+
+    public DatabaseCollection getAccountTransactionProperty() {
+        return accountTransactionProperty;
+    }
+
+    public DatabaseCollection getAccountLimitation() {
+        return accountLimitation;
+    }
+
+    public DatabaseCollection getCurrency() {
+        return currency;
+    }
+
+    public DatabaseCollection getCurrencyExchangeRate() {
+        return currencyExchangeRate;
+    }
+
     private DatabaseCollection createAccountTypeDatabaseCollection() {
         return this.database.createCollection("dkcoins_account_type")
                 .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
@@ -728,8 +771,9 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                 .field("MemberId", DataType.INTEGER, ForeignKey.of(this.accountMember, "Id", ForeignKey.Option.CASCADE, null))
                 .field("MemberRoleId", DataType.INTEGER)
                 .field("ComparativeCurrencyId", DataType.INTEGER, ForeignKey.of(this.currency, "Id", ForeignKey.Option.CASCADE, null))
+                .field("CalculationType", DataType.STRING, FieldOption.NOT_NULL)
                 .field("Amount", DataType.DOUBLE, FieldOption.NOT_NULL)
-                .field("Interval", DataType.LONG, FieldOption.NOT_NULL)
+                .field("Interval", DataType.STRING, FieldOption.NOT_NULL)
                 .create();
     }
 }

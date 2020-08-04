@@ -44,7 +44,7 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
             commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_HELP);
             return;
         }
-        if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.WITHDRAW)) {
+        if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.EXCHANGE)) {
             String sourceCurrency0 = args[0];
             String destinationCurrency0 = args[1];
             String amount0 = args[2];

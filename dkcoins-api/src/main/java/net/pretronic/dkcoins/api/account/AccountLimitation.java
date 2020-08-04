@@ -29,9 +29,23 @@ public interface AccountLimitation {
 
     Currency getComparativeCurrency();
 
+    CalculationType getCalculationType();
+
     double getAmount();
 
-    long getInterval();
+    Interval getInterval();
 
-    String getFormattedInterval();
+
+    enum CalculationType {
+
+        GLOBAL,
+        USER_BASED
+    }
+
+    enum Interval {
+
+        DAILY,
+        WEEKLY,
+        MONTHLY
+    }
 }

@@ -82,7 +82,7 @@ public class DefaultAccountMember implements AccountMember {
         return Iterators.findOne(this.limitations, limitation -> {
             if(!comparativeCurrency.equals(limitation.getComparativeCurrency())) return false;
             if(amount != limitation.getAmount()) return false;
-            if(interval != limitation.getInterval()) return false;
+            //if(interval != limitation.getInterval()) return false;
             return true;
         });
     }

@@ -38,7 +38,7 @@ public class DefaultDKCoins extends DKCoins {
 
     private final PretronicLogger logger;
     private final EventBus eventBus;
-    private final DKCoinsStorage storage;
+    private final DefaultDKCoinsStorage storage;
     private final DefaultAccountManager accountManager;
     private final DefaultCurrencyManager currencyManager;
     private final DKCoinsUserManager userManager;
@@ -93,7 +93,7 @@ public class DefaultDKCoins extends DKCoins {
     }
 
     @Override
-    public DKCoinsStorage getStorage() {
+    public DefaultDKCoinsStorage getStorage() {
         return this.storage;
     }
 

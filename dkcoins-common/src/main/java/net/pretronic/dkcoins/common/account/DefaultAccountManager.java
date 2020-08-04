@@ -10,6 +10,10 @@
 
 package net.pretronic.dkcoins.common.account;
 
+import net.pretronic.databasequery.api.query.Aggregation;
+import net.pretronic.databasequery.api.query.result.QueryResult;
+import net.pretronic.databasequery.api.query.result.QueryResultEntry;
+import net.pretronic.databasequery.api.query.type.FindQuery;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
@@ -25,6 +29,8 @@ import net.pretronic.dkcoins.api.events.account.credit.DKCoinsAccountCreditPreCr
 import net.pretronic.dkcoins.api.events.account.member.DKCoinsAccountMemberAddEvent;
 import net.pretronic.dkcoins.api.events.account.member.DKCoinsAccountMemberRemoveEvent;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.common.DefaultDKCoins;
+import net.pretronic.dkcoins.common.DefaultDKCoinsStorage;
 import net.pretronic.dkcoins.common.SyncAction;
 import net.pretronic.dkcoins.common.user.DefaultDKCoinsUser;
 import net.pretronic.libraries.caching.CacheQuery;
@@ -36,10 +42,7 @@ import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.libraries.utility.annonations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultAccountManager implements AccountManager {
@@ -336,7 +339,56 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public boolean hasAccountLimitation(AccountMember member, Currency currency, double amount) {
+        BankAccount account = member.getAccount();
+        AccountMemberRole memberRole = member.getRole();
+        DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
+        FindQuery query = storage.getAccountTransaction().find()
+                .where("SourceId", account.getCredit(currency).getId())
+                .join(storage.getAccountCredit()).on("SourceId", storage.getAccountCredit(), "Id");
+        for (AccountLimitation limitation : account.getLimitations()) {
+
+            if(limitation.getMemberRole() != null && limitation.getMemberRole() == memberRole
+                    && limitation.getComparativeCurrency().equals(currency)) {
+
+                query.whereHigher("Time", getStartLimitationTime(limitation));
+                if(limitation.getCalculationType() == AccountLimitation.CalculationType.USER_BASED) {
+                    query.where("SenderId", member.getId());
+                }
+                query.groupBy(Aggregation.SUM, "Amount");
+            }
+        }
+        QueryResult result = query.execute();
+        for (QueryResultEntry resultEntry : result) {
+            System.out.println("--> ResultEntry");
+            for (Map.Entry<String, Object> entry : resultEntry) {
+                System.out.println(entry.getKey()+":"+entry.getValue());
+            }
+            System.out.println("---> ResultEntry end");
+        }
         return false;
+    }
+
+    private long getStartLimitationTime(AccountLimitation limitation) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.clear(Calendar.MINUTE);
+        calendar.clear(Calendar.SECOND);
+        calendar.clear(Calendar.MILLISECOND);
+
+        switch (limitation.getInterval()) {
+            case MONTHLY: {
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                break;
+            }
+            case WEEKLY: {
+                calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+                break;
+            }
+            case DAILY: {
+                break;
+            }
+        }
+        return calendar.getTimeInMillis();
     }
 
     @Override
