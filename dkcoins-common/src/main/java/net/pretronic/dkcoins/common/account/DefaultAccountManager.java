@@ -339,14 +339,16 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public boolean hasAccountLimitation(AccountMember member, Currency currency, double amount) {
+        System.out.println("has limit");
         BankAccount account = member.getAccount();
         AccountMemberRole memberRole = member.getRole();
         DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
         FindQuery query = storage.getAccountTransaction().find()
                 .where("SourceId", account.getCredit(currency).getId())
                 .join(storage.getAccountCredit()).on("SourceId", storage.getAccountCredit(), "Id");
+        System.out.println("limits:");
         for (AccountLimitation limitation : account.getLimitations()) {
-
+            System.out.println("limitation " + limitation.getId());
             if(limitation.getMemberRole() != null && limitation.getMemberRole() == memberRole
                     && limitation.getComparativeCurrency().equals(currency)) {
 
@@ -357,6 +359,7 @@ public class DefaultAccountManager implements AccountManager {
                 query.groupBy(Aggregation.SUM, "Amount");
             }
         }
+        System.out.println("end");
         QueryResult result = query.execute();
         for (QueryResultEntry resultEntry : result) {
             System.out.println("--> ResultEntry");
@@ -365,7 +368,7 @@ public class DefaultAccountManager implements AccountManager {
             }
             System.out.println("---> ResultEntry end");
         }
-        return false;
+        return true;
     }
 
     private long getStartLimitationTime(AccountLimitation limitation) {
