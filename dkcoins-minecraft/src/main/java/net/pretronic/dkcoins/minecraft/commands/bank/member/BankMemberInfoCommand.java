@@ -39,8 +39,7 @@ public class BankMemberInfoCommand extends ObjectCommand<AccountMember> {
     @Override
     public void execute(CommandSender commandSender, AccountMember member, String[] strings) {
         commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO,
-                VariableSet.create()
-                        .add("member", member));
+                VariableSet.create().addDescribed("member", member));
         if(CommandUtil.hasAccess(commandSender, member.getAccount(), AccessRight.LIMIT_MANAGEMENT)) {
             if(member.getLimitations().isEmpty()) {
                 commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION, VariableSet.create()

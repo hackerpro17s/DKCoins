@@ -11,6 +11,7 @@
 package net.pretronic.dkcoins.common.account;
 
 import net.pretronic.databasequery.api.query.Aggregation;
+import net.pretronic.databasequery.api.query.QueryGroup;
 import net.pretronic.databasequery.api.query.result.QueryResult;
 import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.databasequery.api.query.type.FindQuery;
@@ -326,49 +327,40 @@ public class DefaultAccountManager implements AccountManager {
         return getAccount(accountId).getLimitation(id);
     }
 
-
-    @Override
-    public boolean hasAccountLimitation(BankAccount account, Currency currency, double amount) {
-        return false;
-    }
-
-    @Override
-    public boolean hasAccountLimitation(BankAccount account, AccountMemberRole memberRole, Currency currency, double amount) {
-        return false;
-    }
-
     @Override
     public boolean hasAccountLimitation(AccountMember member, Currency currency, double amount) {
-        System.out.println("has limit");
         BankAccount account = member.getAccount();
         AccountMemberRole memberRole = member.getRole();
         DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
-        FindQuery query = storage.getAccountTransaction().find()
-                .where("SourceId", account.getCredit(currency).getId())
-                .join(storage.getAccountCredit()).on("SourceId", storage.getAccountCredit(), "Id");
-        System.out.println("limits:");
-        for (AccountLimitation limitation : account.getLimitations()) {
-            System.out.println("limitation " + limitation.getId());
-            if(limitation.getMemberRole() != null && limitation.getMemberRole() == memberRole
-                    && limitation.getComparativeCurrency().equals(currency)) {
 
-                query.whereHigher("Time", getStartLimitationTime(limitation));
-                if(limitation.getCalculationType() == AccountLimitation.CalculationType.USER_BASED) {
+        for (AccountLimitation limitation : account.getLimitations()) {
+            FindQuery query = storage.getAccountTransaction().find()
+                    .getAs(Aggregation.SUM, storage.getAccountTransaction(), "Amount", "TotalAmount")
+                    .where("SourceId", account.getCredit(currency).getId())
+                    .join(storage.getAccountCredit()).on("SourceId", storage.getAccountCredit(), "Id");
+            if(limitation.getComparativeCurrency().equals(currency)) {
+                if(limitation.getMemberRole() != null) {
+                    if(limitation.getMemberRole() == memberRole) {
+                        query.where("RoleId", memberRole.getId());
+                    } else {
+                        continue;
+                    }
+                }
+                if(limitation.getMember() != null && limitation.getMember().getId() == member.getId()) {
+                    query.where("SenderId", member.getId());
+                } else if(limitation.getCalculationType() == AccountLimitation.CalculationType.USER_BASED) {
                     query.where("SenderId", member.getId());
                 }
-                query.groupBy(Aggregation.SUM, "Amount");
+                query.whereHigher("Time", getStartLimitationTime(limitation));
+            }
+            QueryResult result = query.execute();
+            if(!result.isEmpty()) {
+                if(result.first().getObject("TotalAmount") == null) continue;
+                double totalAmount = result.first().getDouble("TotalAmount");
+                if(totalAmount+amount >= limitation.getAmount()) return true;
             }
         }
-        System.out.println("end");
-        QueryResult result = query.execute();
-        for (QueryResultEntry resultEntry : result) {
-            System.out.println("--> ResultEntry");
-            for (Map.Entry<String, Object> entry : resultEntry) {
-                System.out.println(entry.getKey()+":"+entry.getValue());
-            }
-            System.out.println("---> ResultEntry end");
-        }
-        return true;
+        return false;
     }
 
     private long getStartLimitationTime(AccountLimitation limitation) {
@@ -397,16 +389,13 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public AccountLimitation addAccountLimitation(BankAccount account, @Nullable AccountMember member,
                                                   @Nullable AccountMemberRole memberRole, Currency comparativeCurrency,
-                                                  double amount, long interval) {
+                                                  AccountLimitation.CalculationType calculationType,
+                                                  double amount, AccountLimitation.Interval interval) {
         Validate.notNull(account, comparativeCurrency);
         Validate.isTrue(amount > 0);
         AccountLimitation limitation = DKCoins.getInstance().getStorage().addAccountLimitation(account, member, memberRole,
-                comparativeCurrency, amount, interval);
-        if(member != null) {
-            ((DefaultAccountMember)member).addLoadedLimitation(limitation);
-        } else {
-            ((DefaultBankAccount)account).addLoadedLimitation(limitation);
-        }
+                comparativeCurrency, calculationType, amount, interval);
+        ((DefaultBankAccount)account).addLoadedLimitation(limitation);
         this.accountCache.getCaller().updateAndIgnore(account.getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_LIMITATION_ADD)
                 .add("limitationId", limitation.getId()));
@@ -414,27 +403,14 @@ public class DefaultAccountManager implements AccountManager {
     }
 
     @Override
-    public boolean removeAccountLimitation(AccountMember member, AccountLimitation limitation) {
-        Validate.notNull(member);
-        if(limitation == null) return false;
+    public boolean removeAccountLimitation(AccountLimitation limitation) {
+        Validate.notNull(limitation);
         DKCoins.getInstance().getStorage().removeAccountLimitation(limitation.getId());
         this.accountCache.getCaller().updateAndIgnore(limitation.getAccount().getId(),
                 Document.newDocument()
                         .add("action", SyncAction.ACCOUNT_LIMITATION_REMOVE)
                         .add("limitationId", limitation.getId()));
-        return ((DefaultAccountMember)member).removeLoadedLimitation(limitation);
-    }
-
-    @Override
-    public boolean removeAccountLimitation(BankAccount account, AccountLimitation limitation) {
-        Validate.notNull(account);
-        if(limitation == null) return false;
-        DKCoins.getInstance().getStorage().removeAccountLimitation(limitation.getId());
-        this.accountCache.getCaller().updateAndIgnore(limitation.getAccount().getId(),
-                Document.newDocument()
-                        .add("action", SyncAction.ACCOUNT_LIMITATION_REMOVE)
-                        .add("limitationId", limitation.getId()));
-        return ((DefaultBankAccount)account).removeLoadedLimitation(limitation);
+        return ((DefaultBankAccount)limitation.getAccount()).removeLoadedLimitation(limitation);
     }
 
     @Override

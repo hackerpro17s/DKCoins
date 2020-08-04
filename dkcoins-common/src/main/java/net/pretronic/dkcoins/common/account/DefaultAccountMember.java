@@ -29,7 +29,6 @@ public class DefaultAccountMember implements AccountMember {
     private final BankAccount account;
     private final DKCoinsUser user;
     private AccountMemberRole role;
-    private final Collection<AccountLimitation> limitations;
     private boolean receiveNotifications;
 
     public DefaultAccountMember(int id, BankAccount account, DKCoinsUser user, AccountMemberRole role, boolean receiveNotifications) {
@@ -37,7 +36,6 @@ public class DefaultAccountMember implements AccountMember {
         this.account = account;
         this.user = user;
         this.role = role;
-        this.limitations = new ArrayList<>();
         this.receiveNotifications = receiveNotifications;
     }
 
@@ -68,34 +66,24 @@ public class DefaultAccountMember implements AccountMember {
 
     @Override
     public Collection<AccountLimitation> getLimitations() {
-        return this.limitations;
+        return Iterators.filter(getAccount().getLimitations(), limitation -> limitation.getMember() != null && limitation.getMember().getId() == getId());
     }
 
-    //@Todo caching
-    @Override
-    public boolean hasLimitation(Currency currency, double amount) {
-        return DKCoins.getInstance().getAccountManager().hasAccountLimitation(this, currency, amount);
-    }
 
     @Override
-    public AccountLimitation getLimitation(Currency comparativeCurrency, double amount, long interval) {
-        return Iterators.findOne(this.limitations, limitation -> {
+    public AccountLimitation getLimitation(Currency comparativeCurrency, double amount, AccountLimitation.Interval interval) {
+        return Iterators.findOne(getAccount().getLimitations(), limitation -> {
+            if(limitation.getMember() == null || limitation.getMember().getId() != getId()) return false;
             if(!comparativeCurrency.equals(limitation.getComparativeCurrency())) return false;
             if(amount != limitation.getAmount()) return false;
-            //if(interval != limitation.getInterval()) return false;
+            if(interval != limitation.getInterval()) return false;
             return true;
         });
     }
 
     @Override
-    public AccountLimitation addLimitation(Currency comparativeCurrency, double amount, long interval) {
-        return DKCoins.getInstance().getAccountManager()
-                .addAccountLimitation(getAccount(), this, null, comparativeCurrency, amount, interval);
-    }
-
-    @Override
-    public boolean removeLimitation(AccountLimitation limitation) {
-        return DKCoins.getInstance().getAccountManager().removeAccountLimitation(this, limitation);
+    public boolean hasLimitation(Currency currency, double amount) {
+        return getAccount().hasLimitation(this, currency, amount);
     }
 
     @Override
@@ -111,17 +99,6 @@ public class DefaultAccountMember implements AccountMember {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof AccountMember && ((AccountMember)obj).getId() == getId();
-    }
-
-
-    @Internal
-    public void addLoadedLimitation(AccountLimitation limitation) {
-        this.limitations.add(limitation);
-    }
-
-    @Internal
-    public boolean removeLoadedLimitation(AccountLimitation limitation) {
-        return this.limitations.remove(limitation);
     }
 
     @Internal

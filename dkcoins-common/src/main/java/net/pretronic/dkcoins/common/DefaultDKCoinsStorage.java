@@ -72,7 +72,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     @Override
     public AccountType getAccountType(int id) {
-        QueryResultEntry result = this.accountType.find().get("Name", "Symbol").where("Id", id).execute().first();
+        QueryResultEntry result = this.accountType.find().get("Name").get( "Symbol").where("Id", id).execute().first();
         return new DefaultAccountType(id, result.getString("Name"), result.getString("Symbol"));
     }
 
@@ -323,19 +323,19 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     @Override
     public AccountLimitation addAccountLimitation(BankAccount account, AccountMember accountMember,
-                                                  AccountMemberRole memberRole, Currency comparativeCurrency, double amount, long interval) {
+                                                  AccountMemberRole memberRole, Currency comparativeCurrency, AccountLimitation.CalculationType calculationType,
+                                                  double amount, AccountLimitation.Interval interval) {
 
         InsertQuery query = this.accountLimitation.insert()
                 .set("AccountId", account.getId())
                 .set("ComparativeCurrencyId", comparativeCurrency.getId())
-                .set("")
+                .set("CalculationType", calculationType)
                 .set("Amount", amount)
                 .set("Interval", interval);
         if(accountMember != null) query.set("MemberId", accountMember.getId());
         if(memberRole != null) query.set("MemberRoleId", memberRole.getId());
         int id = query.executeAndGetGeneratedKeyAsInt("Id");
-        //return new DefaultAccountLimitation(id, account, accountMember, memberRole, comparativeCurrency, amount, interval);
-        return null;//@Todo change
+        return new DefaultAccountLimitation(id, account, accountMember, memberRole, comparativeCurrency, calculationType, amount, interval);
     }
 
     @Override
@@ -355,7 +355,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                 .where("AccountId", member.getAccount().getId())
                 .where("MemberId", member.getId())
                 .execute()) {
-            member.addLoadedLimitation(new DefaultAccountLimitation(entry.getInt("Id"),
+            ((DefaultBankAccount)member.getAccount()).addLoadedLimitation(new DefaultAccountLimitation(entry.getInt("Id"),
                     member.getAccount(),
                     member,
                     null,
@@ -643,6 +643,10 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     @Override
     public DKCoinsUser getUser(UUID uniqueId) {
         return DKCoins.getInstance().getUserManager().constructNewUser(uniqueId);
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 
     public DatabaseCollection getAccountType() {

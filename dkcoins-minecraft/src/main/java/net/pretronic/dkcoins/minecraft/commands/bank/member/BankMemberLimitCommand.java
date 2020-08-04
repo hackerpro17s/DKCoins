@@ -24,6 +24,7 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountLimitation;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
@@ -63,10 +64,10 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
                                     VariableSet.create().addDescribed("targetRole", member.getRole()));
                             return;
                         }
-                        if(args.length == 3) {
-                            String interval0 = args[1];
-                            if(!GeneralUtil.isNaturalNumber(interval0)) {
-                                commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", interval0));
+                        if(args.length == 5) {
+                            AccountLimitation.Interval interval = AccountLimitation.Interval.parse(args[1]);
+                            if(interval == null) {
+                                commandSender.sendMessage(Messages.ERROR_ACCOUNT_LIMITATION_INTERVAL_NOT_VALID, VariableSet.create().add("value", args[1]));
                                 return;
                             }
                             String amount0 = args[2];
@@ -74,17 +75,27 @@ public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
                                 commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", amount0));
                                 return;
                             }
-                            long interval = Long.parseLong(interval0);
                             double amount = Double.parseDouble(amount0);
 
+                            AccountLimitation.CalculationType calculationType = AccountLimitation.CalculationType.parse(args[3]);
+                            if(calculationType == null) {
+                                commandSender.sendMessage(Messages.ERROR_ACCOUNT_LIMITATION_CALCULATION_TYPE_NOT_VALID, VariableSet.create().add("value", args[3]));
+                                return;
+                            }
+                            Currency currency = DKCoins.getInstance().getCurrencyManager().getCurrency(args[4]);
+                            if(currency == null) {
+                                commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create().add("name", args[4]));
+                                return;
+                            }
+
                             if(args[0].equalsIgnoreCase("set")) {
-                                AccountLimitation limitation = member.addLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
+                                AccountLimitation limitation = member.getAccount().addLimitation(member, null, currency, calculationType, amount, interval);
                                 commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_SET, VariableSet.create()
                                         .addDescribed("limitation", limitation)
                                         .addDescribed("member", member));
                             } else {
                                 AccountLimitation limitation = member.getLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
-                                if(member.removeLimitation(limitation)) {
+                                if(member.getAccount().removeLimitation(limitation)) {
                                     commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE, VariableSet.create()
                                             .addDescribed("limitation", limitation)
                                             .addDescribed("member", member));

@@ -145,10 +145,6 @@ public class DKCoinsConfig {
         });
          */
         for (CreditAlias creditAlias : ACCOUNT_USER_CREDIT_ALIASES) {
-            System.out.println(creditAlias.getCurrency());
-            System.out.println(creditAlias.getPermission());
-            System.out.println(Arrays.toString(creditAlias.getCommands()));
-            System.out.println(Arrays.toString(creditAlias.getDisabledWorlds()));
             if(creditAlias.getCommands().length == 0) {
                 McNative.getInstance().getLogger().warn("Credit command can't be registered. Commands list is empty.");
                 continue;

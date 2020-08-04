@@ -65,20 +65,18 @@ public interface BankAccount {
     AccountLimitation getLimitation(int id);
 
     AccountLimitation getLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
-                                    double amount, long interval);
-
-    boolean hasLimitation(AccountMemberRole memberRole, Currency currency, double amount);
+                                    AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval);
 
     boolean hasLimitation(AccountMember member, Currency currency, double amount);
 
-    void addLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
-                       double amount, long interval);
+    AccountLimitation addLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
+                       AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval);
 
     boolean removeLimitation(AccountLimitation limitation);
 
     default boolean removeLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
-                          double amount, long interval) {
-        return removeLimitation(getLimitation(member, role, comparativeCurrency, amount, interval));
+                                     AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
+        return removeLimitation(getLimitation(member, role, comparativeCurrency, calculationType, amount, interval));
     }
 
 

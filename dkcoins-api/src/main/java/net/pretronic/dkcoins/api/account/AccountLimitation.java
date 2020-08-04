@@ -33,19 +33,35 @@ public interface AccountLimitation {
 
     double getAmount();
 
+    String getFormattedAmount();
+
     Interval getInterval();
 
 
     enum CalculationType {
 
         GLOBAL,
-        USER_BASED
+        USER_BASED;
+
+        public static CalculationType parse(String value) {
+            for (CalculationType calculationType : values()) {
+                if(calculationType.name().equalsIgnoreCase(value)) return calculationType;
+            }
+            return null;
+        }
     }
 
     enum Interval {
 
         DAILY,
         WEEKLY,
-        MONTHLY
+        MONTHLY;
+
+        public static Interval parse(String value) {
+            for (Interval interval : values()) {
+                if(interval.name().equalsIgnoreCase(value)) return interval;
+            }
+            return null;
+        }
     }
 }

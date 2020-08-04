@@ -10,6 +10,7 @@
 
 package net.pretronic.dkcoins.common.account;
 
+import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountLimitation;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
@@ -73,6 +74,12 @@ public class DefaultAccountLimitation implements AccountLimitation {
     public double getAmount() {
         return this.amount;
     }
+
+    @Override
+    public String getFormattedAmount() {
+        return DKCoins.getInstance().getFormatter().formatCurrencyAmount(getAmount());
+    }
+
 
     @Override
     public Interval getInterval() {

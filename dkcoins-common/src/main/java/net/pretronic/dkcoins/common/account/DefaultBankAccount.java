@@ -125,38 +125,22 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
     }
 
     @Override
-    public AccountLimitation getLimitation(AccountMember member, AccountMemberRole role, Currency comparativeCurrency, double amount, long interval) {
+    public AccountLimitation getLimitation(AccountMember member, AccountMemberRole role, Currency comparativeCurrency,
+                                           AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
         return Iterators.findOne(this.limitations, limitation -> {
-            if(!(member == null || member.equals(limitation.getMember()))) {
-                return false;
-            }
-            if(!(role == null || role.equals(limitation.getMemberRole()))) {
-                return false;
-            }
-            if(!comparativeCurrency.equals(limitation.getComparativeCurrency())) {
-                return false;
-            }
-            if(amount != limitation.getAmount()) {
-                return false;
-            }
-            /*
-            if(interval != limitation.getInterval()) {
-                return false;
-            }
-             */
+            if(!(member == null || member.equals(limitation.getMember()))) return false;
+            if(!(role == null || role.equals(limitation.getMemberRole()))) return false;
+            if(!comparativeCurrency.equals(limitation.getComparativeCurrency())) return false;
+            if(calculationType != limitation.getCalculationType()) return false;
+            if(amount != limitation.getAmount()) return false;
+            if(interval != limitation.getInterval()) return false;
             return true;
         });
     }
 
-    //@Todo caching
-    @Override
-    public boolean hasLimitation(AccountMemberRole memberRole, Currency currency, double amount) {
-        return DKCoins.getInstance().getAccountManager().hasAccountLimitation(this, currency, amount);
-    }
-
     @Override
     public boolean hasLimitation(AccountMember member, Currency currency, double amount) {
-        return member.hasLimitation(currency, amount);
+        return DKCoins.getInstance().getAccountManager().hasAccountLimitation(member, currency, amount);
     }
 
     @Override
@@ -201,15 +185,15 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
     }
 
     @Override
-    public void addLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
-                              double amount, long interval) {
-        DKCoins.getInstance().getAccountManager().addAccountLimitation(this, member, role, comparativeCurrency, amount, interval);
+    public AccountLimitation addLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
+                              AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
+        return DKCoins.getInstance().getAccountManager().addAccountLimitation(this, member, role, comparativeCurrency, calculationType, amount, interval);
     }
 
     @Override
     public boolean removeLimitation(AccountLimitation limitation) {
         if(limitation == null) return false;
-        return DKCoins.getInstance().getAccountManager().removeAccountLimitation(this, limitation);
+        return DKCoins.getInstance().getAccountManager().removeAccountLimitation(limitation);
     }
 
     @Override

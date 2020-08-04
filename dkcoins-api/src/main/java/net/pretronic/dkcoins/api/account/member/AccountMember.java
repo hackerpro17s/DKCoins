@@ -44,17 +44,9 @@ public interface AccountMember {
 
     Collection<AccountLimitation> getLimitations();
 
+    AccountLimitation getLimitation(Currency comparativeCurrency, double amount, AccountLimitation.Interval interval);
+
     boolean hasLimitation(Currency currency, double amount);
-
-    AccountLimitation getLimitation(Currency comparativeCurrency, double amount, long interval);
-
-    AccountLimitation addLimitation(Currency comparativeCurrency, double amount, long interval);
-
-    boolean removeLimitation(AccountLimitation limitation);
-
-    default boolean removeLimitation(Currency comparativeCurrency, double amount, long interval) {
-        return removeLimitation(getLimitation(comparativeCurrency, amount, interval));
-    }
 
     boolean receiveNotifications();
 

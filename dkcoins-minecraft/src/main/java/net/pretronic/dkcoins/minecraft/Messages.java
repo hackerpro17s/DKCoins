@@ -39,6 +39,8 @@ public class Messages {
     public static final MessageKeyComponent ERROR_ACCOUNT_USER_NOT_POSSIBLE = Text.ofMessageKey("dkcoins.error.account.user.notPossible");
     public static final MessageKeyComponent ERROR_ACCOUNT_PAYMENT_USER_TOO_LITTLE = Text.ofMessageKey("dkcoins.error.account.payment.user.too.little");
     public static final MessageKeyComponent ERROR_ACCOUNT_PAYMENT_ALL_TOO_LITTLE = Text.ofMessageKey("dkcoins.error.account.payment.all.too.little");
+    public static final MessageKeyComponent ERROR_ACCOUNT_LIMITATION_INTERVAL_NOT_VALID = Text.ofMessageKey("dkcoins.error.account.limitation.interval.notValid");
+    public static final MessageKeyComponent ERROR_ACCOUNT_LIMITATION_CALCULATION_TYPE_NOT_VALID = Text.ofMessageKey("dkcoins.error.account.limitation.calculationType.notValid");
 
 
     public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_HELP = Text.ofMessageKey("dkcoins.command.account.exchange.help");

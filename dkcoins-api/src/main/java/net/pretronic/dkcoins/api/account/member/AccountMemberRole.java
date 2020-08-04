@@ -59,6 +59,7 @@ public enum AccountMemberRole {
     }
 
     public boolean isHigher(AccountMemberRole role) {
+        if(role == AccountMemberRole.OWNER) return true;
         return this.id < role.getId();
     }
 
