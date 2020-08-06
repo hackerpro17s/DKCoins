@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Philipp Elvin Friedhoff
- * @since 02.08.20, 20:44
+ * @since 05.08.20, 15:14
  * @web %web%
  *
  * The DKCoins Project is under the Apache License, version 2.0 (the "License");
@@ -20,105 +20,36 @@
 
 package net.pretronic.dkcoins.minecraft.commands.bank.member;
 
-import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountLimitation;
-import net.pretronic.dkcoins.api.account.access.AccessRight;
+import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
-import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
-import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.command.sender.ConsoleCommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.dkcoins.minecraft.commands.bank.AbstractBankLimitCommand;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import org.mcnative.common.player.MinecraftPlayer;
+import net.pretronic.libraries.utility.map.Triple;
 
-public class BankMemberLimitCommand extends ObjectCommand<AccountMember> {
+import java.util.Collection;
+
+public class BankMemberLimitCommand extends AbstractBankLimitCommand<AccountMember> {
 
     public BankMemberLimitCommand(ObjectOwner owner) {
-        super(owner, CommandConfiguration.name("limit"));
+        super(owner, Messages.COMMAND_BANK_MEMBER_LIMIT_HELP);
     }
 
     @Override
-    public void execute(CommandSender commandSender, AccountMember member, String[] args) {
-        if(CommandUtil.hasAccessAndSendMessage(commandSender, member.getAccount(), AccessRight.LIMIT_MANAGEMENT)) {
-            if(args.length == 0) {
-                listLimitations(commandSender, member);
-                return;
-            } else {
-                switch (args[0].toLowerCase()) {
-                    case "list": {
-                        listLimitations(commandSender, member);
-                        return;
-                    }
-                    case "set":
-                    case "remove": {
-                        if(!(commandSender instanceof ConsoleCommandSender || (commandSender instanceof MinecraftPlayer
-                                && member.getAccount().getMember(DKCoins.getInstance().getUserManager()
-                                .getUser(((MinecraftPlayer)commandSender).getUniqueId())).getRole().isHigher(member.getRole())))) {
-                            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER,
-                                    VariableSet.create().addDescribed("targetRole", member.getRole()));
-                            return;
-                        }
-                        if(args.length == 5) {
-                            AccountLimitation.Interval interval = AccountLimitation.Interval.parse(args[1]);
-                            if(interval == null) {
-                                commandSender.sendMessage(Messages.ERROR_ACCOUNT_LIMITATION_INTERVAL_NOT_VALID, VariableSet.create().add("value", args[1]));
-                                return;
-                            }
-                            String amount0 = args[2];
-                            if(!GeneralUtil.isNumber(amount0)) {
-                                commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", amount0));
-                                return;
-                            }
-                            double amount = Double.parseDouble(amount0);
-
-                            AccountLimitation.CalculationType calculationType = AccountLimitation.CalculationType.parse(args[3]);
-                            if(calculationType == null) {
-                                commandSender.sendMessage(Messages.ERROR_ACCOUNT_LIMITATION_CALCULATION_TYPE_NOT_VALID, VariableSet.create().add("value", args[3]));
-                                return;
-                            }
-                            Currency currency = DKCoins.getInstance().getCurrencyManager().getCurrency(args[4]);
-                            if(currency == null) {
-                                commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create().add("name", args[4]));
-                                return;
-                            }
-
-                            if(args[0].equalsIgnoreCase("set")) {
-                                AccountLimitation limitation = member.getAccount().addLimitation(member, null, currency, calculationType, amount, interval);
-                                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_SET, VariableSet.create()
-                                        .addDescribed("limitation", limitation)
-                                        .addDescribed("member", member));
-                            } else {
-                                AccountLimitation limitation = member.getLimitation(DKCoinsConfig.CURRENCY_DEFAULT, amount, interval);
-                                if(member.getAccount().removeLimitation(limitation)) {
-                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE, VariableSet.create()
-                                            .addDescribed("limitation", limitation)
-                                            .addDescribed("member", member));
-                                } else {
-                                    commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_REMOVE_FAILURE);
-                                }
-                            }
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-        commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_LIMIT_HELP);
+    protected Collection<AccountLimitation> getLimitations(Triple<BankAccount, AccountMemberRole, AccountMember> target) {
+        return target.getThird().getLimitations();
     }
 
-    private void listLimitations(CommandSender commandSender, AccountMember member) {
-        if(member.getLimitations().isEmpty()) {
-            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION, VariableSet.create()
-                    .addDescribed("member", member));
-        } else {
-            commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, VariableSet.create()
-                    .addDescribed("limitations", member.getLimitations()));
-        }
+    @Override
+    protected AccountLimitation getLimitation(Triple<BankAccount, AccountMemberRole, AccountMember> target, Currency currency, AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
+        return target.getThird().getLimitation(currency, amount, interval);
+    }
+
+    @Override
+    protected AccountLimitation addLimitation(Triple<BankAccount, AccountMemberRole, AccountMember> target, Currency currency, AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
+        return target.getFirst().addLimitation(target.getThird(), null, currency, calculationType, amount, interval);
     }
 }

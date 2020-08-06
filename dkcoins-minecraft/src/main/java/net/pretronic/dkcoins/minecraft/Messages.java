@@ -84,21 +84,27 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_LIST = Text.ofMessageKey("dkcoins.command.bank.member.list");
 
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_INFO = Text.ofMessageKey("dkcoins.command.bank.member.info");
-    public static final MessageKeyComponent COMMAND_BANK_MEMBER_INFO_LIMITATION = Text.ofMessageKey("dkcoins.command.bank.member.info.limitation");
-    public static final MessageKeyComponent COMMAND_BANK_MEMBER_INFO_NO_LIMITATION = Text.ofMessageKey("dkcoins.command.bank.member.info.noLimitation");
+
 
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_ROLE = Text.ofMessageKey("dkcoins.command.bank.member.role");
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_REMOVE = Text.ofMessageKey("dkcoins.command.bank.member.remove");
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_ROLE_HELP = Text.ofMessageKey("dkcoins.command.bank.member.role.help");
 
-    public static final MessageKeyComponent COMMAND_BANK_MEMBER_LIMIT_SET = Text.ofMessageKey("dkcoins.command.bank.member.limit.set");
-    public static final MessageKeyComponent COMMAND_BANK_MEMBER_LIMIT_REMOVE = Text.ofMessageKey("dkcoins.command.bank.member.limit.remove");
-    public static final MessageKeyComponent COMMAND_BANK_MEMBER_LIMIT_REMOVE_FAILURE = Text.ofMessageKey("dkcoins.command.bank.member.limit.remove.failure");
+    public static final MessageKeyComponent COMMAND_BANK_LIMIT_SET = Text.ofMessageKey("dkcoins.command.bank.limit.set");
+    public static final MessageKeyComponent COMMAND_BANK_LIMIT_REMOVE = Text.ofMessageKey("dkcoins.command.bank.limit.remove");
+    public static final MessageKeyComponent COMMAND_BANK_LIMIT_REMOVE_FAILURE = Text.ofMessageKey("dkcoins.command.bank.limit.remove.failure");
+    public static final MessageKeyComponent COMMAND_BANK_INFO_LIMITATION = Text.ofMessageKey("dkcoins.command.bank.info.limitation");
+    public static final MessageKeyComponent COMMAND_BANK_INFO_NO_LIMITATION = Text.ofMessageKey("dkcoins.command.bank.info.noLimitation");
+
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_LIMIT_HELP = Text.ofMessageKey("dkcoins.command.bank.member.limit.help");
+    public static final MessageKeyComponent COMMAND_BANK_ROLE_LIMIT_HELP = Text.ofMessageKey("dkcoins.command.bank.role.limit.help");
+    public static final MessageKeyComponent COMMAND_BANK_LIMIT_HELP = Text.ofMessageKey("dkcoins.command.bank.limit.help");
 
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_HELP = Text.ofMessageKey("dkcoins.command.bank.member.help");
 
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_ADD = Text.ofMessageKey("dkcoins.command.bank.member.add");
+
+    public static final MessageKeyComponent COMMAND_BANK_ROLE_HELP = Text.ofMessageKey("dkcoins.command.bank.role.help");
 
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_ADD = Text.ofMessageKey("dkcoins.command.bank.admin.add");
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_REMOVE = Text.ofMessageKey("dkcoins.command.bank.admin.remove");

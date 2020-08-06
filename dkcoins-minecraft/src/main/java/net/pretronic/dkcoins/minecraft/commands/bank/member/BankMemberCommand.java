@@ -23,13 +23,16 @@ package net.pretronic.dkcoins.minecraft.commands.bank.member;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.dkcoins.minecraft.commands.bank.AbstractBankLimitCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.libraries.utility.map.Pair;
+import net.pretronic.libraries.utility.map.Triple;
 
 import java.util.Arrays;
 
@@ -39,7 +42,7 @@ public class BankMemberCommand extends ObjectCommand<BankAccount> {
     private final ObjectCommand<AccountMember> infoCommand;
     private final ObjectCommand<AccountMember> roleCommand;
     private final ObjectCommand<AccountMember> removeCommand;
-    private final ObjectCommand<AccountMember> limitCommand;
+    private final ObjectCommand<Triple<BankAccount, AccountMemberRole, AccountMember>> limitCommand;
     private final ObjectCommand<Pair<BankAccount, String>> addCommand;
 
     public BankMemberCommand(ObjectOwner owner) {
@@ -101,7 +104,7 @@ public class BankMemberCommand extends ObjectCommand<BankAccount> {
                 case "limit": {
                     AccountMember member = CommandUtil.parseAccountMember(commandSender, name, account);
                     if(member != null) {
-                        this.limitCommand.execute(commandSender, member, Arrays.copyOfRange(args, 2, args.length));
+                        this.limitCommand.execute(commandSender, new Triple<>(member.getAccount(), member.getRole(), member), Arrays.copyOfRange(args, 2, args.length));
                     }
                     break;
                 }

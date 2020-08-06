@@ -73,6 +73,10 @@ messages:
   &7/bank <name> member <member> limit remove <interval> <amount> <calculationType> <currency>
   &7/bank <name> member <name> add
 
+  &7/bank <name> limit list
+  &7/bank <name> limit set <interval> <amount> <calculationType> <currency>
+  &7/bank <name> limit remove <interval> <amount> <calculationType> <currency>
+
   &7/bank <name> bankStatement'
 
   dkcoins.command.bank.list: '${dkcoins.prefix} &7Your accounts&8:
@@ -88,22 +92,31 @@ messages:
   dkcoins.command.bank.member.list.loop: '&8» &7{member.displayName} &e{member.role.name}'
 
   dkcoins.command.bank.member.info: '${dkcoins.prefix} &7Member&8: &e{member.displayName} &7Role&8: 6e{member.role.name}'
-  dkcoins.command.bank.member.info.limitation: '${dkcoins.prefix} &7Limitations&8: @for("limitation" in {limitations}, ${dkcoins.command.bank.member.info.limitation.loop},"\n", "\n")'
-  dkcoins.command.bank.member.info.limitation.loop: '&8» &e{limitation.formattedAmount}{limitation.comparativeCurrency.name} &7in an interval of &e{limitation.interval} &7Type&8: &e{limitation.calculationType}'
-  dkcoins.command.bank.member.info.noLimitation: '${dkcoins.prefix} &e{member.displayName} &7has no limitations'
+
+  dkcoins.command.bank.info.limitation: '${dkcoins.prefix} &7Limitations&8: @for("limitation" in {limitations}, ${dkcoins.command.bank.info.limitation.loop},"\n", "\n")'
+  dkcoins.command.bank.info.limitation.loop: '&8» &e{limitation.formattedAmount}{limitation.comparativeCurrency.name} &7in an interval of &e{limitation.interval} &7Type&8: &e{limitation.calculationType}'
+  dkcoins.command.bank.info.noLimitation: '${dkcoins.prefix} &7No limitations'
 
   dkcoins.command.bank.member.role: '${dkcoins.prefix} &aYou have set &e{member.role.name} &afor member &e{member.displayName}'
   dkcoins.command.bank.member.remove: '${dkcoins.prefix} &e{user.displayName} &cwas removed from the bank account'
   dkcoins.command.bank.member.role.help: '${dkcoins.prefix} &cInvalid usage of role command&8:
   &7/bank <name> member <name> role <role>'
 
-  dkcoins.command.bank.member.limit.set: '${dkcoins.prefix} &aYou have set a limit of &e{limitation.amount}{limitation.comparativeCurrency.name} &ain an interval of &e{limitation.interval} &awith type &e{limitation.calculationType} &7for player &e{member.displayName}'
-  dkcoins.command.bank.member.limit.remove: '${dkcoins.prefix} &cYou removed a limit of &e{limitation.amount}{limitation.comparativeCurrency.name} &cin an interval of &e{limitation.interval} 6cwith type &7Type&8: &e{limitation.calculationType} &7for player &e{member.displayName}'
-  dkcoins.command.bank.member.limit.remove.failure: '${dkcoins.prefix} &cFailed to remove limit'
+  dkcoins.command.bank.limit.set: '${dkcoins.prefix} &aYou have set a limit of &e{limitation.amount}{limitation.comparativeCurrency.name} &ain an interval of &e{limitation.interval} &awith type &e{limitation.calculationType}'
+  dkcoins.command.bank.limit.remove: '${dkcoins.prefix} &cYou removed a limit of &e{limitation.amount}{limitation.comparativeCurrency.name} &cin an interval of &e{limitation.interval} 6cwith type &7Type&8: &e{limitation.calculationType}'
+  dkcoins.command.bank.limit.remove.failure: '${dkcoins.prefix} &cFailed to remove limit'
   dkcoins.command.bank.member.limit.help: '${dkcoins.prefix} &cInvalid usage of limit command&8:
   &7/bank <name> member <member> limit list
   &7/bank <name> member <member> limit set <interval> <amount> <calculationType> <currency>
   &7/bank <name> member <member> limit remove <interval> <amount> <calculationType> <currency>'
+  dkcoins.command.bank.role.limit.help: '${dkcoins.prefix} &cInvalid usage of limit command&8:
+  &7/bank <name> role <name> limit list
+  &7/bank <name> role <name> limit set <interval> <amount> <calculationType> <currency>
+  &7/bank <name> role <name> limit remove <interval> <amount> <calculationType> <currency>'
+  dkcoins.command.bank.limit.help: '${dkcoins.prefix} &cInvalid usage of limit command&8:
+  &7/bank <name> limit list
+  &7/bank <name> limit set <interval> <amount> <calculationType> <currency>
+  &7/bank <name> limit remove <interval> <amount> <calculationType> <currency>'
 
   dkcoins.command.bank.member.help: '${dkcoins.prefix} &cInvalid usage of member command&8:
   &7/bank <name> member list
@@ -209,3 +222,8 @@ messages:
 
   dkcoins.error.account.limitation.interval.notValid: '${dkcoins.prefix} &cAn interval with the name &e{value} &cdoes not exist'
   dkcoins.error.account.limitation.calculationType.notValid: '${dkcoins.prefix} &cA calculation type with the name &e{value} &cdoes not exist'
+
+  dkcoins.command.bank.role.help: '${dkcoins.prefix} &cInvalid usage of bank role command&8:
+  &7/bank <name> role <name> limit [list]
+  &7/bank <name> role <name> limit set <interval> <amount> <calculationType> <currency>
+  &7/bank <name> role <name> limit remove <interval> <amount> <calculationType> <currency>'

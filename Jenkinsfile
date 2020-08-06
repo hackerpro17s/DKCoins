@@ -89,7 +89,7 @@ pipeline {
             steps {
                 script {
                     if(BRANCH == BRANCH_MASTER || BRANCH == BRANCH_BETA) {
-                        sh 'mvn javadoc:aggregate-jar -pl :DKCoins,:dkcoins-api,:dkcoins-api-minecraft'
+                        sh 'mvn javadoc:aggregate-jar -pl :DKCoins,:dkcoins-api'
                         withCredentials([string(credentialsId: '120a9a64-81a7-4557-80bf-161e3ab8b976', variable: 'SECRET')]) {
                             String name = env.JOB_NAME
 

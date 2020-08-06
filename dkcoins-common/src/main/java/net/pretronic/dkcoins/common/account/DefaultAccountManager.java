@@ -334,11 +334,13 @@ public class DefaultAccountManager implements AccountManager {
         DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
 
         for (AccountLimitation limitation : account.getLimitations()) {
-            FindQuery query = storage.getAccountTransaction().find()
-                    .getAs(Aggregation.SUM, storage.getAccountTransaction(), "Amount", "TotalAmount")
-                    .where("SourceId", account.getCredit(currency).getId())
-                    .join(storage.getAccountCredit()).on("SourceId", storage.getAccountCredit(), "Id");
+
             if(limitation.getComparativeCurrency().equals(currency)) {
+                FindQuery query = storage.getAccountTransaction().find()
+                        .getAs(Aggregation.SUM, storage.getAccountTransaction(), "Amount", "TotalAmount")
+                        .where("SourceId", account.getCredit(currency).getId())
+                        .join(storage.getAccountCredit()).on("SourceId", storage.getAccountCredit(), "Id")
+                        .join(storage.getAccountMember()).on(storage.getAccountTransaction(), "SenderId", storage.getAccountMember(), "Id");
                 if(limitation.getMemberRole() != null) {
                     if(limitation.getMemberRole() == memberRole) {
                         query.where("RoleId", memberRole.getId());
@@ -352,12 +354,12 @@ public class DefaultAccountManager implements AccountManager {
                     query.where("SenderId", member.getId());
                 }
                 query.whereHigher("Time", getStartLimitationTime(limitation));
-            }
-            QueryResult result = query.execute();
-            if(!result.isEmpty()) {
-                if(result.first().getObject("TotalAmount") == null) continue;
-                double totalAmount = result.first().getDouble("TotalAmount");
-                if(totalAmount+amount >= limitation.getAmount()) return true;
+                QueryResult result = query.execute();
+                if(!result.isEmpty()) {
+                    if(result.first().getObject("TotalAmount") == null) continue;
+                    double totalAmount = result.first().getDouble("TotalAmount");
+                    if(totalAmount+amount >= limitation.getAmount()) return true;
+                }
             }
         }
         return false;

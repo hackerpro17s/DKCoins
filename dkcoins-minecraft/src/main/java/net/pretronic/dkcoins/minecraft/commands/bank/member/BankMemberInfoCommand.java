@@ -42,12 +42,10 @@ public class BankMemberInfoCommand extends ObjectCommand<AccountMember> {
                 VariableSet.create().addDescribed("member", member));
         if(CommandUtil.hasAccess(commandSender, member.getAccount(), AccessRight.LIMIT_MANAGEMENT)) {
             if(member.getLimitations().isEmpty()) {
-                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_NO_LIMITATION, VariableSet.create()
-                        .addDescribed("member", member));
+                commandSender.sendMessage(Messages.COMMAND_BANK_INFO_NO_LIMITATION, VariableSet.create());
             } else {
-                commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO_LIMITATION, VariableSet.create()
-                        .addDescribed("limitations", member.getLimitations())
-                        .addDescribed("member", member));
+                commandSender.sendMessage(Messages.COMMAND_BANK_INFO_LIMITATION, VariableSet.create()
+                        .addDescribed("limitations", member.getLimitations()));
             }
         }
     }
