@@ -15,7 +15,7 @@
     <parent>
         <artifactId>DKCoins</artifactId>
         <groupId>net.pretronic.dkcoins</groupId>
-        <version>1.2.12.80-SNAPSHOT</version>
+        <version>1.2.13.81-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
