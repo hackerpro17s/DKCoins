@@ -56,7 +56,6 @@ public class DKCoinsPlugin extends MinecraftPlugin {
 
         registerEconomyProvider();
         PlaceholderService.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
-        setUpdateConfiguration(DKCoinsConfig.AUTO_UPDATE_ENABLED,DKCoinsConfig.AUTO_UPDATE_QUALIFIER);
 
 
         //@Todo change for service and proxy

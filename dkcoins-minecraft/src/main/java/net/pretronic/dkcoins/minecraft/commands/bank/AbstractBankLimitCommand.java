@@ -24,12 +24,10 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountLimitation;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
-import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
@@ -37,13 +35,11 @@ import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import net.pretronic.libraries.utility.map.Pair;
 import net.pretronic.libraries.utility.map.Triple;
 import org.mcnative.common.player.MinecraftPlayer;
 import org.mcnative.common.text.components.MessageKeyComponent;
 
 import java.util.Collection;
-import java.util.List;
 
 public abstract class AbstractBankLimitCommand<T> extends ObjectCommand<Triple<BankAccount, AccountMemberRole, T>> {
 

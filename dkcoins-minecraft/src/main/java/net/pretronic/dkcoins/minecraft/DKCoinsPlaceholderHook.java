@@ -48,6 +48,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
     dkcoins_bank_(bank)_balance_[currency]
      */
 
+
     @Override
     public Object onRequest(MinecraftPlayer player, String parameter) {
         String[] parameters = parameter.toLowerCase().split("_");

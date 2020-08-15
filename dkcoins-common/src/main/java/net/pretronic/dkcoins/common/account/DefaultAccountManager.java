@@ -11,9 +11,7 @@
 package net.pretronic.dkcoins.common.account;
 
 import net.pretronic.databasequery.api.query.Aggregation;
-import net.pretronic.databasequery.api.query.QueryGroup;
 import net.pretronic.databasequery.api.query.result.QueryResult;
-import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.databasequery.api.query.type.FindQuery;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
