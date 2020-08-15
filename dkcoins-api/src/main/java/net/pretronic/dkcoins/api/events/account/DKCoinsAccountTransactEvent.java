@@ -21,7 +21,6 @@
 package net.pretronic.dkcoins.api.events.account;
 
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
-import net.pretronic.dkcoins.api.events.account.DKCoinsAccountEvent;
 
 public class DKCoinsAccountTransactEvent extends DKCoinsAccountEvent {
 

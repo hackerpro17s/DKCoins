@@ -34,12 +34,6 @@ import java.util.Map;
 
 public class DKCoinsConfig {
 
-    @DocumentKey("autoUpdate.enabled")
-    public static boolean AUTO_UPDATE_ENABLED = true;
-
-    @DocumentKey("autoUpdate.qualifier")
-    public static String AUTO_UPDATE_QUALIFIER = "RELEASE";
-
     @DocumentKey("currency.default")
     private static String CURRENCY_DEFAULT0 = "Coins";
 

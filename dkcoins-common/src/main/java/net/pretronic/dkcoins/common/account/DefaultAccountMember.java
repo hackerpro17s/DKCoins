@@ -20,7 +20,6 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.annonations.Internal;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class DefaultAccountMember implements AccountMember {
