@@ -89,7 +89,7 @@ pipeline {
             steps {
                 script {
                     if(BRANCH == BRANCH_MASTER || BRANCH == BRANCH_BETA) {
-                        sh 'mvn javadoc:aggregate-jar -pl :DKCoins,:dkcoins-api'
+                        sh 'mvn javadoc:aggregate-jar -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none -pl :DKCoins,:dkcoins-api'
                         withCredentials([string(credentialsId: '120a9a64-81a7-4557-80bf-161e3ab8b976', variable: 'SECRET')]) {
                             String name = env.JOB_NAME
 
@@ -116,11 +116,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([string(credentialsId: '120a9a64-81a7-4557-80bf-161e3ab8b976', variable: 'SECRET')]) {
-
-                        //Temporary because project is in beta state
-
                         String qualifier = QUALIFIER;
-                        if(qualifier == "BETA") qualifier = "RELEASE"
 
                         httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_JSON',
                                 httpMode: 'POST', ignoreSslErrors: true,timeout: 3000,
