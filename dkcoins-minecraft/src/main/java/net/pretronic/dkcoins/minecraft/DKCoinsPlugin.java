@@ -154,7 +154,6 @@ public class DKCoinsPlugin extends MinecraftPlugin {
             DefaultDKCoins.getInstance().getAccountManager().getAccountTypeCache().initUnconnected();
         }
 
-
         if(McNative.getInstance().isNetworkAvailable()) {
             McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_account", DKCoinsPlugin.getInstance(),
                     int.class, DefaultDKCoins.getInstance().getAccountManager().getAccountCache());
