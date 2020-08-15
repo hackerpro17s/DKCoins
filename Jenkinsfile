@@ -122,7 +122,7 @@ pipeline {
                                 httpMode: 'POST', ignoreSslErrors: true,timeout: 3000,
                                 responseHandle: 'NONE',
                                 customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
-                                url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/create?name=$VERSION" +
+                                url: "https://mirror.mcnative.org/v1/$RESOURCE_ID/versions/create?name=$VERSION" +
                                         "&qualifier=$qualifier&buildNumber=$BUILD_NUMBER")
 
                         httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_OCTETSTREAM',
@@ -131,7 +131,7 @@ pipeline {
                                 responseHandle: 'NONE',
                                 uploadFile: "dkcoins-minecraft/target/dkcoins-minecraft-${VERSION}.jar",
                                 customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
-                                url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/$BUILD_NUMBER/publish?edition=default")
+                                url: "https://mirror.mcnative.org/v1/$RESOURCE_ID/versions/$BUILD_NUMBER/publish?edition=default")
 
                         httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_OCTETSTREAM',
                                 httpMode: 'POST', ignoreSslErrors: true, timeout: 3000,
@@ -139,7 +139,7 @@ pipeline {
                                 responseHandle: 'NONE',
                                 uploadFile: "dkcoins-minecraft/target/dkcoins-minecraft-${VERSION}-loader.jar",
                                 customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
-                                url: "https://mirror.pretronic.net/v1/$RESOURCE_ID/versions/$BUILD_NUMBER/publish?edition=loader")
+                                url: "https://mirror.mcnative.org/v1/$RESOURCE_ID/versions/$BUILD_NUMBER/publish?edition=loader")
                     }
                 }
             }
