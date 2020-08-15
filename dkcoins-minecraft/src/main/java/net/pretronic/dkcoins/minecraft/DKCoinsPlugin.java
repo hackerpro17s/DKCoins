@@ -168,5 +168,4 @@ public class DKCoinsPlugin extends MinecraftPlugin {
     public static DKCoinsPlugin getInstance() {
         return INSTANCE;
     }
-
 }
