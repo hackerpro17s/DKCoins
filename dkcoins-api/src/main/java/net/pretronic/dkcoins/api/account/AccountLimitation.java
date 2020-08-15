@@ -29,9 +29,39 @@ public interface AccountLimitation {
 
     Currency getComparativeCurrency();
 
+    CalculationType getCalculationType();
+
     double getAmount();
 
-    long getInterval();
+    String getFormattedAmount();
 
-    String getFormattedInterval();
+    Interval getInterval();
+
+
+    enum CalculationType {
+
+        GLOBAL,
+        USER_BASED;
+
+        public static CalculationType parse(String value) {
+            for (CalculationType calculationType : values()) {
+                if(calculationType.name().equalsIgnoreCase(value)) return calculationType;
+            }
+            return null;
+        }
+    }
+
+    enum Interval {
+
+        DAILY,
+        WEEKLY,
+        MONTHLY;
+
+        public static Interval parse(String value) {
+            for (Interval interval : values()) {
+                if(interval.name().equalsIgnoreCase(value)) return interval;
+            }
+            return null;
+        }
+    }
 }

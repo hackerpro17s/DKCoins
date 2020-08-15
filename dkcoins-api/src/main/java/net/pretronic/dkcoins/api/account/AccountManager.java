@@ -101,16 +101,11 @@ public interface AccountManager {
 
     AccountLimitation getAccountLimitation(int id);
 
-    boolean hasAccountLimitation(BankAccount account, Currency currency, double amount);
-
-    boolean hasAccountLimitation(BankAccount account, AccountMemberRole memberRole, Currency currency, double amount);
-
     boolean hasAccountLimitation(AccountMember member, Currency currency, double amount);
 
     AccountLimitation addAccountLimitation(BankAccount account, @Nullable AccountMember member, @Nullable AccountMemberRole memberRole,
-                                           Currency comparativeCurrency, double amount, long interval);
+                                           Currency comparativeCurrency, AccountLimitation.CalculationType calculationType,
+                                           double amount, AccountLimitation.Interval interval);
 
-    boolean removeAccountLimitation(AccountMember member, AccountLimitation accountLimitation);
-
-    boolean removeAccountLimitation(BankAccount account, AccountLimitation accountLimitation);
+    boolean removeAccountLimitation(AccountLimitation accountLimitation);
 }

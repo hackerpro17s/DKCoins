@@ -12,19 +12,21 @@ package net.pretronic.dkcoins.minecraft.commands.bank;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountExchangeCommand;
 import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.member.BankMemberCommand;
+import net.pretronic.dkcoins.minecraft.commands.bank.role.BankRoleCommand;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.*;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
+import net.pretronic.libraries.utility.map.Triple;
 
 import java.util.Arrays;
 
@@ -44,6 +46,8 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
         registerCommand(new BankAdminCommand(owner));
         registerCommand(new BankStatementCommand(owner));
         registerCommand(new BankSettingsCommand(owner));
+        registerCommand(new BankRoleCommand(owner));
+        registerCommand(new LimitCommandMapper(owner));
     }
 
     @Override
@@ -88,5 +92,20 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
     @Override
     public boolean checkPrecondition(CommandSender commandSender, BankAccount account) {
         return CommandUtil.hasAccountAccessAndSendMessage(commandSender, account);
+    }
+
+    private static class LimitCommandMapper extends ObjectCommand<BankAccount> {
+
+        private final BankLimitCommand limitCommand;
+
+        public LimitCommandMapper(ObjectOwner owner) {
+            super(owner, CommandConfiguration.name("limit"));
+            this.limitCommand = new BankLimitCommand(owner);
+        }
+
+        @Override
+        public void execute(CommandSender commandSender, BankAccount account, String[] args) {
+            this.limitCommand.execute(commandSender, new Triple<>(account, AccountMemberRole.ADMIN, account), args);
+        }
     }
 }

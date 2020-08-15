@@ -20,7 +20,7 @@ public enum AccountMemberRole {
 
     GUEST(5, null, AccessRight.VIEW),
     USER(4, GUEST, AccessRight.WITHDRAW, AccessRight.DEPOSIT),
-    MANAGER(3, USER, AccessRight.MEMBER_MANAGEMENT),
+    MANAGER(3, USER, AccessRight.MEMBER_MANAGEMENT, AccessRight.EXCHANGE),
     ADMIN(2, MANAGER, AccessRight.LIMIT_MANAGEMENT, AccessRight.ROLE_MANAGEMENT),
     OWNER(1, ADMIN, AccessRight.ADMIN_MANAGEMENT, AccessRight.DELETE);
 
@@ -59,6 +59,7 @@ public enum AccountMemberRole {
     }
 
     public boolean isHigher(AccountMemberRole role) {
+        if(role == AccountMemberRole.OWNER) return true;
         return this.id < role.getId();
     }
 

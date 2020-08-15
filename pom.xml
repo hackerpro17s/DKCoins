@@ -17,11 +17,12 @@
     <groupId>net.pretronic.dkcoins</groupId>
     <artifactId>DKCoins</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.26.67-BETA</version>
+    <version>1.2.13.81-SNAPSHOT</version>
     <modules>
         <module>dkcoins-api</module>
+        <module>dkcoins-common</module>
+        <module>dkcoins-legacy</module>
         <module>dkcoins-minecraft</module>
-        <module>dkcoins-api-minecraft</module>
     </modules>
 
     <distributionManagement>
@@ -34,11 +35,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <plugin.maven.compiler>3.8.1</plugin.maven.compiler>
+        <plugin.maven.source>3.2.1</plugin.maven.source>
         <plugin.maven.shade>3.2.2</plugin.maven.shade>
         <plugin.maven.deploy>3.0.0-M1</plugin.maven.deploy>
 
-        <dependency.pretronic.libraries>1.1.18.129-SNAPSHOT</dependency.pretronic.libraries>
-        <dependency.mcnative.version>1.2.24.178-SNAPSHOT</dependency.mcnative.version>
+        <dependency.pretronic.libraries>1.2.16.154-SNAPSHOT</dependency.pretronic.libraries>
+        <dependency.pretronic.databasequery>1.2.38.65-SNAPSHOT</dependency.pretronic.databasequery>
+        <dependency.mcnative.version>1.6.0.347-SNAPSHOT</dependency.mcnative.version>
 
         <dependency.essentialsX>2.16.1</dependency.essentialsX>
         <dependency.mongodb>3.8.0</dependency.mongodb>

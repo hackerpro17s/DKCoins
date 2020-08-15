@@ -90,7 +90,8 @@ public interface DKCoinsStorage {
     int getAccountLimitationAccountId(int id);
 
     AccountLimitation addAccountLimitation(BankAccount account, AccountMember accountMember, AccountMemberRole memberRole,
-                                           Currency comparativeCurrency, double amount, long interval);
+                                           Currency comparativeCurrency, AccountLimitation.CalculationType calculationType,
+                                           double amount, AccountLimitation.Interval interval);
 
     void removeAccountLimitation(int id);
 

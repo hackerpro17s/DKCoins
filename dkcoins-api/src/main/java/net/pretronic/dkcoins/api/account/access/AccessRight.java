@@ -15,6 +15,7 @@ public enum AccessRight {
     VIEW,
     DEPOSIT,
     WITHDRAW,
+    EXCHANGE,
     ROLE_MANAGEMENT,
     MEMBER_MANAGEMENT,
     ADMIN_MANAGEMENT,

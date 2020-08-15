@@ -22,9 +22,7 @@ import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.message.bml.variable.Variable;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
@@ -46,7 +44,7 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
             commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_HELP);
             return;
         }
-        if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.WITHDRAW)) {
+        if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.EXCHANGE)) {
             String sourceCurrency0 = args[0];
             String destinationCurrency0 = args[1];
             String amount0 = args[2];
