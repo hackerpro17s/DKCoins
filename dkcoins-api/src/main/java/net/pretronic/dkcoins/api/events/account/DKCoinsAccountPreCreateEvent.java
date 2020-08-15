@@ -21,7 +21,6 @@
 package net.pretronic.dkcoins.api.events.account;
 
 import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.events.account.DKCoinsAccountEvent;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
 public class DKCoinsAccountPreCreateEvent extends DKCoinsAccountEvent {

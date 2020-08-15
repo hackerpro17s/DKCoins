@@ -143,7 +143,6 @@ public class Messages {
     public static final MessageKeyComponent TOP = Text.ofMessageKey("dkcoins.top");
     public static final MessageKeyComponent TOP_PAGE_NO_ENTRIES = Text.ofMessageKey("dkcoins.top.pageNoEntries");
 
-
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_HELP = Text.ofMessageKey("dkcoins.bank.settings.help");
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_RECEIVE_NOTIFICATIONS_ON = Text.ofMessageKey("dkcoins.bank.settings.receiveNotifications.on");
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_RECEIVE_NOTIFICATIONS_OFF = Text.ofMessageKey("dkcoins.bank.settings.receiveNotifications.off");
