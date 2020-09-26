@@ -41,7 +41,7 @@
 
         <dependency.pretronic.libraries>1.2.16.154-SNAPSHOT</dependency.pretronic.libraries>
         <dependency.pretronic.databasequery>1.2.38.65-SNAPSHOT</dependency.pretronic.databasequery>
-        <dependency.mcnative.version>1.6.3.350-SNAPSHOT</dependency.mcnative.version>
+        <dependency.mcnative.version>1.6.28.378-SNAPSHOT</dependency.mcnative.version>
 
         <dependency.essentialsX>2.16.1</dependency.essentialsX>
         <dependency.mongodb>3.8.0</dependency.mongodb>
