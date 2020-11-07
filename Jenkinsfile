@@ -19,8 +19,8 @@ String JAVADOCS_NAME = "dkcoins"
 String JAVADOCS_MODULES = ":DKCoins,:dkcoins-api"
 
 def MIRROR_SERVER_PUBLISHING = [
-  "dkcoins-minecraft/target/dkcoins-minecraft-%version%.jar": "default",
-  "dkcoins-minecraft/target/dkcoins-minecraft-%version%-loader.jar": "loader",
+        "dkcoins-minecraft/target/dkcoins-minecraft-%version%.jar": "default",
+        "dkcoins-minecraft/target/dkcoins-minecraft-%version%-loader.jar": "loader",
 ]
 
 String MAVEN_SETTINGS_FILE_ID = "afe25550-309e-40c1-80ad-59da7989fb4e"
@@ -120,7 +120,7 @@ pipeline {
                 script {
                     if(!JAVADOCS_ENABLED) return
                     if(BRANCH == "origin/$BRANCH_MASTER" || (BRANCH_BETA != null && BRANCH == "origin/$BRANCH_BETA")) {
-                        sh 'mvn javadoc:aggregate-jar -pl ${JAVADOCS_MODULES}'
+                        sh 'mvn javadoc:aggregate-jar -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none -pl '+ JAVADOCS_MODULES
                         withCredentials([string(credentialsId: JAVADOCS_TOKEN_CREDENTIAL_ID, variable: 'SECRET')]) {
                             String name = env.JOB_NAME
 
