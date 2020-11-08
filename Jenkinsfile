@@ -19,8 +19,8 @@ String JAVADOCS_NAME = "dkcoins"
 String JAVADOCS_MODULES = ":DKCoins,:dkcoins-api"
 
 def MIRROR_SERVER_PUBLISHING = [
-  "dkcoins-minecraft/target/dkcoins-minecraft-%version%.jar": "default",
-  "dkcoins-minecraft/target/dkcoins-minecraft-%version%-loader.jar": "loader",
+        "dkcoins-minecraft/target/dkcoins-minecraft-%version%.jar": "default",
+        "dkcoins-minecraft/target/dkcoins-minecraft-%version%-loader.jar": "loader",
 ]
 
 String MAVEN_SETTINGS_FILE_ID = "afe25550-309e-40c1-80ad-59da7989fb4e"
