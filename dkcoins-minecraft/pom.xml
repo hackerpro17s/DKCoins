@@ -88,13 +88,9 @@
                         <main>net.pretronic.dkcoins.minecraft.DKCoinsPlugin</main>
                         <description>McNative demo plugin</description>
                         <website>https://mcnative.org/</website>
-                        <author>Philipp Elvin Friedhoff</author>
+                        <author>Pretronic</author>
                         <messageModule>DKCoins</messageModule>
                     </manifest>
-
-                    <loader>
-                        <version>${project.version}</version>
-                    </loader>
 
                 </configuration>
             </plugin>
