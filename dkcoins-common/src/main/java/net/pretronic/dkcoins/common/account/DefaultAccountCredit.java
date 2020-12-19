@@ -157,8 +157,8 @@ public class DefaultAccountCredit implements AccountCredit {
             credit.addAmount(amount);
             removeAmount(amount0);
             AccountTransaction transaction = account.addTransaction(this, member, credit, amount0, reason, cause, properties);
-            DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountTransactEvent(transaction));
             ((DefaultTransferResult)result).setTransaction(transaction);
+            DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountTransactEvent(transaction));
         }
         return result;
     }

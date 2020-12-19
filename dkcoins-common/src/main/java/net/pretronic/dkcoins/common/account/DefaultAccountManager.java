@@ -230,9 +230,8 @@ public class DefaultAccountManager implements AccountManager {
         DKCoins.getInstance().getStorage().setAccountCreditAmount(credit.getId(), amount);
         ((DefaultAccountCredit)credit).updateAmount(amount);
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_SET_AMOUNT)
-                .add("creditId", credit.getId())
-                .add("amount", amount));
+                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
+                .add("creditId", credit.getId()));
     }
 
     @Override
@@ -240,9 +239,8 @@ public class DefaultAccountManager implements AccountManager {
         DKCoins.getInstance().getStorage().addAccountCreditAmount(credit.getId(), amount);
         ((DefaultAccountCredit)credit).updateAmount(credit.getAmount()+amount);
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_ADD_AMOUNT)
-                .add("creditId", credit.getId())
-                .add("amount", amount));
+                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
+                .add("creditId", credit.getId()));
     }
 
     @Override
@@ -250,9 +248,8 @@ public class DefaultAccountManager implements AccountManager {
         DKCoins.getInstance().getStorage().removeAccountCreditAmount(credit.getId(), amount);
         ((DefaultAccountCredit)credit).updateAmount(credit.getAmount()-amount);
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_REMOVE_AMOUNT)
-                .add("creditId", credit.getId())
-                .add("amount", amount));
+                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
+                .add("creditId", credit.getId()));
     }
 
 

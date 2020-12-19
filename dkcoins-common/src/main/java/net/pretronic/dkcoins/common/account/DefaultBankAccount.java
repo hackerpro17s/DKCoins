@@ -282,19 +282,11 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
                 Iterators.removeOne(this.credits, credit -> credit.getId() == data.getInt("creditId"));
                 break;
             }
-            case SyncAction.ACCOUNT_CREDIT_SET_AMOUNT: {
-                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(data.getInt("creditId"));
-                credit.updateAmount(data.getDouble("amount"));
-                break;
-            }
-            case SyncAction.ACCOUNT_CREDIT_ADD_AMOUNT: {
-                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(data.getInt("creditId"));
-                credit.updateAmount(credit.getAmount()+data.getDouble("amount"));
-                break;
-            }
-            case SyncAction.ACCOUNT_CREDIT_REMOVE_AMOUNT: {
-                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(data.getInt("creditId"));
-                credit.updateAmount(credit.getAmount()-data.getDouble("amount"));
+            case SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE: {
+                int creditId = data.getInt("creditId");
+                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(creditId);
+                this.credits.remove(credit);
+                addLoadedAccountCredit(DKCoins.getInstance().getAccountManager().getAccountCredit(creditId));
                 break;
             }
             case SyncAction.ACCOUNT_LIMITATION_ADD: {
