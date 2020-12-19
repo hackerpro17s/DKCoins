@@ -118,9 +118,9 @@ messages:
 
   dkcoins.command.bank.member.add: '${dkcoins.prefix} &e{member.displayName} &7was added to this bank'
 
-  dkcoins.command.bank.admin.add: '${dkcoins.prefix} &7You have added &e{transaction.amount}{transaction.currency.symbol}'
-  dkcoins.command.bank.admin.remove: '${dkcoins.prefix} &7You have removed &e{transaction.amount}{transaction.currency.symbol}'
-  dkcoins.command.bank.admin.set: '${dkcoins.prefix} &7You have set &e{transaction.amount}{transaction.currency.symbol}'
+  dkcoins.command.bank.admin.add: '${dkcoins.prefix} &7You have added &e{transaction.amount}{transaction.currency.symbol} &7to bank &e{transaction.receiver.account.name}'
+  dkcoins.command.bank.admin.remove: '${dkcoins.prefix} &7You have removed &e{transaction.amount}{transaction.currency.symbol} &7to bank &e{transaction.receiver.account.name}'
+  dkcoins.command.bank.admin.set: '${dkcoins.prefix} &7You have set &e{transaction.amount}{transaction.currency.symbol} &7to bank &e{transaction.receiver.account.name}'
 
   dkcoins.command.bank.bankStatement.filterOption.wrong: '${dkcoins.prefix} &e{filterOption} &cis a wrong option &8» &cUse option=value'
   dkcoins.command.bank.bankStatement.filterOption.notFound: '${dkcoins.prefix} &e{filterOption} &cis not a valid filter option'
