@@ -426,7 +426,7 @@ public class DefaultAccountManager implements AccountManager {
     }
 
     private void createMissingAccountCredits(BankAccount account) {
-        Validate.notNull(account);
+        if(account == null) return;
         for (Currency currency : DKCoins.getInstance().getCurrencyManager().getCurrencies()) {
             if(account.getCredit(currency) == null) {
                 account.addCredit(currency, 0);
