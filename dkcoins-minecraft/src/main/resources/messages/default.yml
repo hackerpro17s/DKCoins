@@ -41,8 +41,8 @@ messages:
 
   dkcoins.command.account.transfer.help: '${dkcoins.prefix} &cInvalid usage of transfer command&8:
   &7/bank <name> transfer <receiver> <amount> [currency]'
-  dkcoins.command.account.transfer.success: '${dkcoins.prefix} &aYou have transfered &e{transaction.formattedAmount}{transaction.currency.symbol} &ato &e{transaction.receiver.name}'
-  dkcoins.command.account.transfer.success.receiver: '${dkcoins.prefix} &aYou have received &e{transaction.formattedAmount}{transaction.currency.symbol} &afrom &e{transaction.receiver.name}'
+  dkcoins.command.account.transfer.success: '${dkcoins.prefix} &aYou have transferred &e{transaction.formattedAmount}{transaction.currency.symbol} &ato &e{transaction.receiver.name}'
+  dkcoins.command.account.transfer.success.receiver: '${dkcoins.prefix} &aYou have received &e{transaction.formattedAmount}{transaction.currency.symbol} &afrom &e{transaction.sender.name}'
   dkcoins.command.account.transfer.failure.notEnoughAmount: '${dkcoins.prefix} &cThe account has not enough money'
   dkcoins.command.account.transfer.failure.masterAccountNotEnoughAmount: '${dkcoins.prefix} &cThe master account has not enough money'
   dkcoins.command.account.transfer.failure.limit: '${dkcoins.prefix} &cYou have reached your limit'
