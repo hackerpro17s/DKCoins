@@ -229,11 +229,6 @@ public class DefaultAccountManager implements AccountManager {
     public void setAccountCreditAmount(AccountCredit credit, double amount) {
         DKCoins.getInstance().getStorage().setAccountCreditAmount(credit.getId(), amount);
         ((DefaultAccountCredit)credit).updateAmount(amount);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
                 .add("creditId", credit.getId()));
@@ -243,11 +238,6 @@ public class DefaultAccountManager implements AccountManager {
     public void addAccountCreditAmount(AccountCredit credit, double amount) {
         DKCoins.getInstance().getStorage().addAccountCreditAmount(credit.getId(), amount);
         ((DefaultAccountCredit)credit).updateAmount(credit.getAmount()+amount);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
                 .add("creditId", credit.getId()));
@@ -257,11 +247,6 @@ public class DefaultAccountManager implements AccountManager {
     public void removeAccountCreditAmount(AccountCredit credit, double amount) {
         DKCoins.getInstance().getStorage().removeAccountCreditAmount(credit.getId(), amount);
         ((DefaultAccountCredit)credit).updateAmount(credit.getAmount()-amount);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
                 .add("creditId", credit.getId()));

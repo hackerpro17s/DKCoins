@@ -22,6 +22,7 @@ import net.pretronic.dkcoins.common.SyncAction;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.synchronisation.Synchronizable;
 import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.SystemUtil;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.libraries.utility.annonations.Nullable;
@@ -283,6 +284,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
                 break;
             }
             case SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE: {
+                SystemUtil.sleepUninterruptible(100);//@Todo optimize
                 int creditId = data.getInt("creditId");
                 System.out.println("Account credit update " + creditId + ":"+getName());
                 AccountCredit loaded = DKCoins.getInstance().getAccountManager().getAccountCredit(creditId);
@@ -290,7 +292,6 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
                 addLoadedAccountCredit(loaded);
                 this.credits.remove(credit);
                 this.credits.forEach(credit0 -> System.out.println("Loaded credit id " + credit0.getId() + ":" + credit0.getAmount()));
-
                 break;
             }
             case SyncAction.ACCOUNT_LIMITATION_ADD: {
