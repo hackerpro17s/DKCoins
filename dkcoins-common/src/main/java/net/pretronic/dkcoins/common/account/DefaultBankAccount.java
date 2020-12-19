@@ -284,7 +284,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
                 break;
             }
             case SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE: {
-                SystemUtil.sleepUninterruptible(100);//@Todo optimize
+                SystemUtil.sleepUninterruptible(300);//@Todo optimize
                 int creditId = data.getInt("creditId");
                 System.out.println("Account credit update " + creditId + ":"+getName());
                 AccountCredit loaded = DKCoins.getInstance().getAccountManager().getAccountCredit(creditId);
