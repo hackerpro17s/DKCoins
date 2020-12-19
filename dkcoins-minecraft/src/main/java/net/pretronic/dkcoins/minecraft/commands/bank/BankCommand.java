@@ -43,7 +43,6 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
         registerCommand(new BankDeleteCommand(owner));
         this.listCommand = new BankListCommand(owner);
         registerCommand(new BankMemberCommand(owner));
-        registerCommand(new BankAdminCommand(owner));
         registerCommand(new BankStatementCommand(owner));
         registerCommand(new BankSettingsCommand(owner));
         registerCommand(new BankRoleCommand(owner));

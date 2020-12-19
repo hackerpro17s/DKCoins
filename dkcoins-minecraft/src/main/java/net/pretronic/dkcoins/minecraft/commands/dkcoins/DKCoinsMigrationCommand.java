@@ -34,15 +34,14 @@ import org.mcnative.common.McNative;
 
 import java.util.concurrent.TimeUnit;
 
-public class DKCoinsMigrateCommand extends BasicCommand {
+public class DKCoinsMigrationCommand extends BasicCommand {
 
-    public DKCoinsMigrateCommand(ObjectOwner owner) {
+    public DKCoinsMigrationCommand(ObjectOwner owner) {
         super(owner, CommandConfiguration.newBuilder().name("migrate").permission("dkcoins.admin").create());
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-     
             if(!sender.equals(McNative.getInstance().getConsoleSender())) {
                 sender.sendMessage(Messages.ERROR_ONLY_FROM_CONSOLE);
                 return;

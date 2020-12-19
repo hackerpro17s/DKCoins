@@ -140,13 +140,13 @@ public class DefaultAccountCredit implements AccountCredit {
     public TransferResult deposit(AccountMember member, double amount, String reason, Collection<AccountTransactionProperty> properties) {
         BankAccount account = member.getUser().getDefaultAccount();
         AccountMember accountMember = account.getMember(member.getUser());
-        return account.getCredit(getCurrency()).transfer(accountMember, amount, this, reason, TransferCause.DEPOSIT, properties);
+        return account.getCredit(getCurrency()).transfer(accountMember, amount, this, reason, TransferCause.API, properties);
     }
 
     @Override
     public TransferResult withdraw(AccountMember member, double amount, String reason, Collection<AccountTransactionProperty> properties) {
         return transfer(member, amount, member.getUser().getDefaultAccount()
-                .getCredit(getCurrency()), reason, TransferCause.WITHDRAW, properties);
+                .getCredit(getCurrency()), reason, TransferCause.API, properties);
     }
 
     @Override

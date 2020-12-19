@@ -20,29 +20,33 @@
 
 package net.pretronic.dkcoins.minecraft.commands.dkcoins;
 
-import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.libraries.command.NoPermissionAble;
 import net.pretronic.libraries.command.NotFindable;
 import net.pretronic.libraries.command.command.MainCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
-public class DKCoinsCommand extends MainCommand implements NotFindable {
+public class DKCoinsCommand extends MainCommand implements NotFindable, NoPermissionAble {
+
+    private final DKCoinsInfoCommand infoCommand;
 
     public DKCoinsCommand(ObjectOwner owner) {
-        super(owner, CommandConfiguration.name("dkcoins"));
-        registerCommand(new DKCoinsMigrateCommand(owner));
+        super(owner, CommandConfiguration.newBuilder().name("dkcoins").permission("dkcoins.admin").create());
+        infoCommand = new DKCoinsInfoCommand(owner);
+        registerCommand(new DKCoinsMigrationCommand(owner));
         registerCommand(new DKCoinsBankAdminCommand(owner));
+        registerCommand(infoCommand);
     }
 
     @Override
-    public void commandNotFound(CommandSender sender, String command, String[] args) {
-        if(sender.hasPermission("dkcoins.admin")) {
-            sender.sendMessage(Messages.COMMAND_DKCOINS_HELP);
-        } else {
-            sender.sendMessage(String.format("DKCoins v%s was programmed by Pretronic (https://pretronic.net)",
-                    DKCoinsPlugin.getInstance().getDescription().getVersion().getName()));
-        }
+    public void commandNotFound(CommandSender sender, String s, String[] strings) {
+        sender.sendMessage(Messages.COMMAND_DKCOINS_HELP);
+    }
+
+    @Override
+    public void noPermission(CommandSender sender, String s, String s1, String[] arguments) {
+        infoCommand.execute(sender,arguments);
     }
 }

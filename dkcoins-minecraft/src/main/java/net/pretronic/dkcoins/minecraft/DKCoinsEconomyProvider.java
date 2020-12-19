@@ -91,7 +91,7 @@ public class DKCoinsEconomyProvider implements EconomyProvider {
     public EconomyResponse setPlayerBalance(MinecraftPlayer player, double amount) {
         Validate.notNull(player);
         AccountCredit credit = getDefaultAccountCredit(player);
-        credit.setAmount(amount, TransferCause.ECONOMY_PROVIDER,
+        credit.setAmount(amount, TransferCause.PROVIDER,
                 DKCoins.getInstance().getTransactionPropertyBuilder().build(credit.getAccount().getMember(player.getAs(DKCoinsUser.class))));
         return new EconomyResponse(true, null, amount, credit.getAmount());
     }
@@ -159,7 +159,7 @@ public class DKCoinsEconomyProvider implements EconomyProvider {
     public EconomyResponse setBankBalance(String name, double amount) {
         Validate.notNull(name);
         AccountCredit credit = getBankAccountCredit(name);
-        credit.setAmount(amount, TransferCause.ECONOMY_PROVIDER, Collections.EMPTY_LIST);
+        credit.setAmount(amount, TransferCause.PROVIDER, Collections.EMPTY_LIST);
         return new EconomyResponse(true, null, amount, credit.getAmount());
     }
 

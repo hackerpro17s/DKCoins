@@ -46,7 +46,9 @@ import java.util.Collection;
 public class DKCoinsBankAdminCommand extends BasicCommand {
 
     public DKCoinsBankAdminCommand(ObjectOwner owner) {
-        super(owner, CommandConfiguration.newBuilder().name("bankAdmin").aliases("admin").permission("dkcoins.admin").create());
+        super(owner, CommandConfiguration.newBuilder()
+                .name("admin").aliases("bankAdmin")
+                .permission("dkcoins.admin").create());
     }
 
     @Override
@@ -104,19 +106,19 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
             }
         }
 
-        if(action.equalsIgnoreCase("setAmount")) {
+        if(action.equalsIgnoreCase("set")) {
             AccountTransaction transaction = account.getCredit(currency)
-                    .setAmount(member, amount, CommandUtil.buildReason(args, 3), TransferCause.API, properties);
+                    .setAmount(member, amount, CommandUtil.buildReason(args, 3), TransferCause.ADMIN, properties);
             commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_SET, VariableSet.create()
                     .addDescribed("transaction", transaction));
-        } else if(action.equalsIgnoreCase("addAmount")) {
+        } else if(action.equalsIgnoreCase("add")) {
             AccountTransaction transaction = account.getCredit(currency).addAmount(member, amount,
-                    CommandUtil.buildReason(args, 3), TransferCause.API, properties);
+                    CommandUtil.buildReason(args, 3), TransferCause.ADMIN, properties);
             commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_ADD, VariableSet.create()
                     .addDescribed("transaction", transaction));
-        } else if(action.equalsIgnoreCase("removeAmount")) {
+        } else if(action.equalsIgnoreCase("remove")) {
             AccountTransaction transaction = account.getCredit(currency).removeAmount(member, amount,
-                    CommandUtil.buildReason(args, 3), TransferCause.API, properties);
+                    CommandUtil.buildReason(args, 3), TransferCause.ADMIN, properties);
             commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, VariableSet.create()
                     .addDescribed("transaction", transaction));
         }
