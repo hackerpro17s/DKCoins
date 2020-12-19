@@ -608,6 +608,8 @@ public class DefaultAccountManager implements AccountManager {
             public boolean check(BankAccount account, Object[] identifiers) {
                 return account.getCredit((int) identifiers[0]) != null;
             }
+        }).setInsertListener(account -> {
+            System.out.println("Inserted account " + account.getName() + ":" + account.getId() + ":"  + System.identityHashCode(account));
         });
 
         this.accountCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getAccount(id));
