@@ -37,7 +37,6 @@ public class SyncAction {
     public static final String ACCOUNT_LIMITATION_ADD = "ACCOUNT_LIMITATION_ADD";
     public static final String ACCOUNT_LIMITATION_REMOVE = "ACCOUNT_LIMITATION_REMOVE";
 
-
     public static final String CURRENCY_UPDATE_NAME = "CURRENCY_UPDATE_NAME";
     public static final String CURRENCY_UPDATE_SYMBOL = "CURRENCY_UPDATE_SYMBOL";
 
