@@ -526,7 +526,9 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public BankAccount load(Object[] identifiers) {
-                return DKCoins.getInstance().getStorage().searchAccount(identifiers[0]);
+                BankAccount account = DKCoins.getInstance().getStorage().searchAccount(identifiers[0]);
+                createMissingAccountCredits(account);
+                return account;
             }
         }).registerQuery("byId", new CacheQuery<BankAccount>() {
 
@@ -537,7 +539,9 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public BankAccount load(Object[] identifiers) {
-                return DKCoins.getInstance().getStorage().getAccount((int) identifiers[0]);
+                BankAccount account = DKCoins.getInstance().getStorage().getAccount((int) identifiers[0]);
+                createMissingAccountCredits(account);
+                return account;
             }
 
             @Override
@@ -552,7 +556,9 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public BankAccount load(Object[] identifiers) {
-                return DKCoins.getInstance().getStorage().getSubAccount((int)identifiers[0], (int)identifiers[1]);
+                BankAccount account = DKCoins.getInstance().getStorage().getSubAccount((int)identifiers[0], (int)identifiers[1]);
+                createMissingAccountCredits(account);
+                return account;
             }
 
             @Override
@@ -573,7 +579,9 @@ public class DefaultAccountManager implements AccountManager {
             public BankAccount load(Object[] identifiers) {
                 String name = (String) identifiers[0];
                 AccountType type = (AccountType) identifiers[1];
-                return DKCoins.getInstance().getStorage().getAccount(name, type);
+                BankAccount account = DKCoins.getInstance().getStorage().getAccount(name, type);
+                createMissingAccountCredits(account);
+                return account;
             }
 
             @Override
@@ -592,13 +600,15 @@ public class DefaultAccountManager implements AccountManager {
             public BankAccount load(Object[] identifiers) {
                 //@Todo direct via join
                 int accountId = DKCoins.getInstance().getStorage().getAccountCreditAccountId((int) identifiers[0]);
-                return DKCoins.getInstance().getAccountManager().getAccount(accountId);
+                BankAccount account = DKCoins.getInstance().getAccountManager().getAccount(accountId);
+                createMissingAccountCredits(account);
+                return account;
             }
             @Override
             public boolean check(BankAccount account, Object[] identifiers) {
                 return account.getCredit((int) identifiers[0]) != null;
             }
-        }).setInsertListener(this::createMissingAccountCredits);
+        });
 
         this.accountCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getAccount(id));
     }
