@@ -281,6 +281,15 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
+    public double getAccountCreditAmount(int id) {
+        return this.accountCredit.find()
+                .get("Amount")
+                .where("Id", id)
+                .execute().firstOrNull()
+                .getDouble("Amount");
+    }
+
+    @Override
     public int getAccountCreditAccountId(int id) {
         QueryResultEntry entry = this.accountCredit.find().where("Id", id).execute().firstOrNull();
         if(entry == null) return -1;

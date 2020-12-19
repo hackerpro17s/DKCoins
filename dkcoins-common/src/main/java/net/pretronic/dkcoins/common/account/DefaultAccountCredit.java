@@ -172,4 +172,9 @@ public class DefaultAccountCredit implements AccountCredit {
     public boolean equals(Object obj) {
         return obj instanceof AccountCredit && ((AccountCredit)obj).getId() == this.id;
     }
+
+    @Internal
+    public void reloadAmount() {
+        this.amount = DefaultDKCoins.getInstance().getStorage().getAccountCreditAmount(this.id);
+    }
 }
