@@ -13,6 +13,7 @@ package net.pretronic.dkcoins.api.account;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
+import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.currency.Currency;
 
 import java.util.Collection;

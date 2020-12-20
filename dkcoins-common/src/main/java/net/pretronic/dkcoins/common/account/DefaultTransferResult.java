@@ -20,7 +20,8 @@
 
 package net.pretronic.dkcoins.common.account;
 
-import net.pretronic.dkcoins.api.account.TransferResult;
+import net.pretronic.dkcoins.api.account.transferresult.TransferResultFailCause;
+import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveHashMap;
@@ -29,21 +30,21 @@ import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveMap;
 public class DefaultTransferResult implements TransferResult {
 
     private AccountTransaction transaction;
-    private final FailCause failCause;
+    private final TransferResultFailCause failCause;
     private final CaseIntensiveMap<Object> properties;
 
-    public DefaultTransferResult(FailCause failCause, CaseIntensiveMap<Object> properties) {
+    public DefaultTransferResult(TransferResultFailCause failCause, CaseIntensiveMap<Object> properties) {
         this.failCause = failCause;
         this.properties = properties;
     }
 
-    public DefaultTransferResult(FailCause failCause) {
+    public DefaultTransferResult(TransferResultFailCause failCause) {
         this.failCause = failCause;
         this.properties = new CaseIntensiveHashMap<>();
     }
 
     @Override
-    public FailCause getFailCause() {
+    public TransferResultFailCause getFailCause() {
         return this.failCause;
     }
 

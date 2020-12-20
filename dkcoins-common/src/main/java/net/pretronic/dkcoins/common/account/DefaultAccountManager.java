@@ -15,6 +15,9 @@ import net.pretronic.databasequery.api.query.result.QueryResult;
 import net.pretronic.databasequery.api.query.type.FindQuery;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
@@ -345,7 +348,7 @@ public class DefaultAccountManager implements AccountManager {
                 }
                 if(limitation.getMember() != null && limitation.getMember().getId() == member.getId()) {
                     query.where("SenderId", member.getId());
-                } else if(limitation.getCalculationType() == AccountLimitation.CalculationType.USER_BASED) {
+                } else if(limitation.getCalculationType() == AccountLimitationCalculationType.USER_BASED) {
                     query.where("SenderId", member.getId());
                 }
                 query.whereHigher("Time", getStartLimitationTime(limitation));
@@ -386,8 +389,8 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public AccountLimitation addAccountLimitation(BankAccount account, @Nullable AccountMember member,
                                                   @Nullable AccountMemberRole memberRole, Currency comparativeCurrency,
-                                                  AccountLimitation.CalculationType calculationType,
-                                                  double amount, AccountLimitation.Interval interval) {
+                                                  AccountLimitationCalculationType calculationType,
+                                                  double amount, AccountLimitationInterval interval) {
         Validate.notNull(account, comparativeCurrency);
         Validate.isTrue(amount > 0);
         AccountLimitation limitation = DKCoins.getInstance().getStorage().addAccountLimitation(account, member, memberRole,

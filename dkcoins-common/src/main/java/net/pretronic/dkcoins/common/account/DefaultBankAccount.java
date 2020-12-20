@@ -12,17 +12,20 @@ package net.pretronic.dkcoins.common.account;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
+import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.SyncAction;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.synchronisation.Synchronizable;
 import net.pretronic.libraries.utility.Iterators;
-import net.pretronic.libraries.utility.SystemUtil;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.libraries.utility.annonations.Nullable;
@@ -127,7 +130,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
 
     @Override
     public AccountLimitation getLimitation(AccountMember member, AccountMemberRole role, Currency comparativeCurrency,
-                                           AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
+                                           AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
         return Iterators.findOne(this.limitations, limitation -> {
             if(!(member == null || member.equals(limitation.getMember()))) return false;
             if(!(role == null || role.equals(limitation.getMemberRole()))) return false;
@@ -187,7 +190,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
 
     @Override
     public AccountLimitation addLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
-                              AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
+                                           AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
         return DKCoins.getInstance().getAccountManager().addAccountLimitation(this, member, role, comparativeCurrency, calculationType, amount, interval);
     }
 

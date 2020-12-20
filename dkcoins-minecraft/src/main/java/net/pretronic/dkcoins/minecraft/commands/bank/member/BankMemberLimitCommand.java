@@ -20,8 +20,10 @@
 
 package net.pretronic.dkcoins.minecraft.commands.bank.member;
 
-import net.pretronic.dkcoins.api.account.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
 import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
@@ -44,12 +46,12 @@ public class BankMemberLimitCommand extends AbstractBankLimitCommand<AccountMemb
     }
 
     @Override
-    protected AccountLimitation getLimitation(Triple<BankAccount, AccountMemberRole, AccountMember> target, Currency currency, AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
+    protected AccountLimitation getLimitation(Triple<BankAccount, AccountMemberRole, AccountMember> target, Currency currency, AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
         return target.getThird().getLimitation(currency, amount, interval);
     }
 
     @Override
-    protected AccountLimitation addLimitation(Triple<BankAccount, AccountMemberRole, AccountMember> target, Currency currency, AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
+    protected AccountLimitation addLimitation(Triple<BankAccount, AccountMemberRole, AccountMember> target, Currency currency, AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
         return target.getFirst().addLimitation(target.getThird(), null, currency, calculationType, amount, interval);
     }
 }

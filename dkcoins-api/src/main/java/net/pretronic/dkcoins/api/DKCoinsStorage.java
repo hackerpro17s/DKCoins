@@ -11,6 +11,9 @@
 package net.pretronic.dkcoins.api;
 
 import net.pretronic.dkcoins.api.account.*;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
@@ -92,8 +95,8 @@ public interface DKCoinsStorage {
     int getAccountLimitationAccountId(int id);
 
     AccountLimitation addAccountLimitation(BankAccount account, AccountMember accountMember, AccountMemberRole memberRole,
-                                           Currency comparativeCurrency, AccountLimitation.CalculationType calculationType,
-                                           double amount, AccountLimitation.Interval interval);
+                                           Currency comparativeCurrency, AccountLimitationCalculationType calculationType,
+                                           double amount, AccountLimitationInterval interval);
 
     void removeAccountLimitation(int id);
 

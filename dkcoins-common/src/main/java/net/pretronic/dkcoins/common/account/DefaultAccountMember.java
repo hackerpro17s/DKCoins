@@ -11,8 +11,9 @@
 package net.pretronic.dkcoins.common.account;
 
 import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
 import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
@@ -70,7 +71,7 @@ public class DefaultAccountMember implements AccountMember {
 
 
     @Override
-    public AccountLimitation getLimitation(Currency comparativeCurrency, double amount, AccountLimitation.Interval interval) {
+    public AccountLimitation getLimitation(Currency comparativeCurrency, double amount, AccountLimitationInterval interval) {
         return Iterators.findOne(getAccount().getLimitations(), limitation -> {
             if(limitation.getMember() == null || limitation.getMember().getId() != getId()) return false;
             if(!comparativeCurrency.equals(limitation.getComparativeCurrency())) return false;
