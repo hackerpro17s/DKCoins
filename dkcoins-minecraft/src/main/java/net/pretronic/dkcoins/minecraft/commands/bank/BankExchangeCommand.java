@@ -8,7 +8,7 @@
  * %license%
  */
 
-package net.pretronic.dkcoins.minecraft.commands.account;
+package net.pretronic.dkcoins.minecraft.commands.bank;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
@@ -27,10 +27,10 @@ import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.common.player.OnlineMinecraftPlayer;
 
-public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
+public class BankExchangeCommand extends ObjectCommand<BankAccount> {
 
     // bank <name> exchange <sourceCurrency> <targetCurrency> <amount>
-    public AccountExchangeCommand(ObjectOwner owner) {
+    public BankExchangeCommand(ObjectOwner owner) {
         super(owner, CommandConfiguration.name("exchange"));
     }
 
@@ -41,7 +41,7 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
             return;
         }
         if(args.length < 3) {
-            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_HELP);
+            commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_HELP);
             return;
         }
         if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.EXCHANGE)) {
@@ -51,16 +51,16 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
 
             Currency sourceCurrency = DKCoins.getInstance().getCurrencyManager().searchCurrency(sourceCurrency0);
             if(sourceCurrency == null) {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_HELP);
+                commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_HELP);
                 return;
             }
             Currency targetCurrency = DKCoins.getInstance().getCurrencyManager().searchCurrency(destinationCurrency0);
             if(targetCurrency == null) {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_HELP);
+                commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_HELP);
                 return;
             }
             if(!GeneralUtil.isNumber(amount0)) {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_HELP);
+                commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_HELP);
                 return;
             }
             double amount = Double.parseDouble(amount0);
@@ -71,7 +71,7 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
             TransferResult result = account.exchangeAccountCredit(member, sourceCurrency, targetCurrency, amount,
                     CommandUtil.buildReason(args, 3), DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
             if(result.isSuccess()) {
-                player.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_SUCCESS, VariableSet.create()
+                player.sendMessage(Messages.COMMAND_BANK_EXCHANGE_SUCCESS, VariableSet.create()
                         .addDescribed("sourceCurrency", sourceCurrency)
                         .addDescribed("targetCurrency", targetCurrency)
                         .add("sourceAmount", DKCoinsConfig.formatCurrencyAmount(amount))
@@ -79,23 +79,23 @@ public class AccountExchangeCommand extends ObjectCommand<BankAccount> {
             } else {
                 switch (result.getFailCause()) {
                     case LIMIT: {
-                        commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_FAILURE_LIMIT);
+                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_LIMIT);
                         break;
                     }
                     case NOT_ENOUGH_AMOUNT: {
-                        commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_FAILURE_NOT_ENOUGH_AMOUNT);
+                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_NOT_ENOUGH_AMOUNT);
                         break;
                     }
                     case NOT_ENOUGH_ACCESS_RIGHTS: {
-                        commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS);
+                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS);
                         break;
                     }
                     case MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT: {
-                        commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
+                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
                         break;
                     }
                     case TRANSFER_DISABLED: {
-                        commandSender.sendMessage(Messages.COMMAND_ACCOUNT_EXCHANGE_FAILURE_DISABLED, VariableSet.create()
+                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_DISABLED, VariableSet.create()
                                 .addDescribed("sourceCurrency", sourceCurrency).addDescribed("targetCurrency", targetCurrency));
                         break;
                     }

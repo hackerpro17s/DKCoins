@@ -14,7 +14,7 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
-import net.pretronic.dkcoins.minecraft.commands.UserBankCommand;
+import net.pretronic.dkcoins.minecraft.commands.user.UserBankCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.configuration.DefaultCommandConfigurationBuilder;
 import net.pretronic.libraries.document.annotations.DocumentIgnored;

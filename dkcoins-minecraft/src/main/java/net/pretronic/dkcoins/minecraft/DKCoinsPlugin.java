@@ -14,7 +14,7 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
-import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
+import net.pretronic.dkcoins.minecraft.commands.bank.BankTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
 import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;
 import net.pretronic.dkcoins.minecraft.commands.dkcoins.DKCoinsCommand;
@@ -34,7 +34,6 @@ import net.pretronic.libraries.plugin.lifecycle.LifecycleState;
 import net.pretronic.libraries.synchronisation.UnconnectedSynchronisationCaller;
 import net.pretronic.libraries.utility.io.FileUtil;
 import org.mcnative.common.McNative;
-import org.mcnative.common.player.MinecraftPlayer;
 import org.mcnative.common.plugin.MinecraftPlugin;
 import org.mcnative.common.plugin.configuration.ConfigurationProvider;
 import org.mcnative.common.serviceprovider.economy.EconomyProvider;
@@ -42,7 +41,6 @@ import org.mcnative.common.serviceprovider.placeholder.PlaceholderService;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.function.Function;
 
 public class DKCoinsPlugin extends MinecraftPlugin {
 
@@ -110,7 +108,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         McNative.getInstance().getLocal().getCommandManager().registerCommand(new DKCoinsCommand(DKCoinsPlugin.getInstance()));
         McNative.getInstance().getLocal().getCommandManager().registerCommand(new BankCommand(DKCoinsPlugin.getInstance()));
         McNative.getInstance().getLocal().getCommandManager().registerCommand(new CurrencyCommand(DKCoinsPlugin.getInstance()));
-        McNative.getInstance().getLocal().getCommandManager().registerCommand(new AccountTransferCommand(DKCoinsPlugin.getInstance(), DKCoinsConfig.COMMAND_PAY));
+        McNative.getInstance().getLocal().getCommandManager().registerCommand(new BankTransferCommand(DKCoinsPlugin.getInstance(), DKCoinsConfig.COMMAND_PAY,Messages.COMMAND_USER_BANK_TRANSFER_HELP));
 
 
         DKCoins.getInstance().getEventBus().subscribe(getInstance(), new MinecraftPlayerListener());

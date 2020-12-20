@@ -112,23 +112,23 @@ public final class CommandUtil {
     public static void handleTransferFailCauses(TransferResult result, CommandSender commandSender) {
         switch (result.getFailCause()) {
             case LIMIT: {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_FAILURE_LIMIT);
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_LIMIT);
                 break;
             }
             case NOT_ENOUGH_AMOUNT: {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_FAILURE_NOT_ENOUGH_AMOUNT);
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_NOT_ENOUGH_AMOUNT);
                 break;
             }
             case NOT_ENOUGH_ACCESS_RIGHTS: {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS);
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS);
                 break;
             }
             case MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT: {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
                 break;
             }
             case TRANSFER_DISABLED: {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_FAILURE_DISABLED);
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_DISABLED);
                 break;
             }
         }
