@@ -33,7 +33,6 @@ import net.pretronic.libraries.utility.Validate;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Function;
 
 public class DefaultDKCoins extends DKCoins {
 

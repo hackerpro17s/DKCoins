@@ -11,7 +11,10 @@
 package net.pretronic.dkcoins.common.account;
 
 import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.*;
+import net.pretronic.dkcoins.api.account.AccountCredit;
+import net.pretronic.dkcoins.api.account.AccountType;
+import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.MasterBankAccount;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
