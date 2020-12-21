@@ -147,5 +147,4 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_NOT_VALID = Text.ofMessageKey("dkcoins.bank.settings.notValid");
 
     public static final MessageKeyComponent COMMAND_DKCOINS_HELP = Text.ofMessageKey("dkcoins.command.dkcoins.help");
-    public static final MessageKeyComponent COMMAND_DKCOINS_ADMIN_HELP = Text.ofMessageKey("dkcoins.command.dkcoins.admin.help");
 }

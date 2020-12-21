@@ -54,7 +54,7 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
     @Override
     public void execute(CommandSender commandSender, String[] args) {
         if(args.length < 3) {
-            commandSender.sendMessage(Messages.COMMAND_DKCOINS_ADMIN_HELP);
+            commandSender.sendMessage(Messages.COMMAND_DKCOINS_HELP);
             return;
         }
         String bankAccount = args[0];
