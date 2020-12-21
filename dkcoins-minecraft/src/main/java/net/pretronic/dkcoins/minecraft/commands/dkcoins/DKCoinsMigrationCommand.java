@@ -23,6 +23,7 @@ package net.pretronic.dkcoins.minecraft.commands.dkcoins;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.migration.Migration;
+import net.pretronic.dkcoins.api.migration.MigrationResult;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
@@ -65,7 +66,7 @@ public class DKCoinsMigrationCommand extends BasicCommand {
                 DKCoinsPlugin.getInstance().getLogger().info("Starting migration of " + migration.getName());
                 DKCoinsPlugin.getInstance().getLogger().info("This may take a while...");
                 try {
-                    Migration.Result result = migration.migrate(currency);
+                    MigrationResult result = migration.migrate(currency);
                     if(result.isSuccess()) {
                         DKCoinsPlugin.getInstance().getLogger().info("Migration was successful");
                         DKCoins.getInstance().getLogger().info("A total of {} was migrated. {} users skipped. {} McNative user data and {} DKCoins account were created",
