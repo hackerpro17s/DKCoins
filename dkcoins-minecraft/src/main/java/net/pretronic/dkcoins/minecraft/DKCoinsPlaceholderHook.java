@@ -21,6 +21,7 @@
 package net.pretronic.dkcoins.minecraft;
 
 import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
@@ -43,6 +44,8 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
     Top:
     dkcoins_top_(rank)_name_[currency]
     dkcoins_top_(rank)_balance_[currency]
+
+    dkcoins_toppos_[currency]
 
     Bank:
     dkcoins_bank_(bank)_balance_[currency]
@@ -106,6 +109,11 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                     }
                 }
                 break;
+            }
+            case "toppos": {
+                Currency currency = parseCurrency(parameters, 1);
+                AccountCredit credit = player.getAs(DKCoinsUser.class).getDefaultAccount().getCredit(currency);
+                return credit.getTopPos();
             }
         }
         return null;

@@ -79,6 +79,8 @@ public interface DKCoinsStorage {
 
     int getAccountIdByRank(Currency currency, int rank);
 
+    int getTopAccountPos(int creditId);
+
 
     double getAccountCreditAmount(int id);
 

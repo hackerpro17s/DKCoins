@@ -57,6 +57,8 @@ public interface AccountCredit {
     //Without transaction add
     void removeAmount(double amount);
 
+    int getTopPos();
+
 
     TransferResult canTransfer(AccountMember member, AccountCredit target, double amount);
 
