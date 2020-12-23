@@ -17,6 +17,7 @@ import net.pretronic.databasequery.api.datatype.DataType;
 import net.pretronic.databasequery.api.query.ForeignKey;
 import net.pretronic.databasequery.api.query.SearchOrder;
 import net.pretronic.databasequery.api.query.function.QueryFunction;
+import net.pretronic.databasequery.api.query.result.QueryResult;
 import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.databasequery.api.query.type.FindQuery;
 import net.pretronic.databasequery.api.query.type.InsertQuery;
@@ -289,10 +290,12 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     @Override
     public int getTopAccountPos(int creditId) {
-        QueryResultEntry resultEntry = this.accountCredit.find()
+        QueryResult result = this.accountCredit.find()
                 .getFunction(QueryFunction.rowNumberFunction("Amount", SearchOrder.DESC), "Pos")
                 .where("Id", creditId)
-                .execute().firstOrNull();
+                .execute();
+        result.getProperties().forEach((s, o) -> System.out.println(s+":"+o));
+        QueryResultEntry resultEntry = result.firstOrNull();
         if(resultEntry == null) return -1;
         return resultEntry.getInt("Pos");
     }
