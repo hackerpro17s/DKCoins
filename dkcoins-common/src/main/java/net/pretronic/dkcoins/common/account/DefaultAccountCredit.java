@@ -118,6 +118,11 @@ public class DefaultAccountCredit implements AccountCredit {
     }
 
     @Override
+    public int getTopPos() {
+        return DKCoins.getInstance().getStorage().getTopAccountPos(getId());
+    }
+
+    @Override
     public TransferResult canTransfer(AccountMember member, AccountCredit target, double amount) {
         if(getCurrency().isTransferDisabled(target.getCurrency())) {
             return new DefaultTransferResult(TransferResultFailCause.TRANSFER_DISABLED);
