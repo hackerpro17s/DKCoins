@@ -54,7 +54,7 @@ public class DKCoinsConfig {
 
 
     @DocumentKey("date.format.pattern")
-    public static String DATE_FORMAT0 = "dd-MM-yyyy HH:mmCHange";
+    public static String DATE_FORMAT0 = "dd-MM-yyyy HH:mm";
 
     @DocumentIgnored
     public static SimpleDateFormat DATE_FORMAT = null;
