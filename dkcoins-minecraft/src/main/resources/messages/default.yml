@@ -52,7 +52,7 @@ messages:
 
   dkcoins.command.bank.credits: '${dkcoins.prefix} &7Your credits&8:
   @for("credit" in {credits}, ${dkcoins.command.bank.credits.loop},"\n")'
-  dkcoins.command.bank.credits.loop: ' &8- &7#&e{credit.toppos} &e{credit.formattedAmount}&8{credit.currency.symbol}'
+  dkcoins.command.bank.credits.loop: ' &8- &e{credit.formattedAmount}&8{credit.currency.symbol}'
 
   dkcoins.command.bank.exchange.help: '${dkcoins.prefix} &cInvalid usage of &eexchange &ccommand&8:
   &8» /bank <name> exchange <source> <target> <amount>'
