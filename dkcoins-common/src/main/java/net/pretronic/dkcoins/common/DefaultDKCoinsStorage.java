@@ -294,6 +294,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                 QueryFunction.rowNumberFunction("Amount",SearchOrder.DESC))
                 .find().where("Id", creditId)
                 .execute();
+        result.getProperties().forEach((s, o) -> System.out.println(s+":"+o));
         QueryResultEntry resultEntry = result.firstOrNull();
         if(resultEntry == null) return -1;
         return resultEntry.getInt("Position");
