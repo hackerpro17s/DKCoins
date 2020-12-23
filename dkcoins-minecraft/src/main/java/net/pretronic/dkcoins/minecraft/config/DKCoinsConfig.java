@@ -35,36 +35,36 @@ import java.util.Map;
 public class DKCoinsConfig {
 
     @DocumentKey("currency.default")
-    private static String CURRENCY_DEFAULT0 = "Coins";
+    public static String CURRENCY_DEFAULT0 = "Coins";
 
     @DocumentIgnored
     public static Currency CURRENCY_DEFAULT = null;
 
     @DocumentKey("currency.format.pattern")//currency.format.separator: ###,###.##
-    private static String CURRENCY_FORMAT0 = "###,###.##";
+    public static String CURRENCY_FORMAT0 = "###,###.##";
 
     @DocumentIgnored
     private static DecimalFormat CURRENCY_FORMAT = null;
 
     @DocumentKey("currency.format.separator.grouping")
-    private static char CURRENCY_FORMAT_SEPARATOR_GROUPING = '\'';
+    public static char CURRENCY_FORMAT_SEPARATOR_GROUPING = '\'';
 
     @DocumentKey("currency.format.separator.decimal")
-    private static char CURRENCY_FORMAT_SEPARATOR_DECIMAL = '.';
+    public static char CURRENCY_FORMAT_SEPARATOR_DECIMAL = '.';
 
 
     @DocumentKey("date.format.pattern")
-    private static String DATE_FORMAT0 = "dd-MM-yyyy hh:mm";
+    public static String DATE_FORMAT0 = "dd-MM-yyyy HH:mmCHange";
 
     @DocumentIgnored
     public static SimpleDateFormat DATE_FORMAT = null;
 
 
     @DocumentKey("account.type.startAmount")
-    private static Map<String, Integer> ACCOUNT_TYPE_START_AMOUNT0 = Maps.ofValues(new Pair<>("User", 1000), new Pair<>("Bank", 0));
+    public static Map<String, Integer> ACCOUNT_TYPE_START_AMOUNT0 = Maps.ofValues(new Pair<>("User", 1000), new Pair<>("Bank", 0));
 
     @DocumentIgnored
-    private static Map<AccountType, Integer> ACCOUNT_TYPE_START_AMOUNT = new HashMap<>();
+    public static Map<AccountType, Integer> ACCOUNT_TYPE_START_AMOUNT = new HashMap<>();
 
     @DocumentKey("account.user.creditAliases")
     public static CreditAlias[] ACCOUNT_USER_CREDIT_ALIASES = new CreditAlias[]{new CreditAlias("Coins",
@@ -80,7 +80,7 @@ public class DKCoinsConfig {
     public static byte ECONOMY_PROVIDER_PRIORITY = ServicePriority.HIGHEST;
 
     @DocumentKey("economyProvider.currency")
-    private static String ECONOMY_PROVIDER_CURRENCY0 = CURRENCY_DEFAULT0;
+    public static String ECONOMY_PROVIDER_CURRENCY0 = CURRENCY_DEFAULT0;
 
     @DocumentIgnored
     public static Currency ECONOMY_PROVIDER_CURRENCY = null;
