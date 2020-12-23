@@ -290,14 +290,13 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     @Override
     public int getTopAccountPos(int creditId) {
-        QueryResult result = this.accountCredit.find()
-                .getFunction(QueryFunction.rowNumberFunction("Amount", SearchOrder.DESC), "Pos")
-                .where("Id", creditId)
+        QueryResult result = this.database.getRowNumberInnerQueryCollection(this.accountCredit, "Position",
+                QueryFunction.rowNumberFunction("Amount",SearchOrder.DESC))
+                .find().where("Id", creditId)
                 .execute();
-        result.getProperties().forEach((s, o) -> System.out.println(s+":"+o));
         QueryResultEntry resultEntry = result.firstOrNull();
         if(resultEntry == null) return -1;
-        return resultEntry.getInt("Pos");
+        return resultEntry.getInt("Position");
     }
 
     @Override
