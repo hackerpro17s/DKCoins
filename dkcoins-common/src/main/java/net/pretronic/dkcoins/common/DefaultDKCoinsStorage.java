@@ -293,13 +293,13 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
         QueryResult result = this.database.getRowNumberInnerQueryCollection(this.accountCredit, "Position",
                 QueryFunction.rowNumberFunction("Amount",SearchOrder.DESC))
                 .find()
-                .get("Position")
+                .get("RowNumber")
                 .where("Id", creditId)
                 .execute();
         result.getProperties().forEach((s, o) -> System.out.println(s+":"+o));
         QueryResultEntry resultEntry = result.firstOrNull();
         if(resultEntry == null) return -1;
-        return resultEntry.getInt("Position");
+        return resultEntry.getInt("RowNumber");
     }
 
     @Override
