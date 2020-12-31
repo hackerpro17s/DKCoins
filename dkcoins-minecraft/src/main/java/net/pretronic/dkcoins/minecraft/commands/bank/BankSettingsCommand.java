@@ -30,7 +30,7 @@ import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.Convert;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import org.mcnative.common.McNative;
+import org.mcnative.runtime.api.McNative;
 
 public class BankSettingsCommand extends ObjectCommand<BankAccount> {
 

@@ -15,8 +15,6 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
-import net.pretronic.dkcoins.minecraft.commands.account.AccountExchangeCommand;
-import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.member.BankMemberCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.role.BankRoleCommand;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
@@ -37,13 +35,12 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
 
     public BankCommand(ObjectOwner owner) {
         super(owner, DKCoinsConfig.COMMAND_BANK);
-        registerCommand(new AccountTransferCommand(owner, CommandConfiguration.newBuilder().name("transfer").aliases("pay").create()));
-        registerCommand(new AccountExchangeCommand(owner));
+        registerCommand(new BankTransferCommand(owner, CommandConfiguration.newBuilder().name("transfer").aliases("pay").create(),Messages.COMMAND_BANK_TRANSFER_HELP));
+        registerCommand(new BankExchangeCommand(owner));
         this.createCommand = new BankCreateCommand(owner);
         registerCommand(new BankDeleteCommand(owner));
         this.listCommand = new BankListCommand(owner);
         registerCommand(new BankMemberCommand(owner));
-        registerCommand(new BankAdminCommand(owner));
         registerCommand(new BankStatementCommand(owner));
         registerCommand(new BankSettingsCommand(owner));
         registerCommand(new BankRoleCommand(owner));

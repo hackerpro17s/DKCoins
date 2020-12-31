@@ -16,13 +16,21 @@ import net.pretronic.databasequery.api.collection.field.FieldOption;
 import net.pretronic.databasequery.api.datatype.DataType;
 import net.pretronic.databasequery.api.query.ForeignKey;
 import net.pretronic.databasequery.api.query.SearchOrder;
+import net.pretronic.databasequery.api.query.function.QueryFunction;
+import net.pretronic.databasequery.api.query.result.QueryResult;
 import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.databasequery.api.query.type.FindQuery;
 import net.pretronic.databasequery.api.query.type.InsertQuery;
 import net.pretronic.databasequery.api.query.type.join.JoinType;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.DKCoinsStorage;
-import net.pretronic.dkcoins.api.account.*;
+import net.pretronic.dkcoins.api.account.AccountCredit;
+import net.pretronic.dkcoins.api.account.AccountType;
+import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.MasterBankAccount;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
@@ -185,9 +193,9 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                     null,
                     AccountMemberRole.byIdOrNull(memberRoleId),
                     DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("CurrencyId")),
-                    AccountLimitation.CalculationType.valueOf(entry.getString("CalculationType")),
+                    AccountLimitationCalculationType.valueOf(entry.getString("CalculationType")),
                     entry.getDouble("Amount"),
-                    AccountLimitation.Interval.valueOf(entry.getString("Interval"))));
+                    AccountLimitationInterval.valueOf(entry.getString("Interval"))));
         }
         for(QueryResultEntry entry : this.accountCredit.find().where("AccountId", id).execute()) {
             account.addLoadedAccountCredit(new DefaultAccountCredit(entry.getInt("Id"), account,
@@ -281,6 +289,28 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     }
 
     @Override
+    public int getTopAccountPos(int creditId) {
+        QueryResult result = this.database.getRowNumberInnerQueryCollection(this.accountCredit, "Position",
+                QueryFunction.rowNumberFunction("Amount",SearchOrder.DESC))
+                .find()
+                .get("RowNumber")
+                .where("Id", creditId)
+                .execute();
+        QueryResultEntry resultEntry = result.firstOrNull();
+        if(resultEntry == null) return -1;
+        return resultEntry.getInt("RowNumber");
+    }
+
+    @Override
+    public double getAccountCreditAmount(int id) {
+        return this.accountCredit.find()
+                .get("Amount")
+                .where("Id", id)
+                .execute().firstOrNull()
+                .getDouble("Amount");
+    }
+
+    @Override
     public int getAccountCreditAccountId(int id) {
         QueryResultEntry entry = this.accountCredit.find().where("Id", id).execute().firstOrNull();
         if(entry == null) return -1;
@@ -323,8 +353,8 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
 
     @Override
     public AccountLimitation addAccountLimitation(BankAccount account, AccountMember accountMember,
-                                                  AccountMemberRole memberRole, Currency comparativeCurrency, AccountLimitation.CalculationType calculationType,
-                                                  double amount, AccountLimitation.Interval interval) {
+                                                  AccountMemberRole memberRole, Currency comparativeCurrency, AccountLimitationCalculationType calculationType,
+                                                  double amount, AccountLimitationInterval interval) {
 
         InsertQuery query = this.accountLimitation.insert()
                 .set("AccountId", account.getId())
@@ -360,8 +390,8 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                     member,
                     null,
                     DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("ComparativeCurrencyId")),
-                    AccountLimitation.CalculationType.valueOf(entry.getString("CalculationType")),
-                    entry.getDouble("Amount"), AccountLimitation.Interval.valueOf(entry.getString("Interval"))));
+                    AccountLimitationCalculationType.valueOf(entry.getString("CalculationType")),
+                    entry.getDouble("Amount"), AccountLimitationInterval.valueOf(entry.getString("Interval"))));
         }
     }
 

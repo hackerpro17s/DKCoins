@@ -11,11 +11,18 @@
 package net.pretronic.dkcoins.common.account;
 
 import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.*;
+import net.pretronic.dkcoins.api.account.AccountCredit;
+import net.pretronic.dkcoins.api.account.AccountType;
+import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.MasterBankAccount;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
+import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.SyncAction;
@@ -126,7 +133,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
 
     @Override
     public AccountLimitation getLimitation(AccountMember member, AccountMemberRole role, Currency comparativeCurrency,
-                                           AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
+                                           AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
         return Iterators.findOne(this.limitations, limitation -> {
             if(!(member == null || member.equals(limitation.getMember()))) return false;
             if(!(role == null || role.equals(limitation.getMemberRole()))) return false;
@@ -186,7 +193,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
 
     @Override
     public AccountLimitation addLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
-                              AccountLimitation.CalculationType calculationType, double amount, AccountLimitation.Interval interval) {
+                                           AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
         return DKCoins.getInstance().getAccountManager().addAccountLimitation(this, member, role, comparativeCurrency, calculationType, amount, interval);
     }
 
@@ -282,19 +289,12 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
                 Iterators.removeOne(this.credits, credit -> credit.getId() == data.getInt("creditId"));
                 break;
             }
-            case SyncAction.ACCOUNT_CREDIT_SET_AMOUNT: {
-                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(data.getInt("creditId"));
-                credit.updateAmount(data.getDouble("amount"));
-                break;
-            }
-            case SyncAction.ACCOUNT_CREDIT_ADD_AMOUNT: {
-                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(data.getInt("creditId"));
-                credit.updateAmount(credit.getAmount()+data.getDouble("amount"));
-                break;
-            }
-            case SyncAction.ACCOUNT_CREDIT_REMOVE_AMOUNT: {
-                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(data.getInt("creditId"));
-                credit.updateAmount(credit.getAmount()-data.getDouble("amount"));
+            case SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE: {
+                int creditId = data.getInt("creditId");
+                DefaultAccountCredit credit = (DefaultAccountCredit) getCredit(creditId);
+                if(credit != null) {
+                    credit.reloadAmount();
+                }
                 break;
             }
             case SyncAction.ACCOUNT_LIMITATION_ADD: {

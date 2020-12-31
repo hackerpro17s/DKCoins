@@ -10,6 +10,9 @@
 
 package net.pretronic.dkcoins.api.account;
 
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
@@ -104,8 +107,8 @@ public interface AccountManager {
     boolean hasAccountLimitation(AccountMember member, Currency currency, double amount);
 
     AccountLimitation addAccountLimitation(BankAccount account, @Nullable AccountMember member, @Nullable AccountMemberRole memberRole,
-                                           Currency comparativeCurrency, AccountLimitation.CalculationType calculationType,
-                                           double amount, AccountLimitation.Interval interval);
+                                           Currency comparativeCurrency, AccountLimitationCalculationType calculationType,
+                                           double amount, AccountLimitationInterval interval);
 
     boolean removeAccountLimitation(AccountLimitation accountLimitation);
 }

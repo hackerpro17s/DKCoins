@@ -11,8 +11,10 @@
 package net.pretronic.dkcoins.common.account;
 
 import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountLimitation;
 import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
@@ -24,12 +26,12 @@ public class DefaultAccountLimitation implements AccountLimitation {
     private final AccountMember member;
     private final AccountMemberRole memberRole;
     private final Currency comparativeCurrency;
-    private final CalculationType calculationType;
+    private final AccountLimitationCalculationType calculationType;
     private final double amount;
-    private final Interval interval;
+    private final AccountLimitationInterval interval;
 
     public DefaultAccountLimitation(int id, BankAccount account, AccountMember member, AccountMemberRole memberRole,
-                                    Currency comparativeCurrency, CalculationType calculationType, double amount, Interval interval) {
+                                    Currency comparativeCurrency, AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
         this.id = id;
         this.account = account;
         this.member = member;
@@ -66,7 +68,7 @@ public class DefaultAccountLimitation implements AccountLimitation {
     }
 
     @Override
-    public CalculationType getCalculationType() {
+    public AccountLimitationCalculationType getCalculationType() {
         return this.calculationType;
     }
 
@@ -82,7 +84,7 @@ public class DefaultAccountLimitation implements AccountLimitation {
 
 
     @Override
-    public Interval getInterval() {
+    public AccountLimitationInterval getInterval() {
         return this.interval;
     }
 

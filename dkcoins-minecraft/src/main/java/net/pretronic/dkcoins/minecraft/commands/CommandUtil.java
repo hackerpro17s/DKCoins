@@ -12,18 +12,18 @@ package net.pretronic.dkcoins.minecraft.commands;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.account.TransferResult;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
-import org.mcnative.common.McNative;
-import org.mcnative.common.player.ConnectedMinecraftPlayer;
-import org.mcnative.common.player.MinecraftPlayer;
+import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.player.ConnectedMinecraftPlayer;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
 
 import java.util.function.Consumer;
 
@@ -112,23 +112,23 @@ public final class CommandUtil {
     public static void handleTransferFailCauses(TransferResult result, CommandSender commandSender) {
         switch (result.getFailCause()) {
             case LIMIT: {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_FAILURE_LIMIT);
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_LIMIT);
                 break;
             }
             case NOT_ENOUGH_AMOUNT: {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_FAILURE_NOT_ENOUGH_AMOUNT);
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_NOT_ENOUGH_AMOUNT);
                 break;
             }
             case NOT_ENOUGH_ACCESS_RIGHTS: {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS);
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS);
                 break;
             }
             case MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT: {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
                 break;
             }
             case TRANSFER_DISABLED: {
-                commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_FAILURE_DISABLED);
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_DISABLED);
                 break;
             }
         }

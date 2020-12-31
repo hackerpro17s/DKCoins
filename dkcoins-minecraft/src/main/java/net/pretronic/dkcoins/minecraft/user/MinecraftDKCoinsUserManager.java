@@ -24,8 +24,8 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.user.DefaultDKCoinsUserManager;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.utility.Validate;
-import org.mcnative.common.McNative;
-import org.mcnative.common.player.MinecraftPlayer;
+import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
 
 import java.util.Arrays;
 import java.util.UUID;

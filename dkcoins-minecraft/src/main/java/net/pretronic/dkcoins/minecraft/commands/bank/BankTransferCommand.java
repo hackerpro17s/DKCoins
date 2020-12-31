@@ -8,13 +8,13 @@
  * %license%
  */
 
-package net.pretronic.dkcoins.minecraft.commands.account;
+package net.pretronic.dkcoins.minecraft.commands.bank;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.account.TransferResult;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.account.TransferCause;
@@ -27,14 +27,18 @@ import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import org.mcnative.common.McNative;
-import org.mcnative.common.player.MinecraftPlayer;
-import org.mcnative.common.player.OnlineMinecraftPlayer;
+import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
+import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
+import org.mcnative.runtime.api.text.components.MessageComponent;
 
-public class AccountTransferCommand extends ObjectCommand<BankAccount> {
+public class BankTransferCommand extends ObjectCommand<BankAccount> {
 
-    public AccountTransferCommand(ObjectOwner owner, CommandConfiguration configuration) {
+    private final MessageComponent<?> helpMessage;
+
+    public BankTransferCommand(ObjectOwner owner, CommandConfiguration configuration, MessageComponent<?> helpMessage) {
         super(owner, configuration);
+        this.helpMessage = helpMessage;
     }
 
     @Override
@@ -54,7 +58,7 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
             return;
         }
         if(args.length < 2) {
-            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_HELP);
+            commandSender.sendMessage(helpMessage);
             return;
         }
         // /pay <bank> amount currency
@@ -102,13 +106,13 @@ public class AccountTransferCommand extends ObjectCommand<BankAccount> {
                 CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
                 DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
         if(result.isSuccess()) {
-            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, VariableSet.create()
+            commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_SUCCESS, VariableSet.create()
                     .addDescribed("transaction", result.getTransaction()));
             for (AccountMember receiverMember : receiver.getMembers()) {
                 MinecraftPlayer receiverPlayer = McNative.getInstance().getPlayerManager().getPlayer(receiverMember.getUser().getUniqueId());
                 if(receiverPlayer.isOnline()) {
                     OnlineMinecraftPlayer receiverOnlinePlayer = receiverPlayer.getAsOnlinePlayer();
-                    receiverOnlinePlayer.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS_RECEIVER, VariableSet.create()
+                    receiverOnlinePlayer.sendMessage(Messages.COMMAND_BANK_TRANSFER_SUCCESS_RECEIVER, VariableSet.create()
                             .addDescribed("transaction", result.getTransaction()));
                 }
             }

@@ -26,6 +26,7 @@ import net.pretronic.dkcoins.common.currency.DefaultCurrencyExchangeRate;
 import net.pretronic.dkcoins.common.currency.DefaultCurrencyManager;
 import net.pretronic.libraries.event.EventBus;
 import net.pretronic.libraries.logging.PretronicLogger;
+import net.pretronic.libraries.message.bml.variable.describer.VariableDescriber;
 import net.pretronic.libraries.message.bml.variable.describer.VariableDescriberRegistry;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
@@ -136,7 +137,6 @@ public class DefaultDKCoins extends DKCoins {
     }
 
     private void registerVariableDescribers() {
-        VariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class);
         VariableDescriberRegistry.registerDescriber(DefaultCurrency.class);
         VariableDescriberRegistry.registerDescriber(DefaultCurrencyExchangeRate.class);
         VariableDescriberRegistry.registerDescriber(DefaultBankAccount.class);
@@ -145,6 +145,8 @@ public class DefaultDKCoins extends DKCoins {
         VariableDescriberRegistry.registerDescriber(DefaultAccountCredit.class);
         VariableDescriberRegistry.registerDescriber(DefaultAccountLimitation.class);
         VariableDescriberRegistry.registerDescriber(DefaultRankedAccountCredit.class);
+
+        VariableDescriber<DefaultAccountTransaction> describer = VariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class);
     }
 
     public static DefaultDKCoins getInstance() {

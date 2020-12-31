@@ -21,9 +21,11 @@
 package net.pretronic.dkcoins.minecraft.commands.bank;
 
 import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountLimitation;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
@@ -36,8 +38,8 @@ import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.libraries.utility.map.Triple;
-import org.mcnative.common.player.MinecraftPlayer;
-import org.mcnative.common.text.components.MessageKeyComponent;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
+import org.mcnative.runtime.api.text.components.MessageKeyComponent;
 
 import java.util.Collection;
 
@@ -72,7 +74,7 @@ public abstract class AbstractBankLimitCommand<T> extends ObjectCommand<Triple<B
                             return;
                         }
                         if(args.length == 5) {
-                            AccountLimitation.Interval interval = AccountLimitation.Interval.parse(args[1]);
+                            AccountLimitationInterval interval = AccountLimitationInterval.parse(args[1]);
                             if(interval == null) {
                                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_LIMITATION_INTERVAL_NOT_VALID, VariableSet.create().add("value", args[1]));
                                 return;
@@ -84,7 +86,7 @@ public abstract class AbstractBankLimitCommand<T> extends ObjectCommand<Triple<B
                             }
                             double amount = Double.parseDouble(amount0);
 
-                            AccountLimitation.CalculationType calculationType = AccountLimitation.CalculationType.parse(args[3]);
+                            AccountLimitationCalculationType calculationType = AccountLimitationCalculationType.parse(args[3]);
                             if(calculationType == null) {
                                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_LIMITATION_CALCULATION_TYPE_NOT_VALID, VariableSet.create().add("value", args[3]));
                                 return;
@@ -119,11 +121,11 @@ public abstract class AbstractBankLimitCommand<T> extends ObjectCommand<Triple<B
 
     protected abstract Collection<AccountLimitation> getLimitations(Triple<BankAccount, AccountMemberRole, T> target);
 
-    protected abstract AccountLimitation getLimitation(Triple<BankAccount, AccountMemberRole, T> target, Currency currency, AccountLimitation.CalculationType calculationType,
-                                                       double amount, AccountLimitation.Interval interval);
+    protected abstract AccountLimitation getLimitation(Triple<BankAccount, AccountMemberRole, T> target, Currency currency, AccountLimitationCalculationType calculationType,
+                                                       double amount, AccountLimitationInterval interval);
 
-    protected abstract AccountLimitation addLimitation(Triple<BankAccount, AccountMemberRole, T> target, Currency currency, AccountLimitation.CalculationType calculationType,
-                                                       double amount, AccountLimitation.Interval interval);
+    protected abstract AccountLimitation addLimitation(Triple<BankAccount, AccountMemberRole, T> target, Currency currency, AccountLimitationCalculationType calculationType,
+                                                       double amount, AccountLimitationInterval interval);
 
     private void listLimitations(CommandSender commandSender, Triple<BankAccount, AccountMemberRole, T> target) {
         Collection<AccountLimitation> limitations = getLimitations(target);
