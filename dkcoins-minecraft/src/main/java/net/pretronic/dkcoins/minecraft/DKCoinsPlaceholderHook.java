@@ -27,8 +27,8 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.utility.GeneralUtil;
-import org.mcnative.common.player.MinecraftPlayer;
-import org.mcnative.common.serviceprovider.placeholder.PlaceholderHook;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
+import org.mcnative.runtime.api.serviceprovider.placeholder.PlaceholderHook;
 
 public class DKCoinsPlaceholderHook implements PlaceholderHook {
 

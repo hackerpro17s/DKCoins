@@ -28,7 +28,7 @@ import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import org.mcnative.common.player.OnlineMinecraftPlayer;
+import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 
 public class CurrencyDeleteCommand extends ObjectCommand<Currency> {
 

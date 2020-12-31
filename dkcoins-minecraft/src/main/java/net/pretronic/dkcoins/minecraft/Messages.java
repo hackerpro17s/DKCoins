@@ -10,8 +10,8 @@
 
 package net.pretronic.dkcoins.minecraft;
 
-import org.mcnative.common.text.Text;
-import org.mcnative.common.text.components.MessageKeyComponent;
+import org.mcnative.runtime.api.text.Text;
+import org.mcnative.runtime.api.text.components.MessageKeyComponent;
 
 public class Messages {
 

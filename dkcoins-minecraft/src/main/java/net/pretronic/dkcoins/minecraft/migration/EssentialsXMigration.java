@@ -29,8 +29,8 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.utility.io.FileUtil;
-import org.mcnative.common.McNative;
-import org.mcnative.common.player.data.PlayerDataProvider;
+import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.player.data.PlayerDataProvider;
 
 import java.io.File;
 import java.util.UUID;

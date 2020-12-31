@@ -26,8 +26,8 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.event.Listener;
-import org.mcnative.common.event.player.login.MinecraftPlayerPostLoginEvent;
-import org.mcnative.common.player.OnlineMinecraftPlayer;
+import org.mcnative.runtime.api.event.player.login.MinecraftPlayerPostLoginEvent;
+import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 
 public class MinecraftPlayerListener {
 

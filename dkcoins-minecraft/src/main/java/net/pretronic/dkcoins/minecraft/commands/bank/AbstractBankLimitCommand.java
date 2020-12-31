@@ -38,8 +38,8 @@ import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.libraries.utility.map.Triple;
-import org.mcnative.common.player.MinecraftPlayer;
-import org.mcnative.common.text.components.MessageKeyComponent;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
+import org.mcnative.runtime.api.text.components.MessageKeyComponent;
 
 import java.util.Collection;
 

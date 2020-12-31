@@ -23,7 +23,7 @@ import net.pretronic.libraries.plugin.service.ServicePriority;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.map.Maps;
 import net.pretronic.libraries.utility.map.Pair;
-import org.mcnative.common.McNative;
+import org.mcnative.runtime.api.McNative;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

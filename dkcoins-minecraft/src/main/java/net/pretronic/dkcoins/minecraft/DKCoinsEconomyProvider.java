@@ -28,9 +28,9 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.utility.Validate;
-import org.mcnative.common.player.MinecraftPlayer;
-import org.mcnative.common.serviceprovider.economy.EconomyProvider;
-import org.mcnative.common.serviceprovider.economy.EconomyResponse;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
+import org.mcnative.runtime.api.serviceprovider.economy.EconomyProvider;
+import org.mcnative.runtime.api.serviceprovider.economy.EconomyResponse;
 
 import java.util.Collection;
 import java.util.Collections;

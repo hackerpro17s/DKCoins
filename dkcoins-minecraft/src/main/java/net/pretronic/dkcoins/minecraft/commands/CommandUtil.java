@@ -21,9 +21,9 @@ import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
-import org.mcnative.common.McNative;
-import org.mcnative.common.player.ConnectedMinecraftPlayer;
-import org.mcnative.common.player.MinecraftPlayer;
+import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.player.ConnectedMinecraftPlayer;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
 
 import java.util.function.Consumer;
 

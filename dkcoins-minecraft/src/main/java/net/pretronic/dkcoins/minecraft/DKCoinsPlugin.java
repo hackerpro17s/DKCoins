@@ -33,11 +33,11 @@ import net.pretronic.libraries.plugin.lifecycle.Lifecycle;
 import net.pretronic.libraries.plugin.lifecycle.LifecycleState;
 import net.pretronic.libraries.synchronisation.UnconnectedSynchronisationCaller;
 import net.pretronic.libraries.utility.io.FileUtil;
-import org.mcnative.common.McNative;
-import org.mcnative.common.plugin.MinecraftPlugin;
-import org.mcnative.common.plugin.configuration.ConfigurationProvider;
-import org.mcnative.common.serviceprovider.economy.EconomyProvider;
-import org.mcnative.common.serviceprovider.placeholder.PlaceholderService;
+import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.plugin.MinecraftPlugin;
+import org.mcnative.runtime.api.plugin.configuration.ConfigurationProvider;
+import org.mcnative.runtime.api.serviceprovider.economy.EconomyProvider;
+import org.mcnative.runtime.api.serviceprovider.placeholder.PlaceholderHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         VariableDescriberRegistry.registerDescriber(MinecraftDKCoinsUser.class);
 
         registerEconomyProvider();
-        PlaceholderService.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
+        PlaceholderHelper.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
 
         //@Todo change for service and proxy
         TransactionPropertyBuilder builder = member -> new ArrayList<>();
