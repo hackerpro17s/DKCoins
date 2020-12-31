@@ -32,7 +32,6 @@
         </repository>
     </distributionManagement>
 
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <plugin.maven.compiler>3.8.1</plugin.maven.compiler>
