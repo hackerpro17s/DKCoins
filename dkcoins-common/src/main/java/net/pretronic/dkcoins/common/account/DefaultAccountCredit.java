@@ -13,11 +13,12 @@ package net.pretronic.dkcoins.common.account;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.account.TransferResult;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
+import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
+import net.pretronic.dkcoins.api.account.transferresult.TransferResultFailCause;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.events.account.DKCoinsAccountTransactEvent;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
@@ -117,21 +118,26 @@ public class DefaultAccountCredit implements AccountCredit {
     }
 
     @Override
+    public int getTopPos() {
+        return DKCoins.getInstance().getStorage().getTopAccountPos(getId());
+    }
+
+    @Override
     public TransferResult canTransfer(AccountMember member, AccountCredit target, double amount) {
         if(getCurrency().isTransferDisabled(target.getCurrency())) {
-            return new DefaultTransferResult(TransferResult.FailCause.TRANSFER_DISABLED);
+            return new DefaultTransferResult(TransferResultFailCause.TRANSFER_DISABLED);
         }
         if(getAmount() < amount) {
-            return new DefaultTransferResult(TransferResult.FailCause.NOT_ENOUGH_AMOUNT);
+            return new DefaultTransferResult(TransferResultFailCause.NOT_ENOUGH_AMOUNT);
         }
         if(!member.canAccess(AccessRight.WITHDRAW)) {
-            return new DefaultTransferResult(TransferResult.FailCause.NOT_ENOUGH_ACCESS_RIGHTS);
+            return new DefaultTransferResult(TransferResultFailCause.NOT_ENOUGH_ACCESS_RIGHTS);
         }
         if(getAccount().isMasterAccount() && getAccount().asMasterAccount().getCredit(getCurrency()).getAmount() < amount) {
-            return new DefaultTransferResult(TransferResult.FailCause.MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
+            return new DefaultTransferResult(TransferResultFailCause.MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
         }
         if(member.hasLimitation(getCurrency(), amount)) {
-            return new DefaultTransferResult(TransferResult.FailCause.LIMIT);
+            return new DefaultTransferResult(TransferResultFailCause.LIMIT);
         }
         return new DefaultTransferResult(null);
     }
@@ -140,13 +146,13 @@ public class DefaultAccountCredit implements AccountCredit {
     public TransferResult deposit(AccountMember member, double amount, String reason, Collection<AccountTransactionProperty> properties) {
         BankAccount account = member.getUser().getDefaultAccount();
         AccountMember accountMember = account.getMember(member.getUser());
-        return account.getCredit(getCurrency()).transfer(accountMember, amount, this, reason, TransferCause.DEPOSIT, properties);
+        return account.getCredit(getCurrency()).transfer(accountMember, amount, this, reason, TransferCause.API, properties);
     }
 
     @Override
     public TransferResult withdraw(AccountMember member, double amount, String reason, Collection<AccountTransactionProperty> properties) {
         return transfer(member, amount, member.getUser().getDefaultAccount()
-                .getCredit(getCurrency()), reason, TransferCause.WITHDRAW, properties);
+                .getCredit(getCurrency()), reason, TransferCause.API, properties);
     }
 
     @Override
@@ -157,8 +163,8 @@ public class DefaultAccountCredit implements AccountCredit {
             credit.addAmount(amount);
             removeAmount(amount0);
             AccountTransaction transaction = account.addTransaction(this, member, credit, amount0, reason, cause, properties);
-            DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountTransactEvent(transaction));
             ((DefaultTransferResult)result).setTransaction(transaction);
+            DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountTransactEvent(transaction));
         }
         return result;
     }
@@ -171,5 +177,10 @@ public class DefaultAccountCredit implements AccountCredit {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof AccountCredit && ((AccountCredit)obj).getId() == this.id;
+    }
+
+    @Internal
+    public void reloadAmount() {
+        this.amount = DefaultDKCoins.getInstance().getStorage().getAccountCreditAmount(this.id);
     }
 }

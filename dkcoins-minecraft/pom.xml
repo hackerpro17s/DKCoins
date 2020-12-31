@@ -25,7 +25,7 @@
     <parent>
         <artifactId>DKCoins</artifactId>
         <groupId>net.pretronic.dkcoins</groupId>
-        <version>1.4.3.101</version>
+        <version>1.6.26.136-BETA</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -66,9 +66,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.mcnative</groupId>
+                <groupId>org.mcnative.buildtool</groupId>
                 <artifactId>mcnative-buildtool-maven</artifactId>
-                <version>${dependency.mcnative.version}</version>
+                <version>${dependency.mcnative.buildtool}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -77,26 +77,23 @@
                         </goals>
                     </execution>
                 </executions>
+
                 <configuration>
-                    <mcnative-loader-version>${dependency.mcnative.version}</mcnative-loader-version>
+                    <mcnative-loader-version>${dependency.mcnative.loader}</mcnative-loader-version>
                     <resource-loader-version>${dependency.pretronic.libraries}</resource-loader-version>
                     <manifest>
                         <name>DKCoins</name>
                         <id>0249f842-de95-42df-b611-7ad390d90086</id>
-                        <category>Network Management</category>
                         <version>${project.version}</version>
                         <main>net.pretronic.dkcoins.minecraft.DKCoinsPlugin</main>
-                        <description>McNative demo plugin</description>
+                        <description>McNative economy plugin</description>
                         <website>https://mcnative.org/</website>
-                        <author>Philipp Elvin Friedhoff</author>
+                        <author>Pretronic</author>
                         <messageModule>DKCoins</messageModule>
                     </manifest>
 
-                    <loader>
-                        <version>${project.version}</version>
-                    </loader>
-
                 </configuration>
+
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -124,15 +121,15 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.mcnative</groupId>
-            <artifactId>mcnative-build</artifactId>
-            <version>${dependency.mcnative.version}</version>
+            <groupId>org.mcnative.runtime</groupId>
+            <artifactId>mcnative-runtime-build</artifactId>
+            <version>${dependency.mcnative.runtime}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.mcnative</groupId>
-            <artifactId>mcnative-service</artifactId>
-            <version>${dependency.mcnative.version}</version>
+            <groupId>org.mcnative.runtime.api</groupId>
+            <artifactId>mcnative-runtime-api-service</artifactId>
+            <version>${dependency.mcnative.api}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

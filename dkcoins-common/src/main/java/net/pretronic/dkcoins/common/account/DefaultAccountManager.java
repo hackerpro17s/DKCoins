@@ -15,6 +15,9 @@ import net.pretronic.databasequery.api.query.result.QueryResult;
 import net.pretronic.databasequery.api.query.type.FindQuery;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
@@ -230,9 +233,8 @@ public class DefaultAccountManager implements AccountManager {
         DKCoins.getInstance().getStorage().setAccountCreditAmount(credit.getId(), amount);
         ((DefaultAccountCredit)credit).updateAmount(amount);
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_SET_AMOUNT)
-                .add("creditId", credit.getId())
-                .add("amount", amount));
+                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
+                .add("creditId", credit.getId()));
     }
 
     @Override
@@ -240,9 +242,8 @@ public class DefaultAccountManager implements AccountManager {
         DKCoins.getInstance().getStorage().addAccountCreditAmount(credit.getId(), amount);
         ((DefaultAccountCredit)credit).updateAmount(credit.getAmount()+amount);
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_ADD_AMOUNT)
-                .add("creditId", credit.getId())
-                .add("amount", amount));
+                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
+                .add("creditId", credit.getId()));
     }
 
     @Override
@@ -250,9 +251,8 @@ public class DefaultAccountManager implements AccountManager {
         DKCoins.getInstance().getStorage().removeAccountCreditAmount(credit.getId(), amount);
         ((DefaultAccountCredit)credit).updateAmount(credit.getAmount()-amount);
         this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_REMOVE_AMOUNT)
-                .add("creditId", credit.getId())
-                .add("amount", amount));
+                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
+                .add("creditId", credit.getId()));
     }
 
 
@@ -348,7 +348,7 @@ public class DefaultAccountManager implements AccountManager {
                 }
                 if(limitation.getMember() != null && limitation.getMember().getId() == member.getId()) {
                     query.where("SenderId", member.getId());
-                } else if(limitation.getCalculationType() == AccountLimitation.CalculationType.USER_BASED) {
+                } else if(limitation.getCalculationType() == AccountLimitationCalculationType.USER_BASED) {
                     query.where("SenderId", member.getId());
                 }
                 query.whereHigher("Time", getStartLimitationTime(limitation));
@@ -389,8 +389,8 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public AccountLimitation addAccountLimitation(BankAccount account, @Nullable AccountMember member,
                                                   @Nullable AccountMemberRole memberRole, Currency comparativeCurrency,
-                                                  AccountLimitation.CalculationType calculationType,
-                                                  double amount, AccountLimitation.Interval interval) {
+                                                  AccountLimitationCalculationType calculationType,
+                                                  double amount, AccountLimitationInterval interval) {
         Validate.notNull(account, comparativeCurrency);
         Validate.isTrue(amount > 0);
         AccountLimitation limitation = DKCoins.getInstance().getStorage().addAccountLimitation(account, member, memberRole,
@@ -429,7 +429,7 @@ public class DefaultAccountManager implements AccountManager {
     }
 
     private void createMissingAccountCredits(BankAccount account) {
-        Validate.notNull(account);
+        if(account == null) return;
         for (Currency currency : DKCoins.getInstance().getCurrencyManager().getCurrencies()) {
             if(account.getCredit(currency) == null) {
                 account.addCredit(currency, 0);
@@ -529,7 +529,9 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public BankAccount load(Object[] identifiers) {
-                return DKCoins.getInstance().getStorage().searchAccount(identifiers[0]);
+                BankAccount account = DKCoins.getInstance().getStorage().searchAccount(identifiers[0]);
+                createMissingAccountCredits(account);
+                return account;
             }
         }).registerQuery("byId", new CacheQuery<BankAccount>() {
 
@@ -540,7 +542,9 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public BankAccount load(Object[] identifiers) {
-                return DKCoins.getInstance().getStorage().getAccount((int) identifiers[0]);
+                BankAccount account = DKCoins.getInstance().getStorage().getAccount((int) identifiers[0]);
+                createMissingAccountCredits(account);
+                return account;
             }
 
             @Override
@@ -555,7 +559,9 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public BankAccount load(Object[] identifiers) {
-                return DKCoins.getInstance().getStorage().getSubAccount((int)identifiers[0], (int)identifiers[1]);
+                BankAccount account = DKCoins.getInstance().getStorage().getSubAccount((int)identifiers[0], (int)identifiers[1]);
+                createMissingAccountCredits(account);
+                return account;
             }
 
             @Override
@@ -576,7 +582,9 @@ public class DefaultAccountManager implements AccountManager {
             public BankAccount load(Object[] identifiers) {
                 String name = (String) identifiers[0];
                 AccountType type = (AccountType) identifiers[1];
-                return DKCoins.getInstance().getStorage().getAccount(name, type);
+                BankAccount account = DKCoins.getInstance().getStorage().getAccount(name, type);
+                createMissingAccountCredits(account);
+                return account;
             }
 
             @Override
@@ -595,13 +603,15 @@ public class DefaultAccountManager implements AccountManager {
             public BankAccount load(Object[] identifiers) {
                 //@Todo direct via join
                 int accountId = DKCoins.getInstance().getStorage().getAccountCreditAccountId((int) identifiers[0]);
-                return DKCoins.getInstance().getAccountManager().getAccount(accountId);
+                BankAccount account = DKCoins.getInstance().getAccountManager().getAccount(accountId);
+                createMissingAccountCredits(account);
+                return account;
             }
             @Override
             public boolean check(BankAccount account, Object[] identifiers) {
                 return account.getCredit((int) identifiers[0]) != null;
             }
-        }).setInsertListener(this::createMissingAccountCredits);
+        });
 
         this.accountCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getAccount(id));
     }

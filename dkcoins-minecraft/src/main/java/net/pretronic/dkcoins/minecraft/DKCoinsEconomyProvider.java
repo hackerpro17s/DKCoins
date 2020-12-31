@@ -28,9 +28,9 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.utility.Validate;
-import org.mcnative.common.player.MinecraftPlayer;
-import org.mcnative.common.serviceprovider.economy.EconomyProvider;
-import org.mcnative.common.serviceprovider.economy.EconomyResponse;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
+import org.mcnative.runtime.api.serviceprovider.economy.EconomyProvider;
+import org.mcnative.runtime.api.serviceprovider.economy.EconomyResponse;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -91,7 +91,7 @@ public class DKCoinsEconomyProvider implements EconomyProvider {
     public EconomyResponse setPlayerBalance(MinecraftPlayer player, double amount) {
         Validate.notNull(player);
         AccountCredit credit = getDefaultAccountCredit(player);
-        credit.setAmount(amount, TransferCause.ECONOMY_PROVIDER,
+        credit.setAmount(amount, TransferCause.PROVIDER,
                 DKCoins.getInstance().getTransactionPropertyBuilder().build(credit.getAccount().getMember(player.getAs(DKCoinsUser.class))));
         return new EconomyResponse(true, null, amount, credit.getAmount());
     }
@@ -159,7 +159,7 @@ public class DKCoinsEconomyProvider implements EconomyProvider {
     public EconomyResponse setBankBalance(String name, double amount) {
         Validate.notNull(name);
         AccountCredit credit = getBankAccountCredit(name);
-        credit.setAmount(amount, TransferCause.ECONOMY_PROVIDER, Collections.EMPTY_LIST);
+        credit.setAmount(amount, TransferCause.PROVIDER, Collections.EMPTY_LIST);
         return new EconomyResponse(true, null, amount, credit.getAmount());
     }
 

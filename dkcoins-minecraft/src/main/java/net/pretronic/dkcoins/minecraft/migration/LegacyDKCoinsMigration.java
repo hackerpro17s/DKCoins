@@ -26,8 +26,9 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.migration.Migration;
-import org.mcnative.common.McNative;
-import org.mcnative.common.player.data.PlayerDataProvider;
+import net.pretronic.dkcoins.api.migration.MigrationResult;
+import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.player.data.PlayerDataProvider;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,12 +41,12 @@ public class LegacyDKCoinsMigration implements Migration {
     }
 
     @Override
-    public Result migrate(Currency currency) {
+    public MigrationResult migrate(Currency currency) {
         long start = System.currentTimeMillis();
         File location = new File("plugins/DKCoins/legacy-config.yml");
         if(!location.exists()) {
             DKCoins.getInstance().getLogger().error("No dkcoins legacy config was found");
-            return new Result(false, 0, 0, 0, 0, -1);
+            return new MigrationResult(false, 0, 0, 0, 0, -1);
         }
         if(DKCoinsLegacy.getInstance() == null) {
             DKCoinsLegacy.setInstance(new DKCoinsLegacy());
@@ -74,6 +75,6 @@ public class LegacyDKCoinsMigration implements Migration {
             totalCount.incrementAndGet();
         }
 
-        return new Result(true, totalCount.get(), dkcoinsCount.get(), mcNativeCount.get(), 0,System.currentTimeMillis()-start);
+        return new MigrationResult(true, totalCount.get(), dkcoinsCount.get(), mcNativeCount.get(), 0,System.currentTimeMillis()-start);
     }
 }

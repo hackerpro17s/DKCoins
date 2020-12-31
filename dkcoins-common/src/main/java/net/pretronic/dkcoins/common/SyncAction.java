@@ -27,10 +27,7 @@ public class SyncAction {
 
     public static final String ACCOUNT_CREDIT_NEW = "ACCOUNT_CREDIT_NEW";
     public static final String ACCOUNT_CREDIT_DELETE = "ACCOUNT_CREDIT_DELETE";
-
-    public static final String ACCOUNT_CREDIT_SET_AMOUNT = "ACCOUNT_CREDIT_SET_AMOUNT";
-    public static final String ACCOUNT_CREDIT_ADD_AMOUNT = "ACCOUNT_CREDIT_ADD_AMOUNT";
-    public static final String ACCOUNT_CREDIT_REMOVE_AMOUNT = "ACCOUNT_CREDIT_REMOVE_AMOUNT";
+    public static final String ACCOUNT_CREDIT_AMOUNT_UPDATE = "ACCOUNT_CREDIT_AMOUNT_UPDATE";
 
     public static final String ACCOUNT_MEMBER_ADD = "ACCOUNT_MEMBER_ADD";
     public static final String ACCOUNT_MEMBER_REMOVE = "ACCOUNT_MEMBER_REMOVE";
@@ -39,7 +36,6 @@ public class SyncAction {
 
     public static final String ACCOUNT_LIMITATION_ADD = "ACCOUNT_LIMITATION_ADD";
     public static final String ACCOUNT_LIMITATION_REMOVE = "ACCOUNT_LIMITATION_REMOVE";
-
 
     public static final String CURRENCY_UPDATE_NAME = "CURRENCY_UPDATE_NAME";
     public static final String CURRENCY_UPDATE_SYMBOL = "CURRENCY_UPDATE_SYMBOL";

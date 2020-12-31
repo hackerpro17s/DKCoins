@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The DKCoins Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Philipp Elvin Friedhoff
- * @since 02.08.20, 20:44
+ * @since 20.12.20, 20:06
  * @web %web%
  *
  * The DKCoins Project is under the Apache License, version 2.0 (the "License");
@@ -18,14 +18,18 @@
  * under the License.
  */
 
-package net.pretronic.dkcoins.api.migration;
+package net.pretronic.dkcoins.api.account.limitation;
 
-import net.pretronic.dkcoins.api.currency.Currency;
+public enum AccountLimitationInterval {
 
-public interface Migration {
+    DAILY,
+    WEEKLY,
+    MONTHLY;
 
-    String getName();
-
-    MigrationResult migrate(Currency currency);
-
+    public static AccountLimitationInterval parse(String value) {
+        for (AccountLimitationInterval interval : values()) {
+            if(interval.name().equalsIgnoreCase(value)) return interval;
+        }
+        return null;
+    }
 }

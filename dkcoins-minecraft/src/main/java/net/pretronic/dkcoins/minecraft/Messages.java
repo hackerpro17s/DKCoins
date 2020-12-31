@@ -10,8 +10,8 @@
 
 package net.pretronic.dkcoins.minecraft;
 
-import org.mcnative.common.text.Text;
-import org.mcnative.common.text.components.MessageKeyComponent;
+import org.mcnative.runtime.api.text.Text;
+import org.mcnative.runtime.api.text.components.MessageKeyComponent;
 
 public class Messages {
 
@@ -42,34 +42,6 @@ public class Messages {
     public static final MessageKeyComponent ERROR_ACCOUNT_LIMITATION_INTERVAL_NOT_VALID = Text.ofMessageKey("dkcoins.error.account.limitation.interval.notValid");
     public static final MessageKeyComponent ERROR_ACCOUNT_LIMITATION_CALCULATION_TYPE_NOT_VALID = Text.ofMessageKey("dkcoins.error.account.limitation.calculationType.notValid");
 
-
-    public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_HELP = Text.ofMessageKey("dkcoins.command.account.exchange.help");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_SUCCESS = Text.ofMessageKey("dkcoins.command.account.exchange.success");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_FAILURE_NOT_ENOUGH_AMOUNT =
-            Text.ofMessageKey("dkcoins.command.account.exchange.failure.notEnoughAmount");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT =
-            Text.ofMessageKey("dkcoins.command.account.exchange.failure.masterAccountNotEnoughAmount");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_FAILURE_LIMIT =
-            Text.ofMessageKey("dkcoins.command.account.exchange.failure.limit");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS =
-            Text.ofMessageKey("dkcoins.command.account.exchange.failure.notEnoughAccessRights");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_EXCHANGE_FAILURE_DISABLED =
-            Text.ofMessageKey("dkcoins.command.account.exchange.failure.disabled");
-
-    public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_HELP = Text.ofMessageKey("dkcoins.command.account.transfer.help");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_SUCCESS = Text.ofMessageKey("dkcoins.command.account.transfer.success");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_SUCCESS_RECEIVER = Text.ofMessageKey("dkcoins.command.account.transfer.success.receiver");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_FAILURE_NOT_ENOUGH_AMOUNT =
-            Text.ofMessageKey("dkcoins.command.account.transfer.failure.notEnoughAmount");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT =
-            Text.ofMessageKey("dkcoins.command.account.transfer.failure.masterAccountNotEnoughAmount");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_FAILURE_LIMIT =
-            Text.ofMessageKey("dkcoins.command.account.transfer.failure.limit");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS =
-            Text.ofMessageKey("dkcoins.command.account.transfer.failure.notEnoughAccessRights");
-    public static final MessageKeyComponent COMMAND_ACCOUNT_TRANSFER_FAILURE_DISABLED =
-            Text.ofMessageKey("dkcoins.command.account.transfer.failure.disabled");
-
     public static final MessageKeyComponent COMMAND_BANK_CREATE_HELP = Text.ofMessageKey("dkcoins.command.bank.create.help");
     public static final MessageKeyComponent COMMAND_BANK_CREATE_DONE = Text.ofMessageKey("dkcoins.command.bank.create.done");
 
@@ -81,11 +53,36 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_BANK_CREDITS = Text.ofMessageKey("dkcoins.command.bank.credits");
 
 
+    public static final MessageKeyComponent COMMAND_BANK_EXCHANGE_HELP = Text.ofMessageKey("dkcoins.command.bank.exchange.help");
+    public static final MessageKeyComponent COMMAND_BANK_EXCHANGE_SUCCESS = Text.ofMessageKey("dkcoins.command.bank.exchange.success");
+    public static final MessageKeyComponent COMMAND_BANK_EXCHANGE_FAILURE_NOT_ENOUGH_AMOUNT =
+            Text.ofMessageKey("dkcoins.command.bank.exchange.failure.notEnoughAmount");
+    public static final MessageKeyComponent COMMAND_BANK_EXCHANGE_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT =
+            Text.ofMessageKey("dkcoins.command.bank.exchange.failure.masterAccountNotEnoughAmount");
+    public static final MessageKeyComponent COMMAND_BANK_EXCHANGE_FAILURE_LIMIT =
+            Text.ofMessageKey("dkcoins.command.bank.exchange.failure.limit");
+    public static final MessageKeyComponent COMMAND_BANK_EXCHANGE_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS =
+            Text.ofMessageKey("dkcoins.command.bank.exchange.failure.notEnoughAccessRights");
+    public static final MessageKeyComponent COMMAND_BANK_EXCHANGE_FAILURE_DISABLED =
+            Text.ofMessageKey("dkcoins.command.bank.exchange.failure.disabled");
+
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_HELP = Text.ofMessageKey("dkcoins.command.bank.transfer.help");
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_SUCCESS = Text.ofMessageKey("dkcoins.command.bank.transfer.success");
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_SUCCESS_RECEIVER = Text.ofMessageKey("dkcoins.command.bank.transfer.success.receiver");
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_NOT_ENOUGH_AMOUNT =
+            Text.ofMessageKey("dkcoins.command.bank.transfer.failure.notEnoughAmount");
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT =
+            Text.ofMessageKey("dkcoins.command.bank.transfer.failure.masterAccountNotEnoughAmount");
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_LIMIT =
+            Text.ofMessageKey("dkcoins.command.bank.transfer.failure.limit");
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS =
+            Text.ofMessageKey("dkcoins.command.bank.transfer.failure.notEnoughAccessRights");
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_DISABLED =
+            Text.ofMessageKey("dkcoins.command.bank.transfer.failure.disabled");
+
+
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_LIST = Text.ofMessageKey("dkcoins.command.bank.member.list");
-
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_INFO = Text.ofMessageKey("dkcoins.command.bank.member.info");
-
-
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_ROLE = Text.ofMessageKey("dkcoins.command.bank.member.role");
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_REMOVE = Text.ofMessageKey("dkcoins.command.bank.member.remove");
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_ROLE_HELP = Text.ofMessageKey("dkcoins.command.bank.member.role.help");
@@ -109,13 +106,13 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_ADD = Text.ofMessageKey("dkcoins.command.bank.admin.add");
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_REMOVE = Text.ofMessageKey("dkcoins.command.bank.admin.remove");
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_SET = Text.ofMessageKey("dkcoins.command.bank.admin.set");
-    public static final MessageKeyComponent COMMAND_BANK_ADMIN_HELP = Text.ofMessageKey("dkcoins.command.bank.admin.help");
 
     public static final MessageKeyComponent COMMAND_BANK_BANK_STATEMENT_FILTER_OPTION_WRONG = Text.ofMessageKey("dkcoins.command.bank.bankStatement.filterOption.wrong");
     public static final MessageKeyComponent COMMAND_BANK_BANK_STATEMENT_FILTER_OPTION_NOT_FOUND = Text.ofMessageKey("dkcoins.command.bank.bankStatement.filterOption.notFound");
 
     public static final MessageKeyComponent COMMAND_BANK_BANK_STATEMENT = Text.ofMessageKey("dkcoins.command.bank.bankStatement");
 
+    public static final MessageKeyComponent COMMAND_TRANSFER_HELP = Text.ofMessageKey("dkcoins.command.transfer.help");
 
     public static final MessageKeyComponent COMMAND_CURRENCY_HELP = Text.ofMessageKey("dkcoins.command.currency.help");
 
@@ -139,6 +136,7 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_USER_BANK_AMOUNT_OTHER = Text.ofMessageKey("dkcoins.command.userBank.amount.other");
     public static final MessageKeyComponent COMMAND_USER_BANK_HELP = Text.ofMessageKey("dkcoins.command.userBank.help");
     public static final MessageKeyComponent COMMAND_USER_BANK_WORLD_DISABLED = Text.ofMessageKey("dkcoins.command.userBank.world.disabled");
+    public static final MessageKeyComponent COMMAND_USER_BANK_TRANSFER_HELP  = Text.ofMessageKey("dkcoins.command.userBank.transfer.help");
 
     public static final MessageKeyComponent TOP = Text.ofMessageKey("dkcoins.top");
     public static final MessageKeyComponent TOP_PAGE_NO_ENTRIES = Text.ofMessageKey("dkcoins.top.pageNoEntries");
@@ -149,5 +147,4 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_NOT_VALID = Text.ofMessageKey("dkcoins.bank.settings.notValid");
 
     public static final MessageKeyComponent COMMAND_DKCOINS_HELP = Text.ofMessageKey("dkcoins.command.dkcoins.help");
-    public static final MessageKeyComponent COMMAND_DKCOINS_ADMIN_HELP = Text.ofMessageKey("dkcoins.command.dkcoins.admin.help");
 }

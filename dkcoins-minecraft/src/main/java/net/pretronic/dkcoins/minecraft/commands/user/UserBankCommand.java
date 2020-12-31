@@ -18,18 +18,18 @@
  * under the License.
  */
 
-package net.pretronic.dkcoins.minecraft.commands;
+package net.pretronic.dkcoins.minecraft.commands.user;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.account.TransferResult;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.Messages;
-import net.pretronic.dkcoins.minecraft.commands.account.AccountTopCommand;
+import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.config.CreditAlias;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.BasicCommand;
@@ -40,11 +40,11 @@ import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import org.mcnative.common.McNative;
-import org.mcnative.common.player.MinecraftPlayer;
-import org.mcnative.common.player.OnlineMinecraftPlayer;
-import org.mcnative.service.entity.living.Player;
-import org.mcnative.service.world.World;
+import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
+import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
+import org.mcnative.runtime.api.service.entity.living.Player;
+import org.mcnative.runtime.api.service.world.World;
 
 import java.util.Arrays;
 
@@ -57,7 +57,7 @@ public class UserBankCommand extends BasicCommand {
         super(owner, configuration);
         Validate.notNull(creditAlias);
         this.creditAlias = creditAlias;
-        this.topCommand = new AccountTopCommand(owner);
+        this.topCommand = new TopCommand(owner);
     }
 
     @Override
@@ -154,13 +154,13 @@ public class UserBankCommand extends BasicCommand {
                 CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,
                 DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
         if(result.isSuccess()) {
-            commandSender.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS, VariableSet.create()
+            commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_SUCCESS, VariableSet.create()
                     .addDescribed("transaction", result.getTransaction()));
             for (AccountMember receiverMember : receiver.getMembers()) {
                 MinecraftPlayer receiverPlayer = McNative.getInstance().getPlayerManager().getPlayer(receiverMember.getUser().getUniqueId());
                 if(receiverPlayer.isOnline()) {
                     OnlineMinecraftPlayer receiverOnlinePlayer = receiverPlayer.getAsOnlinePlayer();
-                    receiverOnlinePlayer.sendMessage(Messages.COMMAND_ACCOUNT_TRANSFER_SUCCESS_RECEIVER, VariableSet.create()
+                    receiverOnlinePlayer.sendMessage(Messages.COMMAND_BANK_TRANSFER_SUCCESS_RECEIVER, VariableSet.create()
                             .addDescribed("transaction", result.getTransaction()));
                 }
             }

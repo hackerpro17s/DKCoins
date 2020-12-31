@@ -23,6 +23,7 @@ package net.pretronic.dkcoins.minecraft.commands.dkcoins;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.migration.Migration;
+import net.pretronic.dkcoins.api.migration.MigrationResult;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
@@ -30,19 +31,18 @@ import net.pretronic.libraries.command.command.BasicCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import org.mcnative.common.McNative;
+import org.mcnative.runtime.api.McNative;
 
 import java.util.concurrent.TimeUnit;
 
-public class DKCoinsMigrateCommand extends BasicCommand {
+public class DKCoinsMigrationCommand extends BasicCommand {
 
-    public DKCoinsMigrateCommand(ObjectOwner owner) {
+    public DKCoinsMigrationCommand(ObjectOwner owner) {
         super(owner, CommandConfiguration.newBuilder().name("migrate").permission("dkcoins.admin").create());
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-     
             if(!sender.equals(McNative.getInstance().getConsoleSender())) {
                 sender.sendMessage(Messages.ERROR_ONLY_FROM_CONSOLE);
                 return;
@@ -66,7 +66,7 @@ public class DKCoinsMigrateCommand extends BasicCommand {
                 DKCoinsPlugin.getInstance().getLogger().info("Starting migration of " + migration.getName());
                 DKCoinsPlugin.getInstance().getLogger().info("This may take a while...");
                 try {
-                    Migration.Result result = migration.migrate(currency);
+                    MigrationResult result = migration.migrate(currency);
                     if(result.isSuccess()) {
                         DKCoinsPlugin.getInstance().getLogger().info("Migration was successful");
                         DKCoins.getInstance().getLogger().info("A total of {} was migrated. {} users skipped. {} McNative user data and {} DKCoins account were created",

@@ -18,7 +18,7 @@
  * under the License.
  */
 
-package net.pretronic.dkcoins.minecraft.commands.account;
+package net.pretronic.dkcoins.minecraft.commands.user;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountType;
@@ -35,9 +35,9 @@ import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.List;
 
-public class AccountTopCommand extends ObjectCommand<Currency> {
+public class TopCommand extends ObjectCommand<Currency> {
 
-    public AccountTopCommand(ObjectOwner owner) {
+    public TopCommand(ObjectOwner owner) {
         super(owner, CommandConfiguration.name("top"));
     }
 

@@ -14,8 +14,8 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
-import net.pretronic.dkcoins.minecraft.commands.account.AccountTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
+import net.pretronic.dkcoins.minecraft.commands.bank.BankTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;
 import net.pretronic.dkcoins.minecraft.commands.dkcoins.DKCoinsCommand;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
@@ -33,11 +33,11 @@ import net.pretronic.libraries.plugin.lifecycle.Lifecycle;
 import net.pretronic.libraries.plugin.lifecycle.LifecycleState;
 import net.pretronic.libraries.synchronisation.UnconnectedSynchronisationCaller;
 import net.pretronic.libraries.utility.io.FileUtil;
-import org.mcnative.common.McNative;
-import org.mcnative.common.plugin.MinecraftPlugin;
-import org.mcnative.common.plugin.configuration.ConfigurationProvider;
-import org.mcnative.common.serviceprovider.economy.EconomyProvider;
-import org.mcnative.common.serviceprovider.placeholder.PlaceholderService;
+import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.plugin.MinecraftPlugin;
+import org.mcnative.runtime.api.plugin.configuration.ConfigurationProvider;
+import org.mcnative.runtime.api.serviceprovider.economy.EconomyProvider;
+import org.mcnative.runtime.api.serviceprovider.placeholder.PlaceholderHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,8 +55,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         VariableDescriberRegistry.registerDescriber(MinecraftDKCoinsUser.class);
 
         registerEconomyProvider();
-        PlaceholderService.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
-
+        PlaceholderHelper.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
 
         //@Todo change for service and proxy
         TransactionPropertyBuilder builder = member -> new ArrayList<>();
@@ -66,6 +65,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
                 new MinecraftDKCoinsUserManager(),
                 builder,
                 new MinecraftDKCoinsFormatter());
+
         registerCommandsAndListeners();
         registerPlayerAdapter();
 
@@ -108,7 +108,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         McNative.getInstance().getLocal().getCommandManager().registerCommand(new DKCoinsCommand(DKCoinsPlugin.getInstance()));
         McNative.getInstance().getLocal().getCommandManager().registerCommand(new BankCommand(DKCoinsPlugin.getInstance()));
         McNative.getInstance().getLocal().getCommandManager().registerCommand(new CurrencyCommand(DKCoinsPlugin.getInstance()));
-        McNative.getInstance().getLocal().getCommandManager().registerCommand(new AccountTransferCommand(DKCoinsPlugin.getInstance(), DKCoinsConfig.COMMAND_PAY));
+        McNative.getInstance().getLocal().getCommandManager().registerCommand(new BankTransferCommand(DKCoinsPlugin.getInstance(), DKCoinsConfig.COMMAND_PAY,Messages.COMMAND_USER_BANK_TRANSFER_HELP));
 
 
         DKCoins.getInstance().getEventBus().subscribe(getInstance(), new MinecraftPlayerListener());

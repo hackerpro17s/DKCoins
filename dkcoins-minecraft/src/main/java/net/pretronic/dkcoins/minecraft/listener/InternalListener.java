@@ -25,7 +25,7 @@ import net.pretronic.dkcoins.api.events.currency.DKCoinsCurrencyEditEvent;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.event.Listener;
-import org.mcnative.common.plugin.configuration.Configuration;
+import org.mcnative.runtime.api.plugin.configuration.Configuration;
 
 public class InternalListener {
 

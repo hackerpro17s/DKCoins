@@ -13,9 +13,8 @@ package net.pretronic.dkcoins.common.account;
 public final class TransferCause {
 
     public static final String EXCHANGE = "exchange";
-    public static final String DEPOSIT = "deposit";
-    public static final String WITHDRAW = "withdraw";
     public static final String TRANSFER = "transfer";
     public static final String API = "api";
-    public static final String ECONOMY_PROVIDER = "economyProvider";
+    public static final String ADMIN = "admin";
+    public static final String PROVIDER = "provider";
 }
