@@ -148,8 +148,8 @@ public class DefaultAccountManager implements AccountManager {
         Validate.notNull(name, type, creator);
         BankAccount account = DKCoins.getInstance().getStorage()
                 .createAccount(name, type, disabled, parent, creator);
-        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountPreCreateEvent(account, creator));
         accountCache.insert(account);
+        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountPreCreateEvent(account, creator));
         this.accountCache.getCaller().createAndIgnore(account.getId(), Document.newDocument());
         DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountCreateEvent(account, creator));
         return account;
@@ -436,12 +436,12 @@ public class DefaultAccountManager implements AccountManager {
 
     private void createMissingAccountCredits(BankAccount account) {
         System.out.println("create missing");
-        /*if(account == null) return;
+        if(account == null) return;
         for (Currency currency : DKCoins.getInstance().getCurrencyManager().getCurrencies()) {
             if(account.getCredit(currency) == null) {
                 account.addCredit(currency, 0);
             }
-        }*/
+        }
     }
 
     private void registerAccountTypeCacheQueries() {
