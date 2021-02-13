@@ -114,14 +114,8 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
     @Override
     public AccountCredit getCredit(Currency currency) {
         if(currency == null) return null;
-        System.out.println("getCredit " + currency.getName() + ":" + currency.getId());
-        for (AccountCredit credit : this.credits) {
-            System.out.println(credit.getName() + ":" + credit.getCurrency().getName() + ":" + credit.getAmount() + ":" + credit.getId());
-        }
-        System.out.println("---");
         AccountCredit credit = Iterators.findOne(this.credits, credit0 -> credit0.getCurrency().getId() == currency.getId());
         if(credit == null) {
-            System.out.println("credit null ");
             credit = addCredit(currency, 0);
         }
         return credit;

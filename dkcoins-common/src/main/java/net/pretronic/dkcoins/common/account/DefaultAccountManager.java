@@ -113,12 +113,6 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public BankAccount getAccount(String name, AccountType type) {
-        System.out.println("Get Account");
-        System.out.println(accountCache.isConnected());
-        for (BankAccount cachedObject : accountCache.getCachedObjects()) {
-            System.out.println(cachedObject.getName() + ":" + cachedObject.getId());
-        }
-        System.out.println("---");
         return this.accountCache.get("nameAndType", name, type);
     }
 
@@ -435,7 +429,6 @@ public class DefaultAccountManager implements AccountManager {
     }
 
     private void createMissingAccountCredits(BankAccount account) {
-        System.out.println("create missing");
         if(account == null) return;
         for (Currency currency : DKCoins.getInstance().getCurrencyManager().getCurrencies()) {
             if(account.getCredit(currency) == null) {
@@ -620,6 +613,11 @@ public class DefaultAccountManager implements AccountManager {
             }
         });
 
-        //this.accountCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getAccount(id));
+        this.accountCache.setCreateHandler((id, data) -> {
+            for (BankAccount account : this.accountCache.getCachedObjects()) {
+                if(account.getId() == id) return null;
+            }
+            return DKCoins.getInstance().getStorage().getAccount(id);
+        });
     }
 }
