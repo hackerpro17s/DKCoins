@@ -620,6 +620,6 @@ public class DefaultAccountManager implements AccountManager {
             }
         });
 
-        this.accountCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getAccount(id));
+        //this.accountCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getAccount(id));
     }
 }
