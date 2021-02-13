@@ -17,7 +17,7 @@
     <groupId>net.pretronic.dkcoins</groupId>
     <artifactId>DKCoins</artifactId>
     <packaging>pom</packaging>
-    <version>1.7.3.142-SNAPSHOT</version>
+    <version>1.7.4.143-SNAPSHOT</version>
     <modules>
         <module>dkcoins-api</module>
         <module>dkcoins-common</module>
