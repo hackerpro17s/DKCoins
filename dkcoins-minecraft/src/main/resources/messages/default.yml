@@ -41,7 +41,7 @@ messages:
   &7/bank <name> delete
   &7/bank <name> settings <setting> <value>
   &7/bank <name> transfer <receiver> <amount> [currency]
-  &7/bank <name> exchange <source> <target> <account>
+  &7/bank <name> exchange <source> <target> <amount>
   &7/bank <name> member
   &7/bank <name> limit
   &7/bank <name> statement'
