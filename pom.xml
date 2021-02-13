@@ -17,7 +17,7 @@
     <groupId>net.pretronic.dkcoins</groupId>
     <artifactId>DKCoins</artifactId>
     <packaging>pom</packaging>
-    <version>1.6.26.138</version>
+    <version>1.7.15.155-BETA</version>
     <modules>
         <module>dkcoins-api</module>
         <module>dkcoins-common</module>
@@ -31,6 +31,7 @@
             <url>https://repository.pretronic.net/repository/pretronic/</url>
         </repository>
     </distributionManagement>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

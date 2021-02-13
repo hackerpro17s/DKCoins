@@ -57,7 +57,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         registerEconomyProvider();
         PlaceholderHelper.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
 
-        //@Todo change for service and proxy
+        //@Todo special properties for server and proxy
         TransactionPropertyBuilder builder = member -> new ArrayList<>();
         DefaultDKCoins dkCoins = new DefaultDKCoins(getLogger(),
                 McNative.getInstance().getLocal().getEventBus(),
