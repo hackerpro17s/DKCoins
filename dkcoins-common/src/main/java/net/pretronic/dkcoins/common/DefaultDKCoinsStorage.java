@@ -447,11 +447,11 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
         Validate.notNull(filter.getAccount());
         FindQuery query = this.accountTransaction
                 .find()
-                .get("dkcoins_account_transaction.Id", "SourceId", "SenderId","ReceiverId", "dkcoins_account_transaction.Amount",
+                .get("dkcoins_account_transaction.Id", "SenderAccountId","SenderAccountName", "SenderId","DestinationId","DestinationName", "dkcoins_account_transaction.Amount",
                         "ExchangeRate", "Reason", "Cause", "Time", "Key", "Value")
-                .join(this.accountCredit, JoinType.INNER).on("SourceId", this.accountCredit, "Id")
+                .join(this.account, JoinType.INNER).on("SenderAccountId", this.account, "Id")
                 .join(this.accountTransactionProperty, JoinType.LEFT).on("Id", this.accountTransactionProperty, "TransactionId")
-        .where("accountId", filter.getAccount().getId());
+        .or(subQuery -> subQuery.where("SenderAccountId", filter.getAccount().getId()).where("DestinationId", filter.getAccount().getId()));
 
         if(filter.getWorld() != null) {
             query.and(subQuery ->
@@ -519,12 +519,13 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                                                     double amount, double exchangeRate, String reason, String cause,
                                                     long time, Collection<AccountTransactionProperty> properties) {
         int id = this.accountTransaction.insert()
-                .set("SourceId", source.getId())
-                .set("SourceName", source.getName())
+                .set("SenderAccountId", source.getAccount().getId())
+                .set("SenderAccountName", source.getAccount().getName())
                 .set("SenderId", sender == null ? null : sender.getId())
                 .set("SenderName", sender == null ? "API" : sender.getName())
-                .set("ReceiverId", receiver.getId())
-                .set("ReceiverName", receiver.getName())
+                .set("DestinationId", receiver.getAccount().getId())
+                .set("DestinationName", receiver.getAccount().getName())
+                .set("CurrencyId", source.getCurrency().getName())
                 .set("CurrencyName", source.getCurrency().getName())
                 .set("Amount", amount)
                 .set("ExchangeRate", exchangeRate)
@@ -773,12 +774,13 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     private DatabaseCollection createAccountTransactionDatabaseCollection() {
         return this.database.createCollection("dkcoins_account_transaction")
                 .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
-                .field("SourceId", DataType.INTEGER, ForeignKey.of(this.accountCredit, "Id", ForeignKey.Option.DEFAULT, null), FieldOption.NOT_NULL)
-                .field("SourceName", DataType.STRING, FieldOption.NOT_NULL)
+                .field("SenderAccountId", DataType.INTEGER)
+                .field("SenderAccountName", DataType.STRING, FieldOption.NOT_NULL)
                 .field("SenderId", DataType.INTEGER)
                 .field("SenderName", DataType.STRING, FieldOption.NOT_NULL)
-                .field("ReceiverId",  DataType.INTEGER, FieldOption.NOT_NULL)
-                .field("ReceiverName", DataType.STRING, FieldOption.NOT_NULL)
+                .field("DestinationId",  DataType.INTEGER, FieldOption.NOT_NULL)
+                .field("DestinationName", DataType.STRING, FieldOption.NOT_NULL)
+                .field("CurrencyId", DataType.INTEGER, FieldOption.NOT_NULL)
                 .field("CurrencyName", DataType.STRING, FieldOption.NOT_NULL)
                 .field("Amount", DataType.DOUBLE, FieldOption.NOT_NULL)
                 .field("ExchangeRate", DataType.DOUBLE, FieldOption.NOT_NULL)
