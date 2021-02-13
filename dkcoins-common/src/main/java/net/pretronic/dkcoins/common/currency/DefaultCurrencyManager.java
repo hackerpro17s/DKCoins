@@ -182,6 +182,9 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     @Override
     public void onCreate(Integer id, Document document) {
         if(connected && !currencies.isEmpty()) {
+            for (Currency currency : this.currencies) {
+                if(currency.getId() == id) return;
+            }
             this.currencies.add(DKCoins.getInstance().getStorage().getCurrency(id));
         }
     }

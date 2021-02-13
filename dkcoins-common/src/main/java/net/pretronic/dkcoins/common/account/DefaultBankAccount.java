@@ -114,7 +114,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
     @Override
     public AccountCredit getCredit(Currency currency) {
         if(currency == null) return null;
-        AccountCredit credit = Iterators.findOne(this.credits, credit0 -> credit0.getCurrency().equals(currency));
+        AccountCredit credit = Iterators.findOne(this.credits, credit0 -> credit0.getCurrency().getId() == currency.getId());
         if(credit == null) {
             credit = addCredit(currency, 0);
         }
@@ -249,7 +249,9 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
 
     @Internal
     public void addLoadedMember(AccountMember member) {
-        this.members.add(member);
+        if(getMember(member.getId()) == null) {
+            this.members.add(member);
+        }
     }
 
     @Internal

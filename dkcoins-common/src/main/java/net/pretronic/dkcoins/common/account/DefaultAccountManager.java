@@ -142,8 +142,8 @@ public class DefaultAccountManager implements AccountManager {
         Validate.notNull(name, type, creator);
         BankAccount account = DKCoins.getInstance().getStorage()
                 .createAccount(name, type, disabled, parent, creator);
-        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountPreCreateEvent(account, creator));
         accountCache.insert(account);
+        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountPreCreateEvent(account, creator));
         this.accountCache.getCaller().createAndIgnore(account.getId(), Document.newDocument());
         DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountCreateEvent(account, creator));
         return account;
@@ -211,8 +211,8 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public AccountCredit addAccountCredit(BankAccount account, Currency currency, double amount) {
         AccountCredit credit = DKCoins.getInstance().getStorage().addAccountCredit(account, currency, amount);
-        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountCreditPreCreateEvent(credit));
         ((DefaultBankAccount)account).addLoadedAccountCredit(credit);
+        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountCreditPreCreateEvent(credit));
         this.accountCache.getCaller().updateAndIgnore(account.getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_NEW)
                 .add("creditId", credit.getId()));
@@ -613,6 +613,11 @@ public class DefaultAccountManager implements AccountManager {
             }
         });
 
-        this.accountCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getAccount(id));
+        this.accountCache.setCreateHandler((id, data) -> {
+            for (BankAccount account : this.accountCache.getCachedObjects()) {
+                if(account.getId() == id) return null;
+            }
+            return DKCoins.getInstance().getStorage().getAccount(id);
+        });
     }
 }
