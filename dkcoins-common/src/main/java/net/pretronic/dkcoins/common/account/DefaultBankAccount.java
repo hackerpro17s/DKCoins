@@ -255,7 +255,9 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
 
     @Internal
     public void addLoadedMember(AccountMember member) {
-        this.members.add(member);
+        if(getMember(member.getId()) == null) {
+            this.members.add(member);
+        }
     }
 
     @Internal
