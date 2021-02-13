@@ -115,6 +115,10 @@ public class DefaultAccountManager implements AccountManager {
     public BankAccount getAccount(String name, AccountType type) {
         System.out.println("Get Account");
         System.out.println(accountCache.isConnected());
+        for (BankAccount cachedObject : accountCache.getCachedObjects()) {
+            System.out.println(cachedObject.getName() + ":" + cachedObject.getId());
+        }
+        System.out.println("---");
         return this.accountCache.get("nameAndType", name, type);
     }
 
