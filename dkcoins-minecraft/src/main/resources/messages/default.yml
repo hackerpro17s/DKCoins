@@ -124,7 +124,7 @@ messages:
   dkcoins.command.bank.bankStatement.filterOption.wrong: '${dkcoins.prefix} &e{filterOption} &cis a wrong option &8» &cUse option=value'
   dkcoins.command.bank.bankStatement.filterOption.notFound: '${dkcoins.prefix} &e{filterOption} &cis not a valid filter option'
 
-  dkcoins.command.bank.bankStatement: '${dkcoins.prefix} &7Bank statements&8: @for("transaction" in {transactions}, ${dkcoins.command.bank.bankStatement.loop},"\n-------------------------------\n","\n")'
+  dkcoins.command.bank.bankStatement: '${dkcoins.prefix} &7Bank statements&8: @for("transaction" in {transactions}, ${dkcoins.command.bank.bankStatement.loop},"\n","\n")'
   dkcoins.command.bank.bankStatement.loop: ' &8- &e{transaction.sender.name} &8> &e{transaction.receiver.account.name}&8| &6{transaction.formattedAmount}{transaction.currency.symbol} &7on &e{transaction.formattedTime}'
 
   dkcoins.command.currency.help: '${dkcoins.prefix} &cInvalid usage of currency command&8:

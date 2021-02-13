@@ -450,8 +450,8 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                 .get("dkcoins_account_transaction.Id", "SourceId", "SenderId","ReceiverId", "dkcoins_account_transaction.Amount",
                         "ExchangeRate", "Reason", "Cause", "Time", "Key", "Value")
                 .join(this.accountCredit, JoinType.INNER).on("SourceId", this.accountCredit, "Id")
-                .join(this.accountTransactionProperty, JoinType.LEFT).on("Id", this.accountTransactionProperty, "TransactionId");
-        //.where("accountId", filter.getAccount().getId())
+                .join(this.accountTransactionProperty, JoinType.LEFT).on("Id", this.accountTransactionProperty, "TransactionId")
+        .where("accountId", filter.getAccount().getId());
 
         if(filter.getWorld() != null) {
             query.and(subQuery ->
