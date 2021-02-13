@@ -458,6 +458,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                     subQuery.where("dkcoins_account_transaction_property.Key", "world")
                             .where("dkcoins_account_transaction_property.Value", filter.getWorld()));
         }
+
         if(filter.getServer() != null) {
             query.and(subQuery ->
                     subQuery.where("dkcoins_account_transaction_property.key", "server")
