@@ -525,7 +525,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
                 .set("SenderName", sender == null ? "API" : sender.getName())
                 .set("DestinationId", receiver.getAccount().getId())
                 .set("DestinationName", receiver.getAccount().getName())
-                .set("CurrencyId", source.getCurrency().getName())
+                .set("CurrencyId", source.getCurrency().getId())
                 .set("CurrencyName", source.getCurrency().getName())
                 .set("Amount", amount)
                 .set("ExchangeRate", exchangeRate)
