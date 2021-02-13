@@ -491,10 +491,12 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
             if(last != null && last.getId() == id) {
                 transaction = last;
             } else {
+                Currency currency = DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("CurrencyId"));
+                BankAccount destination = DKCoins.getInstance().getAccountManager().getAccount(entry.getInt("DestinationId"));
                 transaction = new DefaultAccountTransaction(id,
-                        DKCoins.getInstance().getAccountManager().getAccountCredit(entry.getInt("SourceId")),
+                        filter.getAccount().getCredit(currency),
                         DKCoins.getInstance().getAccountManager().getAccountMember(entry.getInt("SenderId")),
-                        DKCoins.getInstance().getAccountManager().getAccountCredit(entry.getInt("ReceiverId")),
+                        destination.getCredit(currency),
                         entry.getDouble("Amount"),
                         entry.getDouble("ExchangeRate"),
                         entry.getString("Reason"),
