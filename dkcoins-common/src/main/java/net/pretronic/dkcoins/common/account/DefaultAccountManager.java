@@ -113,6 +113,8 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public BankAccount getAccount(String name, AccountType type) {
+        System.out.println("Get Account");
+        System.out.println(accountCache.isConnected());
         return this.accountCache.get("nameAndType", name, type);
     }
 
@@ -212,10 +214,10 @@ public class DefaultAccountManager implements AccountManager {
     public AccountCredit addAccountCredit(BankAccount account, Currency currency, double amount) {
         AccountCredit credit = DKCoins.getInstance().getStorage().addAccountCredit(account, currency, amount);
         ((DefaultBankAccount)account).addLoadedAccountCredit(credit);
-        /*DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountCreditPreCreateEvent(credit));
+        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountCreditPreCreateEvent(credit));
         this.accountCache.getCaller().updateAndIgnore(account.getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_NEW)
-                .add("creditId", credit.getId()));*/
+                .add("creditId", credit.getId()));
         return credit;
     }
 
