@@ -321,6 +321,7 @@ public class DefaultDKCoinsStorage implements DKCoinsStorage {
     public AccountCredit addAccountCredit(BankAccount account, Currency currency, double amount) {
         int id = this.accountCredit.insert().set("AccountId", account.getId()).set("CurrencyId", currency.getId()).set("Amount", amount)
                 .executeAndGetGeneratedKeyAsInt("Id");
+        System.out.println(id);
         return new DefaultAccountCredit(id, account, currency, amount);
     }
 
