@@ -24,7 +24,6 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.event.Listener;
 import org.mcnative.runtime.api.event.player.login.MinecraftPlayerPostLoginEvent;
 import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
@@ -36,10 +35,6 @@ public class MinecraftPlayerListener {
         OnlineMinecraftPlayer player = event.getOnlinePlayer();
 
         initUserAccount(player);
-
-        DKCoinsUser user = player.getAs(DKCoinsUser.class);
-        DKCoins.getInstance().getAccountManager().hasAccountLimitation(user.getAsMember(user.getDefaultAccount()),
-                DKCoinsConfig.CURRENCY_DEFAULT, 100);
     }
 
     private void initUserAccount(OnlineMinecraftPlayer player) {

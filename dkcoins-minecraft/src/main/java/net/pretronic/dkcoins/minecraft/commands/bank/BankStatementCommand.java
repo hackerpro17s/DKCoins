@@ -54,7 +54,7 @@ public class BankStatementCommand extends ObjectCommand<BankAccount> {
             String value = split[1];
             appendFilterOption(sender, filter, key, value);
         }
-        Collection<AccountTransaction> transactions = DKCoins.getInstance().getAccountManager().filterAccountTransactions(filter);
+        Collection<AccountTransaction> transactions = filter.filter();
         sender.sendMessage(Messages.COMMAND_BANK_BANK_STATEMENT, VariableSet.create()
                     .addDescribed("transactions", transactions));
 

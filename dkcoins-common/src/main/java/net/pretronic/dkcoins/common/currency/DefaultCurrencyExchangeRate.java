@@ -10,10 +10,11 @@
 
 package net.pretronic.dkcoins.common.currency;
 
-import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
+import net.pretronic.dkcoins.common.SyncAction;
+import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.utility.annonations.Internal;
 
 public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
@@ -57,7 +58,19 @@ public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
 
     @Override
     public void setExchangeAmount(double amount) {
-        DKCoins.getInstance().getCurrencyManager().updateCurrencyExchangeRateAmount(this, amount);
+        DefaultDKCoins instance = DefaultDKCoins.getInstance();
+
+        instance.getStorage().getCurrencyExchangeRate().update()
+                .set("ExchangeAmount", exchangeAmount)
+                .where("CurrencyId", currency.getId())
+                .where("TargetCurrencyId", targetCurrency.getId())
+                .execute();
+        updateExchangeAmount(exchangeAmount);
+
+        instance.getCurrencyManager().getCaller().updateAndIgnore(getCurrency().getId(), Document.newDocument()
+                .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_UPDATE_AMOUNT)
+                .add("exchangeRateId", getId())
+                .add("exchangeAmount", getExchangeAmount()));
     }
 
     @Override

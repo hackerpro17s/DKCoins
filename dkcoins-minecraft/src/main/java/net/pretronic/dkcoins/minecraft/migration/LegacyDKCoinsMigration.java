@@ -59,7 +59,7 @@ public class LegacyDKCoinsMigration implements Migration {
         for (CoinPlayer player : DKCoinsLegacy.getInstance().getStorage().getPlayers()) {
 
             if(DKCoins.getInstance().getAccountManager().getAccount(player.getName(), "User") == null) {
-                BankAccount account = DKCoins.getInstance().getStorage().createAccount(player.getName(),
+                BankAccount account = DKCoins.getInstance().getAccountManager().createAccount(player.getName(),
                         DKCoins.getInstance().getAccountManager().searchAccountType("User"),
                         false, null, DKCoins.getInstance().getUserManager().getUser(player.getUUID()));
                 account.getCredit(currency).setAmount(player.getCoins());

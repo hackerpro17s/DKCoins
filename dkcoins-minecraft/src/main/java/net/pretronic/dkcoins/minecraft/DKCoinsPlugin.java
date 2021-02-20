@@ -14,6 +14,7 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
+import net.pretronic.dkcoins.common.currency.DefaultCurrency;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;
@@ -137,7 +138,12 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         } else {
             dkCoins.getCurrencyManager().init(new UnconnectedSynchronisationCaller<>(true));
         }
-        dkCoins.getCurrencyManager().getLoadedCurrencies().addAll(DKCoins.getInstance().getStorage().getCurrencies());
+
+        DefaultDKCoins.getInstance().getStorage().getCurrency().find().execute()
+                .loadIn(dkCoins.getCurrencyManager().getLoadedCurrencies(), entry -> new DefaultCurrency(
+                        entry.getInt("Id"),
+                        entry.getString("Name"),
+                        entry.getString("Symbol")));
 
         if(dkCoins.getCurrencyManager().getLoadedCurrencies().isEmpty() && dkCoins.getCurrencyManager().searchCurrency("Coins") == null) {
             dkCoins.getCurrencyManager().createCurrency("Coins", "$");
@@ -152,7 +158,6 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         } else {
             DefaultDKCoins.getInstance().getAccountManager().getAccountTypeCache().initUnconnected();
         }
-
 
         if(McNative.getInstance().isNetworkAvailable()) {
             McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_account", DKCoinsPlugin.getInstance(),

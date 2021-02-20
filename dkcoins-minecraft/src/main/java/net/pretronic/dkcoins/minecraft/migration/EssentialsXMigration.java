@@ -82,7 +82,7 @@ public class EssentialsXMigration implements Migration {
                     skipped.incrementAndGet();
                 } else {
                     if(DKCoins.getInstance().getAccountManager().getAccount(user.getName(), "User") == null) {
-                        BankAccount account = DKCoins.getInstance().getStorage().createAccount(user.getName(),
+                        BankAccount account = DKCoins.getInstance().getAccountManager().createAccount(user.getName(),
                                 DKCoins.getInstance().getAccountManager().searchAccountType("User"),
                                 false, null, DKCoins.getInstance().getUserManager().getUser(uniqueId));
                         account.getCredit(currency).setAmount(balance);

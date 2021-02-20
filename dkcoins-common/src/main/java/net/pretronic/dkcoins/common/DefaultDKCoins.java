@@ -92,7 +92,6 @@ public class DefaultDKCoins extends DKCoins {
         return this.userManager;
     }
 
-    @Override
     public DefaultDKCoinsStorage getStorage() {
         return this.storage;
     }

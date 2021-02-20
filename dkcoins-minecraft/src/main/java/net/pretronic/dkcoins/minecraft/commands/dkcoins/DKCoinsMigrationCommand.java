@@ -24,6 +24,7 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.migration.Migration;
 import net.pretronic.dkcoins.api.migration.MigrationResult;
+import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
@@ -80,6 +81,9 @@ public class DKCoinsMigrationCommand extends BasicCommand {
                                 TimeUnit.MILLISECONDS.toHours(millis),
                                 TimeUnit.MILLISECONDS.toMinutes(millis)-TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                                 TimeUnit.MILLISECONDS.toSeconds(millis)-TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+
+                        DefaultDKCoins.getInstance().getAccountManager().clearCaches();
+
                         DKCoins.getInstance().getLogger().info("It took " + time);
                     } else {
                         DKCoinsPlugin.getInstance().getLogger().error("Migration failed");
