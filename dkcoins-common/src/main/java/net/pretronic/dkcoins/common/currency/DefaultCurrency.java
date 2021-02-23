@@ -56,30 +56,36 @@ public class DefaultCurrency implements Currency, Synchronizable {
 
     @Override
     public void setName(String name) {
+        String oldName = getName();
         DefaultDKCoins instance = DefaultDKCoins.getInstance();
 
-        instance.getStorage().getCurrency().update().set("Name", name)
+        instance.getStorage().getCurrency().update()
+                .set("Name", name)
                 .where("Id", id)
                 .execute();
 
-        String oldName = getName();
         updateName(name);
+
         instance.getCurrencyManager().getCaller().updateAndIgnore(getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_UPDATE_NAME)
                 .add("name", getName()));
-        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsCurrencyEditEvent(this, DKCoinsCurrencyEditEvent.Operation.CHANGED_NAME, oldName, name));
+
+        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsCurrencyEditEvent(this
+                ,DKCoinsCurrencyEditEvent.Operation.CHANGED_NAME, oldName, name));
     }
 
     @Override
     public void setSymbol(String symbol) {
+        String oldSymbol = getSymbol();
         DefaultDKCoins instance = DefaultDKCoins.getInstance();
 
         instance.getStorage().getCurrency().update()
                 .set("Symbol", symbol)
                 .where("Id", id)
                 .execute();
-        String oldSymbol = getSymbol();
+
         updateSymbol(symbol);
+
         instance.getCurrencyManager().getCaller().updateAndIgnore(getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_UPDATE_SYMBOL)
                 .add("symbol", getSymbol()));
@@ -108,8 +114,9 @@ public class DefaultCurrency implements Currency, Synchronizable {
     @Override
     public CurrencyExchangeRate getExchangeRate(Currency targetCurrency) {
         Validate.notNull(targetCurrency);
-        CurrencyExchangeRate exchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate0 ->
-                exchangeRate0.getTargetCurrency().equals(targetCurrency));
+        CurrencyExchangeRate exchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate0
+                -> exchangeRate0.getTargetCurrency().equals(targetCurrency));
+
         if(exchangeRate == null) {
             exchangeRate = DKCoins.getInstance().getCurrencyManager().getCurrencyExchangeRate(this, targetCurrency);
             if(exchangeRate == null) {

@@ -137,7 +137,7 @@ public class DefaultAccountManager implements AccountManager {
                 .set("ParentId", parent == null ? null : parent.getId()).set("Master", false)
                 .executeAndGetGeneratedKeyAsInt("Id");
         DefaultBankAccount account = new DefaultBankAccount(id, name, type,
-                disabled, parent);;
+                disabled, parent);
 
         account.addMember(creator, null, AccountMemberRole.OWNER, true);
 

@@ -82,6 +82,7 @@
                     <mcnative-loader-version>${dependency.mcnative.loader}</mcnative-loader-version>
                     <resource-loader-version>${dependency.pretronic.libraries}</resource-loader-version>
                     <manifest>
+                        <installMcNative>true</installMcNative>
                         <name>DKCoins</name>
                         <id>0249f842-de95-42df-b611-7ad390d90086</id>
                         <version>${project.version}</version>
@@ -91,9 +92,7 @@
                         <author>Pretronic</author>
                         <messageModule>DKCoins</messageModule>
                     </manifest>
-
                 </configuration>
-
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

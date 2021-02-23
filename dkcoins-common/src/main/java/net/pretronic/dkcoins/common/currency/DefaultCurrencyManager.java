@@ -44,9 +44,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     @Override
     public Collection<Currency> getCurrencies() {
         if(connected){
-            if(this.currencies.isEmpty()){
-                this.currencies.addAll(loadCurrencies());
-            }
+            if(this.currencies.isEmpty()) this.currencies.addAll(loadCurrencies());
             return this.currencies;
         }
         return loadCurrencies();
@@ -94,9 +92,10 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
                 .set("Name", name)
                 .set("Symbol", symbol)
                 .executeAndGetGeneratedKeyAsInt("Id");
-        Currency currency = new DefaultCurrency(id, name, symbol);
 
+        Currency currency = new DefaultCurrency(id, name, symbol);
         if(connected && !this.currencies.isEmpty()) this.currencies.add(currency);
+
         for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
             account.addCredit(currency, 0);
         }
@@ -106,7 +105,9 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
 
     @Override
     public void deleteCurrency(Currency currency) {
-        DefaultDKCoins.getInstance().getStorage().getCurrency().delete().where("Id", currency.getId()).execute();
+        DefaultDKCoins.getInstance().getStorage().getCurrency().delete()
+                .where("Id", currency.getId())
+                .execute();
 
         this.currencies.remove(currency);
         for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
@@ -135,6 +136,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
                 .set("TargetCurrencyId", targetCurrency.getId())
                 .set("ExchangeAmount", exchangeAmount)
                 .executeAndGetGeneratedKeyAsInt("Id");
+
         CurrencyExchangeRate exchangeRate = new DefaultCurrencyExchangeRate(id, selectedCurrency, targetCurrency, exchangeAmount);
         caller.updateAndIgnore(selectedCurrency.getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_NEW)
@@ -226,8 +228,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
                 .or(query -> {
                     if(identifier instanceof Integer) query.where("Id", identifier);
                     query.where("Name", identifier).where("Symbol", identifier);
-                })
-                .execute().firstOrNull();
+                }).execute().firstOrNull();
         return getCurrencyInternal(result);
     }
 
