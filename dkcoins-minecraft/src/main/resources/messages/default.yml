@@ -13,12 +13,22 @@ messages:
   dkcoins.error.account.alreadyExists: '${dkcoins.prefix} &cAn account with the name &e{account.name} &cdoes already exist'
   dkcoins.error.currency.alreadyExists: '${dkcoins.prefix} &cA currency with the name &e{currency.name} &cdoes already exist'
   dkcoins.error.currency.notExists: '${dkcoins.prefix} &cThe currency &e{name} &cdoes not exist'
-  dkcoins.error.account.type.notExists: '${dkcoins.prefix} &cThe account type &e{name} &cdoes not exist'
+  dkcoins.error.account.type.notExists: '${dkcoins.prefix} &cThe account type &e{name} &cdoes not exist
+  &7
+  &8» &Types&8:
+   &8- &eBank'
   dkcoins.error.notNumber: '${dkcoins.prefix} &e{value} &cis not a number'
   dkcoins.error.notBoolean: '${dkcoins.prefix} &e{value} &cis not a boolean'
   dkcoins.error.account.notExists: '${dkcoins.prefix} &cThe account &e{name} &cdoes not exist'
   dkcoins.error.account.member.notExists: '${dkcoins.prefix} &e{name} &cis not a member of that account'
-  dkcoins.error.account.memberRole.notExists: '${dkcoins.prefix} &cThe role &e{name} &cdoes not exist'
+  dkcoins.error.account.memberRole.notExists: '${dkcoins.prefix} &cThe role &e{name} &cdoes not exist
+  &7
+  &8» &7Roles&8:
+   &8- &eGUEST
+   &8- &eUSER
+   &8- &eMANAGER
+   &8- &eADMIN
+   &8- &eOWNER'
   dkcoins.error.account.member.notEnoughAccessRights: '${dkcoins.prefix} &cYou are not allowed to perform this action'
   dkcoins.error.memberRole.lower: '${dkcoins.prefix} &cYou are not permitted to interact with the &e{targetRole.name} &crole'
   dkcoins.error.account.user.deleteNotPossible: '${dkcoins.prefix} &cIt is not possible to delete an user account'
@@ -195,8 +205,17 @@ messages:
   &7/dkcoins admin <bank> add <amount> [currency]
   &7/dkcoins admin <bank> remove <amount> [currency]'
 
-  dkcoins.error.account.limitation.interval.notValid: '${dkcoins.prefix} &cAn interval with the name &e{value} &cdoes not exist'
-  dkcoins.error.account.limitation.calculationType.notValid: '${dkcoins.prefix} &cA calculation type with the name &e{value} &cdoes not exist'
+  dkcoins.error.account.limitation.interval.notValid: '${dkcoins.prefix} &cAn interval with the name &e{value} &cdoes not exist
+  &7
+  &8» &7Intervals&8:
+   &8- &eDAILY
+   &8- &eWEEKLY
+   &8- &eMONTHLY'
+  dkcoins.error.account.limitation.calculationType.notValid: '${dkcoins.prefix} &cA calculation type with the name &e{value} &cdoes not exist
+  &7
+  &8» &7Types&8:
+   &8- &eGLOBAL
+   &8- &eUSER_BASED'
 
   dkcoins.command.bank.role.help: '${dkcoins.prefix} &cInvalid usage of bank role command&8:
   &7/bank <name> role <name> limit
