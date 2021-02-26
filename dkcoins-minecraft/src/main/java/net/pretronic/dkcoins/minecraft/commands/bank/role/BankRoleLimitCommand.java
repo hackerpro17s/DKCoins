@@ -27,7 +27,7 @@ import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
-import net.pretronic.dkcoins.minecraft.commands.bank.AbstractBankLimitCommand;
+import net.pretronic.dkcoins.minecraft.commands.bank.limit.AbstractBankLimitCommand;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.libraries.utility.map.Triple;
