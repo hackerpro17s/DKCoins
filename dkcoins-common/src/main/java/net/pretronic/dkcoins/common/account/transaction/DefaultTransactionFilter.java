@@ -100,7 +100,7 @@ public class DefaultTransactionFilter implements TransactionFilter {
         FindQuery query = storage.getAccountTransaction()
                 .find()
                 .get("dkcoins_account_transaction.Id", "SenderAccountId","SenderAccountName", "SenderId","DestinationId","DestinationName", "dkcoins_account_transaction.Amount",
-                        "ExchangeRate", "Reason", "Cause", "Time", "Key", "Value")
+                        "ExchangeRate", "Reason", "Cause", "Time", "Key", "Value", "CurrencyId")
                 .join(storage.getAccount(), JoinType.INNER).on("SenderAccountId", storage.getAccount(), "Id")
                 .join(storage.getAccountTransactionProperty(), JoinType.LEFT).on("Id", storage.getAccountTransactionProperty(), "TransactionId")
                 .or(subQuery -> subQuery.where("SenderAccountId", getAccount().getId()).where("DestinationId", getAccount().getId()));
@@ -165,6 +165,9 @@ public class DefaultTransactionFilter implements TransactionFilter {
                 transaction.getProperties().add(new DefaultAccountTransactionProperty(entry.getString("Key"), value));
             }
             last = transaction;
+            System.out.println(transaction);
+            System.out.println(transaction.getSource());
+            System.out.println(transaction.getAmount());
         }
         return transactions;
     }
