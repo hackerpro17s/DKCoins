@@ -114,6 +114,7 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public BankAccount getAccount(String name, AccountType type) {
+        if(type == null) return null;
         return this.accountCache.get("nameAndType", name, type);
     }
 
