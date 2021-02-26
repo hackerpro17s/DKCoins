@@ -372,7 +372,7 @@ public class DefaultAccountManager implements AccountManager {
                 BankAccount account = getAccountInternal(DefaultDKCoins.getInstance().getStorage().getAccount().find()
                         .or(query -> {
                             if(identifier instanceof Integer) query.where("Id", identifier);
-                            query.where("Name", identifier);
+                            else query.where("Name", identifier);
                         }).execute().firstOrNull());
                 createMissingAccountCredits(account);
                 return account;
