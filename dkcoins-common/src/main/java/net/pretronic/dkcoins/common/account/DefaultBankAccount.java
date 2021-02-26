@@ -29,6 +29,7 @@ import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.events.account.DKCoinsAccountTransactEvent;
 import net.pretronic.dkcoins.api.events.account.credit.DKCoinsAccountCreditPreCreateEvent;
 import net.pretronic.dkcoins.api.events.account.member.DKCoinsAccountMemberAddEvent;
 import net.pretronic.dkcoins.api.events.account.member.DKCoinsAccountMemberRemoveEvent;
@@ -402,7 +403,9 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
             }
             propertyInsertQuery.execute();
         }
-        return new DefaultAccountTransaction(id, source, sender, receiver, amount, exchangeRate, reason, cause, time, properties);
+        AccountTransaction transaction = new DefaultAccountTransaction(id, source, sender, receiver, amount, exchangeRate, reason, cause, time, properties);
+        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountTransactEvent(transaction));
+        return transaction;
     }
 
     @Override

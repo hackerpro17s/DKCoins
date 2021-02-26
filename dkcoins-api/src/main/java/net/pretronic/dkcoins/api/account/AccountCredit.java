@@ -49,13 +49,13 @@ public interface AccountCredit {
     AccountTransaction removeAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties);
 
     //Without transaction add
-    void setAmount(double amount);
+    AccountTransaction setAmount(double amount);
 
     //Without transaction add
-    void addAmount(double amount);
+    AccountTransaction addAmount(double amount);
 
     //Without transaction add
-    void removeAmount(double amount);
+    AccountTransaction removeAmount(double amount);
 
     int getTopPos();
 

@@ -121,18 +121,21 @@ public class DefaultAccountCredit implements AccountCredit {
     }
 
     @Override
-    public void setAmount(double amount) {
+    public AccountTransaction setAmount(double amount) {
         setAmountInternal(amount);
+        return getAccount().addTransaction(this, null, this, amount, null, TransferCause.API, new ArrayList<>());
     }
 
     @Override
-    public void addAmount(double amount) {
+    public AccountTransaction addAmount(double amount) {
         addAmountInternal(amount);
+        return getAccount().addTransaction(this, null, this, amount, null, TransferCause.API, new ArrayList<>());
     }
 
     @Override
-    public void removeAmount(double amount) {
+    public AccountTransaction removeAmount(double amount) {
         removeAmountInternal(amount);
+        return getAccount().addTransaction(this, null, this, amount, null, TransferCause.API, new ArrayList<>());
     }
 
     @Override
@@ -191,7 +194,6 @@ public class DefaultAccountCredit implements AccountCredit {
             removeAmount(amount0);
             AccountTransaction transaction = account.addTransaction(this, member, credit, amount0, reason, cause, properties);
             ((DefaultTransferResult)result).setTransaction(transaction);
-            DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountTransactEvent(transaction));
         }
         return result;
     }

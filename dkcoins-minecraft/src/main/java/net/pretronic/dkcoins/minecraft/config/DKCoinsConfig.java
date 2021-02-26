@@ -100,15 +100,15 @@ public class DKCoinsConfig {
     public static int TOP_LIMIT_ENTRIES_PER_PAGE = 5;
 
 
-    public static boolean LABY_MOD_BALANCE_CASH_ENABLED = true;
+    public static boolean LABYMOD_BALANCE_CASH_ENABLED = true;
     @DocumentKey("labymod.balance.cash.currency")
-    private static String LABY_MOD_BALANCE_CASH_CURRENCY0 = CURRENCY_DEFAULT0;
-    public static Currency LABY_MOD_BALANCE_CASH_CURRENCY = null;
+    private static String LABYMOD_BALANCE_CASH_CURRENCY0 = CURRENCY_DEFAULT0;
+    public static Currency LABYMOD_BALANCE_CASH_CURRENCY = null;
 
-    public static boolean LABY_MOD_BALANCE_BANK_ENABLED = true;
+    public static boolean LABYMOD_BALANCE_BANK_ENABLED = false;
     @DocumentKey("labymod.balance.bank.currency")
-    public static String LABY_MOD_BALANCE_BANK_CURRENCY0 = CURRENCY_DEFAULT0;
-    public static Currency LABY_MOD_BALANCE_BANK_CURRENCY = null;
+    public static String LABYMOD_BALANCE_BANK_CURRENCY0 = CURRENCY_DEFAULT0;
+    public static Currency LABYMOD_BALANCE_BANK_CURRENCY = null;
 
     @DocumentKey("command.bank")
     public static CommandConfiguration COMMAND_BANK = CommandConfiguration.newBuilder()
@@ -163,10 +163,10 @@ public class DKCoinsConfig {
 
         DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT0);
 
-        LABY_MOD_BALANCE_BANK_CURRENCY = DKCoins.getInstance().getCurrencyManager().getCurrency(LABY_MOD_BALANCE_BANK_CURRENCY0);
-        LABY_MOD_BALANCE_CASH_CURRENCY = DKCoins.getInstance().getCurrencyManager().getCurrency(LABY_MOD_BALANCE_CASH_CURRENCY0);
+        LABYMOD_BALANCE_BANK_CURRENCY = DKCoins.getInstance().getCurrencyManager().getCurrency(LABYMOD_BALANCE_BANK_CURRENCY0);
+        LABYMOD_BALANCE_CASH_CURRENCY = DKCoins.getInstance().getCurrencyManager().getCurrency(LABYMOD_BALANCE_CASH_CURRENCY0);
 
-        if(LABY_MOD_BALANCE_BANK_ENABLED || LABY_MOD_BALANCE_CASH_ENABLED) {
+        if(LABYMOD_BALANCE_BANK_ENABLED || LABYMOD_BALANCE_CASH_ENABLED) {
             McNative.getInstance().getLocal().getEventBus().subscribe(DKCoinsPlugin.getInstance(), new LabyModServiceListener());
         }
     }

@@ -18,11 +18,11 @@ public class LabyModServiceListener {
     public void onPlayerLogin(MinecraftPlayerPostLoginEvent event){
         DKCoinsUser user = event.getOnlinePlayer().getAs(DKCoinsUser.class);
 
-        LabyModIntegration.sendPlayerBalance(event.getPlayer().getAsConnectedPlayer(), user.getDefaultAccount().getCredit(DKCoinsConfig.LABY_MOD_BALANCE_CASH_CURRENCY));
+        LabyModIntegration.sendPlayerBalance(event.getPlayer().getAsConnectedPlayer(), user.getDefaultAccount().getCredit(DKCoinsConfig.LABYMOD_BALANCE_CASH_CURRENCY));
 
         for (BankAccount account : user.getAccounts()) {
             if(account.getType().getName().equalsIgnoreCase("user")) continue;
-            LabyModIntegration.sendPlayerBalance(event.getPlayer().getAsConnectedPlayer(), account.getCredit(DKCoinsConfig.LABY_MOD_BALANCE_BANK_CURRENCY));
+            LabyModIntegration.sendPlayerBalance(event.getPlayer().getAsConnectedPlayer(), account.getCredit(DKCoinsConfig.LABYMOD_BALANCE_BANK_CURRENCY));
             break;
         }
     }
@@ -30,12 +30,12 @@ public class LabyModServiceListener {
     @Listener
     public void onTransact(DKCoinsAccountTransactEvent event) {
         Currency currency = event.getTransaction().getCurrency();
-        if(currency.equals(DKCoinsConfig.LABY_MOD_BALANCE_BANK_CURRENCY) && DKCoinsConfig.LABY_MOD_BALANCE_BANK_ENABLED) {
+        if(currency.equals(DKCoinsConfig.LABYMOD_BALANCE_BANK_CURRENCY) && DKCoinsConfig.LABYMOD_BALANCE_BANK_ENABLED) {
             sendCurrencyUpdate(event.getTransaction().getSource());
             sendCurrencyUpdate(event.getTransaction().getReceiver());
         }
 
-        if(currency.equals(DKCoinsConfig.LABY_MOD_BALANCE_CASH_CURRENCY) && DKCoinsConfig.LABY_MOD_BALANCE_CASH_ENABLED) {
+        if(currency.equals(DKCoinsConfig.LABYMOD_BALANCE_CASH_CURRENCY) && DKCoinsConfig.LABYMOD_BALANCE_CASH_ENABLED) {
             sendCurrencyUpdate(event.getTransaction().getSource());
             sendCurrencyUpdate(event.getTransaction().getReceiver());
         }
