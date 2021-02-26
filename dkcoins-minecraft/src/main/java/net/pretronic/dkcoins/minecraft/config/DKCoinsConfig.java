@@ -103,11 +103,13 @@ public class DKCoinsConfig {
     public static boolean LABYMOD_BALANCE_CASH_ENABLED = true;
     @DocumentKey("labymod.balance.cash.currency")
     private static String LABYMOD_BALANCE_CASH_CURRENCY0 = CURRENCY_DEFAULT0;
+    @DocumentIgnored
     public static Currency LABYMOD_BALANCE_CASH_CURRENCY = null;
 
     public static boolean LABYMOD_BALANCE_BANK_ENABLED = false;
     @DocumentKey("labymod.balance.bank.currency")
     public static String LABYMOD_BALANCE_BANK_CURRENCY0 = CURRENCY_DEFAULT0;
+    @DocumentIgnored
     public static Currency LABYMOD_BALANCE_BANK_CURRENCY = null;
 
     @DocumentKey("command.bank")
