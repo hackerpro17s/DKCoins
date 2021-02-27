@@ -18,7 +18,7 @@
  * under the License.
  */
 
-package net.pretronic.dkcoins.minecraft;
+package net.pretronic.dkcoins.minecraft.integration;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;

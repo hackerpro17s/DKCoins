@@ -14,6 +14,7 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
+import net.pretronic.dkcoins.common.currency.DefaultCurrency;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;
@@ -53,15 +54,13 @@ public class DKCoinsPlugin extends MinecraftPlugin {
 
         loadConfig();
         VariableDescriberRegistry.registerDescriber(MinecraftDKCoinsUser.class);
-
         registerEconomyProvider();
         PlaceholderHelper.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
 
-        //@Todo special properties for server and proxy
         TransactionPropertyBuilder builder = member -> new ArrayList<>();
         DefaultDKCoins dkCoins = new DefaultDKCoins(getLogger(),
                 McNative.getInstance().getLocal().getEventBus(),
-                McNative.getInstance().getPluginManager().getService(ConfigurationProvider.class).getDatabase(DKCoinsPlugin.getInstance(), true),
+                getDatabaseOrCreate(),
                 new MinecraftDKCoinsUserManager(),
                 builder,
                 new MinecraftDKCoinsFormatter());
@@ -100,25 +99,24 @@ public class DKCoinsPlugin extends MinecraftPlugin {
     }
 
     private void registerPlayerAdapter() {
-        McNative.getInstance().getPlayerManager().registerPlayerAdapter(DKCoinsUser.class, minecraftPlayer ->
-                DKCoins.getInstance().getUserManager().getUser(minecraftPlayer.getUniqueId()));
+        McNative.getInstance().getPlayerManager().registerPlayerAdapter(DKCoinsUser.class, minecraftPlayer
+                -> DKCoins.getInstance().getUserManager().getUser(minecraftPlayer.getUniqueId()));
     }
 
     private void registerCommandsAndListeners() {
-        McNative.getInstance().getLocal().getCommandManager().registerCommand(new DKCoinsCommand(DKCoinsPlugin.getInstance()));
-        McNative.getInstance().getLocal().getCommandManager().registerCommand(new BankCommand(DKCoinsPlugin.getInstance()));
-        McNative.getInstance().getLocal().getCommandManager().registerCommand(new CurrencyCommand(DKCoinsPlugin.getInstance()));
-        McNative.getInstance().getLocal().getCommandManager().registerCommand(new BankTransferCommand(DKCoinsPlugin.getInstance(), DKCoinsConfig.COMMAND_PAY,Messages.COMMAND_USER_BANK_TRANSFER_HELP));
+        getRuntime().getLocal().getCommandManager().registerCommand(new DKCoinsCommand(DKCoinsPlugin.getInstance()));
+        getRuntime().getLocal().getCommandManager().registerCommand(new BankCommand(DKCoinsPlugin.getInstance()));
+        getRuntime().getLocal().getCommandManager().registerCommand(new CurrencyCommand(DKCoinsPlugin.getInstance()));
+        getRuntime().getLocal().getCommandManager().registerCommand(new BankTransferCommand(DKCoinsPlugin.getInstance(), DKCoinsConfig.COMMAND_PAY,Messages.COMMAND_USER_BANK_TRANSFER_HELP));
 
-
-        DKCoins.getInstance().getEventBus().subscribe(getInstance(), new MinecraftPlayerListener());
-        DKCoins.getInstance().getEventBus().subscribe(getInstance(), new InternalListener());
+        getRuntime().getLocal().getEventBus().subscribe(getInstance(), new MinecraftPlayerListener());
+        getRuntime().getLocal().getEventBus().subscribe(getInstance(), new InternalListener());
     }
 
     private void registerEconomyProvider() {
         if(DKCoinsConfig.ECONOMY_PROVIDER_ENABLED) {
             getLogger().info("Enabling economy provider");
-            McNative.getInstance().getPluginManager().registerService(DKCoinsPlugin.getInstance(), EconomyProvider.class,
+            getRuntime().getPluginManager().registerService(DKCoinsPlugin.getInstance(), EconomyProvider.class,
                     new DKCoinsEconomyProvider(), DKCoinsConfig.ECONOMY_PROVIDER_PRIORITY);
             getLogger().info("Economy provider enabled with priority " + DKCoinsConfig.ECONOMY_PROVIDER_PRIORITY);
         }
@@ -130,14 +128,19 @@ public class DKCoinsPlugin extends MinecraftPlugin {
     }
 
     private void initCurrencyManager(DefaultDKCoins dkCoins) {
-        if(McNative.getInstance().isNetworkAvailable()) {
-            McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_currency", DKCoinsPlugin.getInstance(),
-                    int.class, dkCoins.getCurrencyManager());
-            McNative.getInstance().getNetwork().registerStatusCallback(DKCoinsPlugin.getInstance(), dkCoins.getCurrencyManager());
+        if(getRuntime().isNetworkAvailable()) {
+            getRuntime().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_currency"
+                    , DKCoinsPlugin.getInstance(), int.class, dkCoins.getCurrencyManager());
+            getRuntime().getNetwork().registerStatusCallback(DKCoinsPlugin.getInstance(), dkCoins.getCurrencyManager());
         } else {
             dkCoins.getCurrencyManager().init(new UnconnectedSynchronisationCaller<>(true));
         }
-        dkCoins.getCurrencyManager().getLoadedCurrencies().addAll(DKCoins.getInstance().getStorage().getCurrencies());
+
+        DefaultDKCoins.getInstance().getStorage().getCurrency().find().execute()
+                .loadIn(dkCoins.getCurrencyManager().getLoadedCurrencies(), entry -> new DefaultCurrency(
+                        entry.getInt("Id"),
+                        entry.getString("Name"),
+                        entry.getString("Symbol")));
 
         if(dkCoins.getCurrencyManager().getLoadedCurrencies().isEmpty() && dkCoins.getCurrencyManager().searchCurrency("Coins") == null) {
             dkCoins.getCurrencyManager().createCurrency("Coins", "$");
@@ -145,18 +148,18 @@ public class DKCoinsPlugin extends MinecraftPlugin {
     }
 
     private void initAccountManager(DefaultDKCoins dkCoins) {
-        if(McNative.getInstance().isNetworkAvailable()) {
-            McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_accountType", DKCoinsPlugin.getInstance(),
+        if(getRuntime().isNetworkAvailable()) {
+            getRuntime().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_accountType", DKCoinsPlugin.getInstance(),
                     int.class, DefaultDKCoins.getInstance().getAccountManager().getAccountTypeCache());
-            McNative.getInstance().getNetwork().registerStatusCallback(DKCoinsPlugin.getInstance(), DefaultDKCoins.getInstance().getAccountManager().getAccountTypeCache());
+            getRuntime().getNetwork().registerStatusCallback(DKCoinsPlugin.getInstance(), DefaultDKCoins.getInstance().getAccountManager().getAccountTypeCache());
         } else {
             DefaultDKCoins.getInstance().getAccountManager().getAccountTypeCache().initUnconnected();
         }
 
         if(McNative.getInstance().isNetworkAvailable()) {
-            McNative.getInstance().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_account", DKCoinsPlugin.getInstance(),
+            getRuntime().getNetwork().getMessenger().registerSynchronizingChannel("dkcoins_account", DKCoinsPlugin.getInstance(),
                     int.class, DefaultDKCoins.getInstance().getAccountManager().getAccountCache());
-            McNative.getInstance().getNetwork().registerStatusCallback(DKCoinsPlugin.getInstance(), DefaultDKCoins.getInstance().getAccountManager().getAccountCache());
+            getRuntime().getNetwork().registerStatusCallback(DKCoinsPlugin.getInstance(), DefaultDKCoins.getInstance().getAccountManager().getAccountCache());
         } else {
             DefaultDKCoins.getInstance().getAccountManager().getAccountCache().initUnconnected();
         }

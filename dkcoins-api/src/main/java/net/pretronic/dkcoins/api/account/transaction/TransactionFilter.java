@@ -14,6 +14,8 @@ import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 
+import java.util.List;
+
 public interface TransactionFilter {
 
     TransactionFilter account(BankAccount account);
@@ -33,6 +35,8 @@ public interface TransactionFilter {
     TransactionFilter cause(String cause);
 
     TransactionFilter page(int page);
+
+    List<AccountTransaction> filter();
 
     static TransactionFilter newFilter() {
         return DKCoins.getInstance().newTransactionFilter();

@@ -46,7 +46,8 @@ public class DefaultDKCoins extends DKCoins {
     private final Collection<Migration> migrations;
     private final DKCoinsFormatter formatter;
 
-    public DefaultDKCoins(PretronicLogger logger, EventBus eventBus, Database database, DKCoinsUserManager userManager, TransactionPropertyBuilder transactionPropertyBuilder, DKCoinsFormatter formatter) {
+    public DefaultDKCoins(PretronicLogger logger, EventBus eventBus, Database database, DKCoinsUserManager userManager
+            , TransactionPropertyBuilder transactionPropertyBuilder, DKCoinsFormatter formatter) {
         Validate.notNull(logger,
                 eventBus,
                 database,
@@ -92,7 +93,6 @@ public class DefaultDKCoins extends DKCoins {
         return this.userManager;
     }
 
-    @Override
     public DefaultDKCoinsStorage getStorage() {
         return this.storage;
     }

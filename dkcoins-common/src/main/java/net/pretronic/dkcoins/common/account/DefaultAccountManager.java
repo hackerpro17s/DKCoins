@@ -10,41 +10,34 @@
 
 package net.pretronic.dkcoins.common.account;
 
-import net.pretronic.databasequery.api.query.Aggregation;
-import net.pretronic.databasequery.api.query.result.QueryResult;
+import net.pretronic.databasequery.api.query.SearchOrder;
+import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.databasequery.api.query.type.FindQuery;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
-import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
-import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
-import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
-import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.events.account.DKCoinsAccountCreateEvent;
 import net.pretronic.dkcoins.api.events.account.DKCoinsAccountDeleteEvent;
 import net.pretronic.dkcoins.api.events.account.DKCoinsAccountPreCreateEvent;
-import net.pretronic.dkcoins.api.events.account.credit.DKCoinsAccountCreditPreCreateEvent;
-import net.pretronic.dkcoins.api.events.account.member.DKCoinsAccountMemberAddEvent;
-import net.pretronic.dkcoins.api.events.account.member.DKCoinsAccountMemberRemoveEvent;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.dkcoins.common.DefaultDKCoinsStorage;
-import net.pretronic.dkcoins.common.SyncAction;
 import net.pretronic.dkcoins.common.user.DefaultDKCoinsUser;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
 import net.pretronic.libraries.caching.synchronisation.SynchronizableCache;
 import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
-import net.pretronic.libraries.utility.annonations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultAccountManager implements AccountManager {
@@ -72,9 +65,14 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public AccountType createAccountType(String name, String symbol) {
-        AccountType accountType = DKCoins.getInstance().getStorage().createAccountType(name, symbol);
+        int id = DefaultDKCoins.getInstance().getStorage().getAccountType().insert()
+                .set("Name", name).set("Symbol", symbol)
+                .executeAndGetGeneratedKeyAsInt("Id");
+
+        AccountType accountType = new DefaultAccountType(id, name, symbol);
         this.accountTypeCache.insert(accountType);
         this.accountTypeCache.getCaller().createAndIgnore(accountType.getId(), Document.newDocument());
+
         return accountType;
     }
 
@@ -98,10 +96,13 @@ public class DefaultAccountManager implements AccountManager {
 
     private Collection<BankAccount> loadAccounts(DKCoinsUser user) {
         Collection<BankAccount> accounts = new ArrayList<>();
-        for (int accountId : DKCoins.getInstance().getStorage().getAccountIds(user.getUniqueId())) {
-            BankAccount account = this.accountCache.get("search", accountId);
-            accounts.add(account);
-        }
+
+        DefaultDKCoins.getInstance().getStorage().getAccount().find().get("dkcoins_account.Id")
+                .join(DefaultDKCoins.getInstance().getStorage().getAccountMember())
+                .on("Id", DefaultDKCoins.getInstance().getStorage().getAccountMember(), "AccountId")
+                .where("UserId", user.getUniqueId())
+                .execute().loadIn(accounts, entry -> this.accountCache.get("search", entry.getInt("Id")));
+
         ((DefaultDKCoinsUser)user).setUserAccountsLoaded(true);
         return accounts;
     }
@@ -113,6 +114,7 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public BankAccount getAccount(String name, AccountType type) {
+        if(type == null) return null;
         return this.accountCache.get("nameAndType", name, type);
     }
 
@@ -128,20 +130,18 @@ public class DefaultAccountManager implements AccountManager {
     }
 
     @Override
-    public BankAccount getSubAccount(MasterBankAccount account, int id) {
-        return accountCache.get("subAccount", account.getId(), id);
-    }
-
-    @Override
-    public MasterBankAccount getSubMasterAccount(MasterBankAccount account, int id) {
-        return (MasterBankAccount) getSubAccount(account, id);
-    }
-
-    @Override
     public BankAccount createAccount(String name, AccountType type, boolean disabled, MasterBankAccount parent, DKCoinsUser creator) {
         Validate.notNull(name, type, creator);
-        BankAccount account = DKCoins.getInstance().getStorage()
-                .createAccount(name, type, disabled, parent, creator);
+
+        int id = DefaultDKCoins.getInstance().getStorage().getAccount()
+                .insert().set("Name", name).set("TypeId", type.getId()).set("Disabled", disabled)
+                .set("ParentId", parent == null ? null : parent.getId()).set("Master", false)
+                .executeAndGetGeneratedKeyAsInt("Id");
+        DefaultBankAccount account = new DefaultBankAccount(id, name, type,
+                disabled, parent);
+
+        account.addMember(creator, null, AccountMemberRole.OWNER, true);
+
         accountCache.insert(account);
         DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountPreCreateEvent(account, creator));
         this.accountCache.getCaller().createAndIgnore(account.getId(), Document.newDocument());
@@ -151,8 +151,15 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public MasterBankAccount createMasterAccount(String name, AccountType type, boolean disabled, MasterBankAccount parent, DKCoinsUser creator) {
-        MasterBankAccount account = DKCoins.getInstance().getStorage()
-                .createMasterAccount(name, type, disabled, parent, creator);
+        int id = DefaultDKCoins.getInstance().getStorage().getAccount().insert()
+                .set("Name", name).set("TypeId", type.getId()).set("Disabled", disabled)
+                .set("ParentId", parent == null ? null : parent.getId()).set("Master", true)
+                .executeAndGetGeneratedKeyAsInt("Id");
+
+        DefaultMasterBankAccount account = new DefaultMasterBankAccount(id, name, type, disabled, parent);;
+
+        account.addMember(creator, null, AccountMemberRole.OWNER, true);
+
         accountCache.insert(account);
         this.accountCache.getCaller().createAndIgnore(account.getId(), Document.newDocument());
         DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountCreateEvent(account, creator));
@@ -161,8 +168,10 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public void deleteAccount(BankAccount account, DKCoinsUser user) {
+        Validate.notNull(account, user);
+
         accountCache.remove(account);
-        DKCoins.getInstance().getStorage().deleteAccount(account.getId());
+        DefaultDKCoins.getInstance().getStorage().getAccount().delete().where("Id", account.getId()).execute();
         this.accountCache.getCaller().deleteAndIgnore(account.getId(), Document.newDocument());
         DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountDeleteEvent(account.getId(), user));
     }
@@ -170,252 +179,67 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public List<RankedAccountCredit> getTopAccountCredits(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page) {
         AtomicInteger rank = new AtomicInteger();
-        return Iterators.map(DKCoins.getInstance().getStorage().getTopAccountCreditIds(currency, excludedAccountTypes, entriesPerPage, page),
-                (creditId) -> new DefaultRankedAccountCredit(rank.getAndIncrement(), creditId));
+
+        List<RankedAccountCredit> accountCredits = new ArrayList<>();
+        FindQuery query = DefaultDKCoins.getInstance().getStorage().getAccountCredit().find()
+                .get("dkcoins_account_credit.Id")
+                .join(DefaultDKCoins.getInstance().getStorage().getAccount())
+                .on("AccountId", DefaultDKCoins.getInstance().getStorage().getAccount(), "Id")
+                .where("CurrencyId", currency.getId())
+                .orderBy("Amount", SearchOrder.DESC);
+        if(excludedAccountTypes != null) {
+            for (AccountType type : excludedAccountTypes) {
+                query.whereNot("TypeId", type.getId());
+            }
+        }
+        query.page(page, entriesPerPage);
+        query.execute().loadIn(accountCredits, entry -> new DefaultRankedAccountCredit(rank.getAndIncrement(), entry.getInt("Id")));
+
+        return accountCredits;
     }
 
     @Override
     public BankAccount getAccountByRank(Currency currency, int rank) {
-        return getAccount(DKCoins.getInstance().getStorage().getAccountIdByRank(currency, rank));
+        Validate.notNull(currency);
+
+        int accountId = DefaultDKCoins.getInstance().getStorage().getAccountCredit().find()
+                .get("AccountId")
+                .where("CurrencyId", currency.getId())
+                .index(rank, rank)
+                .execute().firstOrNull()
+                .getInt("AccountId");
+
+        return getAccount(accountId);
     }
 
-    @Override
-    public void updateAccountName(BankAccount account, String name) {
-        Validate.notNull(account);
-        Validate.notNull(name);
-        DKCoins.getInstance().getStorage().updateAccountName(account.getId(), name);
-        ((DefaultBankAccount)account).updateName(name);
-        this.accountCache.getCaller().updateAndIgnore(account.getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_UPDATE_NAME)
-                .add("name", account.getName()));
-    }
 
-    @Override
-    public void updateAccountDisabled(BankAccount account, boolean disabled) {
-        Validate.notNull(account);
-        DKCoins.getInstance().getStorage().updateAccountDisabled(account.getId(), disabled);
-        ((DefaultBankAccount)account).updateDisabled(disabled);
-        this.accountCache.getCaller().updateAndIgnore(account.getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_UPDATE_DISABLED)
-                .add("disabled", account.isDisabled()));
-    }
 
     @Override
     public AccountCredit getAccountCredit(int id) {
-        int accountId = DKCoins.getInstance().getStorage().getAccountCreditAccountId(id);
+        QueryResultEntry entry = DefaultDKCoins.getInstance().getStorage().getAccountCredit().find().where("Id", id).execute().firstOrNull();
+        if(entry == null) throw new IllegalArgumentException("No account found for credit id " + id);
+        int accountId = entry.getInt("AccountId");
+
         if(accountId == -1) throw new IllegalArgumentException("No account found for credit id " + id);
         return getAccount(accountId).getCredit(id);
     }
 
-
-    @Override
-    public AccountCredit addAccountCredit(BankAccount account, Currency currency, double amount) {
-        AccountCredit credit = DKCoins.getInstance().getStorage().addAccountCredit(account, currency, amount);
-        ((DefaultBankAccount)account).addLoadedAccountCredit(credit);
-        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountCreditPreCreateEvent(credit));
-        this.accountCache.getCaller().updateAndIgnore(account.getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_NEW)
-                .add("creditId", credit.getId()));
-        return credit;
-    }
-
-    @Override
-    public void deleteAccountCredit(AccountCredit credit) {
-        DKCoins.getInstance().getStorage().deleteAccountCredit(credit.getId());
-        ((DefaultBankAccount)credit.getAccount()).deleteLoadedAccountCredit(credit);
-        this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_DELETE)
-                .add("creditId", credit.getId()));
-    }
-
-    @Override
-    public void setAccountCreditAmount(AccountCredit credit, double amount) {
-        DKCoins.getInstance().getStorage().setAccountCreditAmount(credit.getId(), amount);
-        ((DefaultAccountCredit)credit).updateAmount(amount);
-        this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
-                .add("creditId", credit.getId()));
-    }
-
-    @Override
-    public void addAccountCreditAmount(AccountCredit credit, double amount) {
-        DKCoins.getInstance().getStorage().addAccountCreditAmount(credit.getId(), amount);
-        ((DefaultAccountCredit)credit).updateAmount(credit.getAmount()+amount);
-        this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
-                .add("creditId", credit.getId()));
-    }
-
-    @Override
-    public void removeAccountCreditAmount(AccountCredit credit, double amount) {
-        DKCoins.getInstance().getStorage().removeAccountCreditAmount(credit.getId(), amount);
-        ((DefaultAccountCredit)credit).updateAmount(credit.getAmount()-amount);
-        this.accountCache.getCaller().updateAndIgnore(credit.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
-                .add("creditId", credit.getId()));
-    }
-
-
     @Override
     public AccountMember getAccountMember(int id) {
-        int accountId = DKCoins.getInstance().getStorage().getAccountMemberAccountId(id);
+        QueryResultEntry result = DefaultDKCoins.getInstance().getStorage().getAccountMember().find()
+                .where("Id", id)
+                .execute().firstOrNull();
+
+        if(result == null) return null;
+        int accountId =  result.getInt("AccountId");
         if(accountId == -1) throw new IllegalArgumentException("No account found for member id " + id);
+
         return getAccount(accountId).getMember(id);
     }
 
     @Override
     public AccountMember getAccountMember(DKCoinsUser user, BankAccount account) {
         return account.getMember(user);
-    }
-
-    @Override
-    public AccountMember addAccountMember(BankAccount account, DKCoinsUser user, AccountMember adder, AccountMemberRole memberRole, boolean receiveNotifications) {
-        AccountMember member = DKCoins.getInstance().getStorage().addAccountMember(account, user, memberRole, receiveNotifications);
-        ((DefaultBankAccount)account).addLoadedMember(member);
-        this.accountCache.getCaller().updateAndIgnore(account.getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_MEMBER_ADD)
-                .add("memberId", member.getId()));
-        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountMemberAddEvent(member, adder));
-        return member;
-    }
-
-    @Override
-    public void updateAccountMemberRole(AccountMember member, AccountMemberRole role) {
-        ((DefaultAccountMember)member).updateRole(role);
-        DKCoins.getInstance().getStorage().updateAccountMemberRole(member);
-        this.accountCache.getCaller().updateAndIgnore(member.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_MEMBER_UPDATE_ROLE)
-                .add("memberId", member.getId())
-                .add("roleId", member.getRole().getId()));
-    }
-
-    @Override
-    public void updateAccountMemberReceiveNotifications(AccountMember member, boolean receiveNotification) {
-        Validate.notNull(member);
-        ((DefaultAccountMember)member).updateReceiveNotifications(receiveNotification);
-        DKCoins.getInstance().getStorage().updateAccountMemberReceiveNotifications(member);
-        this.accountCache.getCaller().updateAndIgnore(member.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_MEMBER_UPDATE_RECEIVE_NOTIFICATIONS)
-                .add("memberId", member.getId())
-                .add("receiveNotifications", member.receiveNotifications()));
-    }
-
-    @Override
-    public boolean removeAccountMember(AccountMember member, AccountMember remover) {
-        DKCoins.getInstance().getStorage().removeAccountMember(member.getId());
-        this.accountCache.getCaller().updateAndIgnore(member.getAccount().getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_MEMBER_REMOVE)
-                .add("memberId", member.getId()));
-        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountMemberRemoveEvent(member.getUser(), remover));
-        return ((DefaultBankAccount)member.getAccount()).removeLoadedMember(member);
-    }
-
-    @Override
-    public AccountTransaction addAccountTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver,
-                                                    double amount, double exchangeRate, String reason, String cause,
-                                                    long time, Collection<AccountTransactionProperty> properties) {
-        return DKCoins.getInstance().getStorage().addAccountTransaction(source, sender, receiver,
-                amount, exchangeRate, reason, cause, time, properties);
-    }
-
-    @Override
-    public AccountLimitation getAccountLimitation(int id) {
-        int accountId = DKCoins.getInstance().getStorage().getAccountLimitationAccountId(id);
-        if(accountId == -1) throw new IllegalArgumentException("No account found for limitation id " + id);
-        return getAccount(accountId).getLimitation(id);
-    }
-
-    @Override
-    public boolean hasAccountLimitation(AccountMember member, Currency currency, double amount) {
-        BankAccount account = member.getAccount();
-        AccountMemberRole memberRole = member.getRole();
-        DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
-
-        for (AccountLimitation limitation : account.getLimitations()) {
-
-            if(limitation.getComparativeCurrency().equals(currency)) {
-                FindQuery query = storage.getAccountTransaction().find()
-                        .getAs(Aggregation.SUM, storage.getAccountTransaction(), "Amount", "TotalAmount")
-                        .where("SourceId", account.getCredit(currency).getId())
-                        .join(storage.getAccountCredit()).on("SourceId", storage.getAccountCredit(), "Id")
-                        .join(storage.getAccountMember()).on(storage.getAccountTransaction(), "SenderId", storage.getAccountMember(), "Id");
-                if(limitation.getMemberRole() != null) {
-                    if(limitation.getMemberRole() == memberRole) {
-                        query.where("RoleId", memberRole.getId());
-                    } else {
-                        continue;
-                    }
-                }
-                if(limitation.getMember() != null && limitation.getMember().getId() == member.getId()) {
-                    query.where("SenderId", member.getId());
-                } else if(limitation.getCalculationType() == AccountLimitationCalculationType.USER_BASED) {
-                    query.where("SenderId", member.getId());
-                }
-                query.whereHigher("Time", getStartLimitationTime(limitation));
-                QueryResult result = query.execute();
-                if(!result.isEmpty()) {
-                    if(result.first().getObject("TotalAmount") == null) continue;
-                    double totalAmount = result.first().getDouble("TotalAmount");
-                    if(totalAmount+amount >= limitation.getAmount()) return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private long getStartLimitationTime(AccountLimitation limitation) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.clear(Calendar.MINUTE);
-        calendar.clear(Calendar.SECOND);
-        calendar.clear(Calendar.MILLISECOND);
-
-        switch (limitation.getInterval()) {
-            case MONTHLY: {
-                calendar.set(Calendar.DAY_OF_MONTH, 1);
-                break;
-            }
-            case WEEKLY: {
-                calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
-                break;
-            }
-            case DAILY: {
-                break;
-            }
-        }
-        return calendar.getTimeInMillis();
-    }
-
-    @Override
-    public AccountLimitation addAccountLimitation(BankAccount account, @Nullable AccountMember member,
-                                                  @Nullable AccountMemberRole memberRole, Currency comparativeCurrency,
-                                                  AccountLimitationCalculationType calculationType,
-                                                  double amount, AccountLimitationInterval interval) {
-        Validate.notNull(account, comparativeCurrency);
-        Validate.isTrue(amount > 0);
-        AccountLimitation limitation = DKCoins.getInstance().getStorage().addAccountLimitation(account, member, memberRole,
-                comparativeCurrency, calculationType, amount, interval);
-        ((DefaultBankAccount)account).addLoadedLimitation(limitation);
-        this.accountCache.getCaller().updateAndIgnore(account.getId(), Document.newDocument()
-                .add("action", SyncAction.ACCOUNT_LIMITATION_ADD)
-                .add("limitationId", limitation.getId()));
-        return limitation;
-    }
-
-    @Override
-    public boolean removeAccountLimitation(AccountLimitation limitation) {
-        Validate.notNull(limitation);
-        DKCoins.getInstance().getStorage().removeAccountLimitation(limitation.getId());
-        this.accountCache.getCaller().updateAndIgnore(limitation.getAccount().getId(),
-                Document.newDocument()
-                        .add("action", SyncAction.ACCOUNT_LIMITATION_REMOVE)
-                        .add("limitationId", limitation.getId()));
-        return ((DefaultBankAccount)limitation.getAccount()).removeLoadedLimitation(limitation);
-    }
-
-    @Override
-    public List<AccountTransaction> filterAccountTransactions(TransactionFilter filter) {
-        return DKCoins.getInstance().getStorage().filterAccountTransactions(filter);
     }
 
     @Internal
@@ -453,7 +277,12 @@ public class DefaultAccountManager implements AccountManager {
             }
         });
 
-        this.accountTypeCache.setCreateHandler((id, data) -> DKCoins.getInstance().getStorage().getAccountType(id));
+        this.accountTypeCache.setCreateHandler((id, data) -> {
+            for (AccountType cachedObject : this.accountTypeCache.getCachedObjects()) {
+                if(cachedObject.getId() == id) return null;
+            }
+            return getAccountTypeInternal(id);
+        });
 
         this.accountTypeCache.setMaxSize(100).registerQuery("byId", new CacheQuery<AccountType>() {
 
@@ -470,7 +299,7 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public AccountType load(Object[] identifiers) {
-                return DKCoins.getInstance().getStorage().getAccountType((int) identifiers[0]);
+                return getAccountTypeInternal(identifiers[0]);
             }
         }).registerQuery("search", new CacheQuery<AccountType>() {
 
@@ -488,9 +317,20 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public AccountType load(Object[] identifiers) {
-                return DKCoins.getInstance().getStorage().searchAccountType(identifiers[0]);
+                return getAccountTypeInternal(identifiers[0]);
             }
         });
+    }
+
+    private AccountType getAccountTypeInternal(Object identifier) {
+        QueryResultEntry result = DefaultDKCoins.getInstance().getStorage().getAccountType().find()
+                .or(query -> {
+                    query.where("Name", identifier).where("Symbol", identifier);
+                    if(identifier instanceof Integer) query.where("Id", identifier);
+                })
+                .execute().firstOrNull();
+        if(result == null) return null;
+        return new DefaultAccountType(result.getInt("Id"), result.getString("Name"), result.getString("Symbol"));
     }
 
     private void registerAccountCacheQueries() {
@@ -529,7 +369,12 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public BankAccount load(Object[] identifiers) {
-                BankAccount account = DKCoins.getInstance().getStorage().searchAccount(identifiers[0]);
+                Object identifier = identifiers[0];
+                BankAccount account = getAccountInternal(DefaultDKCoins.getInstance().getStorage().getAccount().find()
+                        .or(query -> {
+                            if(identifier instanceof Integer) query.where("Id", identifier);
+                            else query.where("Name", identifier);
+                        }).execute().firstOrNull());
                 createMissingAccountCredits(account);
                 return account;
             }
@@ -542,7 +387,7 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public BankAccount load(Object[] identifiers) {
-                BankAccount account = DKCoins.getInstance().getStorage().getAccount((int) identifiers[0]);
+                BankAccount account = getAccountInternalById((Integer) identifiers[0]);
                 createMissingAccountCredits(account);
                 return account;
             }
@@ -550,24 +395,6 @@ public class DefaultAccountManager implements AccountManager {
             @Override
             public boolean check(BankAccount account, Object[] identifiers) {
                 return account.getId() == (int) identifiers[0];
-            }
-        }).registerQuery("subAccount", new CacheQuery<BankAccount>() {
-            @Override
-            public void validate(Object[] identifiers) {
-                Validate.isTrue(identifiers.length == 2 && identifiers[0] instanceof Integer && identifiers[1] instanceof Integer);
-            }
-
-            @Override
-            public BankAccount load(Object[] identifiers) {
-                BankAccount account = DKCoins.getInstance().getStorage().getSubAccount((int)identifiers[0], (int)identifiers[1]);
-                createMissingAccountCredits(account);
-                return account;
-            }
-
-            @Override
-            public boolean check(BankAccount account, Object[] identifiers) {
-                return account.getId() == (int) identifiers[1]
-                        && account.getParent() != null && account.getParent().getId() == (int) identifiers[0];
             }
         }).registerQuery("nameAndType", new CacheQuery<BankAccount>() {
 
@@ -582,7 +409,8 @@ public class DefaultAccountManager implements AccountManager {
             public BankAccount load(Object[] identifiers) {
                 String name = (String) identifiers[0];
                 AccountType type = (AccountType) identifiers[1];
-                BankAccount account = DKCoins.getInstance().getStorage().getAccount(name, type);
+                BankAccount account = getAccountInternal(DefaultDKCoins.getInstance().getStorage().getAccount().find()
+                        .where("Name", name).where("TypeId", type.getId()).execute().firstOrNull());
                 createMissingAccountCredits(account);
                 return account;
             }
@@ -601,8 +429,10 @@ public class DefaultAccountManager implements AccountManager {
 
             @Override
             public BankAccount load(Object[] identifiers) {
-                //@Todo direct via join
-                int accountId = DKCoins.getInstance().getStorage().getAccountCreditAccountId((int) identifiers[0]);
+                QueryResultEntry entry = DefaultDKCoins.getInstance().getStorage().getAccountCredit().find()
+                        .where("Id", identifiers[0]).execute().firstOrNull();
+                if(entry == null) return null;
+                int accountId =  entry.getInt("AccountId");
                 BankAccount account = DKCoins.getInstance().getAccountManager().getAccount(accountId);
                 createMissingAccountCredits(account);
                 return account;
@@ -617,7 +447,80 @@ public class DefaultAccountManager implements AccountManager {
             for (BankAccount account : this.accountCache.getCachedObjects()) {
                 if(account.getId() == id) return null;
             }
-            return DKCoins.getInstance().getStorage().getAccount(id);
+            return getAccountInternalById(id);
         });
+    }
+
+    private BankAccount getAccountInternalById(int id) {
+        return getAccountInternal(DefaultDKCoins.getInstance().getStorage().getAccount().find()
+                .where("Id", id).execute().firstOrNull());
+    }
+
+    private BankAccount getAccountInternal(QueryResultEntry resultEntry) {
+        if(resultEntry == null) return null;
+
+        DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
+
+        int id = resultEntry.getInt("Id");
+        boolean master = resultEntry.getBoolean("Master");
+
+        DefaultBankAccount account;
+        if(master) {
+            account = new DefaultMasterBankAccount(id, resultEntry.getString("Name"),
+                    DKCoins.getInstance().getAccountManager().getAccountType(resultEntry.getInt("TypeId")),
+                    resultEntry.getBoolean("Disabled"),
+                    DKCoins.getInstance().getAccountManager().getMasterAccount(resultEntry.getInt("ParentId")));
+        } else {
+            account = new DefaultBankAccount(id, resultEntry.getString("Name"),
+                    DKCoins.getInstance().getAccountManager().getAccountType(resultEntry.getInt("TypeId")),
+                    resultEntry.getBoolean("Disabled"),
+                    DKCoins.getInstance().getAccountManager().getMasterAccount(resultEntry.getInt("ParentId")));
+        }
+
+        for (QueryResultEntry entry : storage.getAccountLimitation().find().where("AccountId", id).whereIsNull("MemberId").execute()) {
+            int memberRoleId = entry.getInt("MemberRoleId");
+            account.addLoadedLimitation(new DefaultAccountLimitation(entry.getInt("Id"),
+                    account,
+                    null,
+                    AccountMemberRole.byIdOrNull(memberRoleId),
+                    DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("CurrencyId")),
+                    AccountLimitationCalculationType.valueOf(entry.getString("CalculationType")),
+                    entry.getDouble("Amount"),
+                    AccountLimitationInterval.valueOf(entry.getString("Interval"))));
+        }
+        for(QueryResultEntry entry : storage.getAccountCredit().find().where("AccountId", id).execute()) {
+            account.addLoadedAccountCredit(new DefaultAccountCredit(entry.getInt("Id"), account,
+                    DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("CurrencyId")),
+                    entry.getDouble("Amount")));
+        }
+        for (QueryResultEntry entry : storage.getAccountMember().find().where("AccountId", id).execute()) {
+            DefaultAccountMember member = new DefaultAccountMember(entry.getInt("Id"), account,
+                    DKCoins.getInstance().getUserManager().getUser(entry.getUniqueId("UserId")),
+                    AccountMemberRole.byId(entry.getInt("RoleId")), entry.getBoolean("ReceiveNotifications"));
+            loadAccountMemberLimitations(member);
+            account.addLoadedMember(member);
+        }
+        return account;
+    }
+
+    private void loadAccountMemberLimitations(DefaultAccountMember member) {
+        DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
+        for (QueryResultEntry entry : storage.getAccountLimitation().find()
+                .where("AccountId", member.getAccount().getId())
+                .where("MemberId", member.getId())
+                .execute()) {
+            ((DefaultBankAccount)member.getAccount()).addLoadedLimitation(new DefaultAccountLimitation(entry.getInt("Id"),
+                    member.getAccount(),
+                    member,
+                    null,
+                    DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("ComparativeCurrencyId")),
+                    AccountLimitationCalculationType.valueOf(entry.getString("CalculationType")),
+                    entry.getDouble("Amount"), AccountLimitationInterval.valueOf(entry.getString("Interval"))));
+        }
+    }
+
+    @Internal
+    public void clearCaches() {
+        this.accountCache.clear();
     }
 }

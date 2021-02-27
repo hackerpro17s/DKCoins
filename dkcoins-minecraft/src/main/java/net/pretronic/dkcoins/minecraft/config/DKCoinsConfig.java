@@ -15,6 +15,7 @@ import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.commands.user.UserBankCommand;
+import net.pretronic.dkcoins.minecraft.integration.labymod.LabyModServiceListener;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.configuration.DefaultCommandConfigurationBuilder;
 import net.pretronic.libraries.document.annotations.DocumentIgnored;
@@ -98,6 +99,19 @@ public class DKCoinsConfig {
     @DocumentKey("command.top.entriesPerPage")
     public static int TOP_LIMIT_ENTRIES_PER_PAGE = 5;
 
+
+    public static boolean LABYMOD_BALANCE_CASH_ENABLED = true;
+    @DocumentKey("labymod.balance.cash.currency")
+    private static String LABYMOD_BALANCE_CASH_CURRENCY0 = CURRENCY_DEFAULT0;
+    @DocumentIgnored
+    public static Currency LABYMOD_BALANCE_CASH_CURRENCY = null;
+
+    public static boolean LABYMOD_BALANCE_BANK_ENABLED = false;
+    @DocumentKey("labymod.balance.bank.currency")
+    public static String LABYMOD_BALANCE_BANK_CURRENCY0 = CURRENCY_DEFAULT0;
+    @DocumentIgnored
+    public static Currency LABYMOD_BALANCE_BANK_CURRENCY = null;
+
     @DocumentKey("command.bank")
     public static CommandConfiguration COMMAND_BANK = CommandConfiguration.newBuilder()
             .name("bank")
@@ -131,13 +145,6 @@ public class DKCoinsConfig {
         ACCOUNT_TYPE_START_AMOUNT0.forEach((type, startAmount) ->
                 ACCOUNT_TYPE_START_AMOUNT.put(DKCoins.getInstance().getAccountManager().searchAccountType(type), startAmount));
 
-
-        /*
-        .forEach((currency, command)-> {
-            McNative.getInstance().getLocal().getCommandManager().registerCommand(new UserBankCommand(DKCoinsPlugin.getInstance()
-                    , CommandConfiguration.newBuilder().name(command).permission("dkcoins.command."+command).create(), currency));
-        });
-         */
         for (CreditAlias creditAlias : ACCOUNT_USER_CREDIT_ALIASES) {
             if(creditAlias.getCommands().length == 0) {
                 McNative.getInstance().getLogger().warn("Credit command can't be registered. Commands list is empty.");
@@ -157,6 +164,13 @@ public class DKCoinsConfig {
         ECONOMY_PROVIDER_CURRENCY = DKCoins.getInstance().getCurrencyManager().searchCurrency(ECONOMY_PROVIDER_CURRENCY0);
 
         DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT0);
+
+        LABYMOD_BALANCE_BANK_CURRENCY = DKCoins.getInstance().getCurrencyManager().getCurrency(LABYMOD_BALANCE_BANK_CURRENCY0);
+        LABYMOD_BALANCE_CASH_CURRENCY = DKCoins.getInstance().getCurrencyManager().getCurrency(LABYMOD_BALANCE_CASH_CURRENCY0);
+
+        if(LABYMOD_BALANCE_BANK_ENABLED || LABYMOD_BALANCE_CASH_ENABLED) {
+            McNative.getInstance().getLocal().getEventBus().subscribe(DKCoinsPlugin.getInstance(), new LabyModServiceListener());
+        }
     }
 
     public static String formatCurrencyAmount(double amount) {

@@ -10,7 +10,6 @@
 
 package net.pretronic.dkcoins.common.account;
 
-import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
@@ -18,6 +17,10 @@ import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.common.DefaultDKCoins;
+import net.pretronic.dkcoins.common.DefaultDKCoinsStorage;
+import net.pretronic.dkcoins.common.SyncAction;
+import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.annonations.Internal;
 
@@ -61,7 +64,20 @@ public class DefaultAccountMember implements AccountMember {
 
     @Override
     public void setRole(AccountMemberRole role) {
-        DKCoins.getInstance().getAccountManager().updateAccountMemberRole(this, role);
+        DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
+        DefaultAccountManager accountManager = DefaultDKCoins.getInstance().getAccountManager();
+
+        storage.getAccountMember().update()
+                .set("RoleId", role.getId())
+                .where("Id", getId())
+                .execute();
+
+        updateRole(role);
+
+        accountManager.getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_MEMBER_UPDATE_ROLE)
+                .add("memberId", getId())
+                .add("roleId", getRole().getId()));
     }
 
     @Override
@@ -93,7 +109,19 @@ public class DefaultAccountMember implements AccountMember {
 
     @Override
     public void setReceiveNotifications(boolean receiveNotifications) {
-        DKCoins.getInstance().getAccountManager().updateAccountMemberReceiveNotifications(this, receiveNotifications);
+        DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
+        DefaultAccountManager accountManager = DefaultDKCoins.getInstance().getAccountManager();
+
+        storage.getAccountMember().update().set("ReceiveNotifications", receiveNotifications)
+                .where("Id", getId())
+                .execute();
+
+        updateReceiveNotifications(receiveNotifications);
+
+        accountManager.getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_MEMBER_UPDATE_RECEIVE_NOTIFICATIONS)
+                .add("memberId", getId())
+                .add("receiveNotifications", receiveNotifications()));
     }
 
     @Override

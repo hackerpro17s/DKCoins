@@ -10,19 +10,21 @@
 
 package net.pretronic.dkcoins.common.currency;
 
+import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.api.currency.CurrencyManager;
-import net.pretronic.dkcoins.api.events.currency.DKCoinsCurrencyEditEvent;
+import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.dkcoins.common.SyncAction;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.synchronisation.NetworkSynchronisationCallback;
 import net.pretronic.libraries.synchronisation.SynchronisationCaller;
 import net.pretronic.libraries.synchronisation.SynchronisationHandler;
 import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
 
 import java.util.ArrayList;
@@ -42,12 +44,10 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     @Override
     public Collection<Currency> getCurrencies() {
         if(connected){
-            if(this.currencies.isEmpty()){
-                this.currencies.addAll(DKCoins.getInstance().getStorage().getCurrencies());
-            }
+            if(this.currencies.isEmpty()) this.currencies.addAll(loadCurrencies());
             return this.currencies;
         }
-        return DKCoins.getInstance().getStorage().getCurrencies();
+        return loadCurrencies();
     }
 
     @Internal
@@ -60,7 +60,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
         if(connected){
             return Iterators.findOne(getCurrencies(), currency -> currency.getId() == id);
         }
-        return DKCoins.getInstance().getStorage().getCurrency(id);
+        return getCurrencyInternal(id);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
         if(connected){
             return Iterators.findOne(getCurrencies(), currency -> currency.getName().equalsIgnoreCase(name));
         }
-        return DKCoins.getInstance().getStorage().getCurrency(name);
+        return getCurrencyInternal(name);
     }
 
     @Override
@@ -83,13 +83,19 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
             else if(identifier instanceof String) return getCurrency((String) identifier);
             throw new IllegalArgumentException("Wrong identifier for currency");
         }
-        return DKCoins.getInstance().getStorage().searchCurrency(identifier);
+        return searchCurrencyInternal(identifier);
     }
 
     @Override
     public Currency createCurrency(String name, String symbol) {
-        Currency currency = DKCoins.getInstance().getStorage().createCurrency(name, symbol);
+        int id = DefaultDKCoins.getInstance().getStorage().getCurrency().insert()
+                .set("Name", name)
+                .set("Symbol", symbol)
+                .executeAndGetGeneratedKeyAsInt("Id");
+
+        Currency currency = new DefaultCurrency(id, name, symbol);
         if(connected && !this.currencies.isEmpty()) this.currencies.add(currency);
+
         for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
             account.addCredit(currency, 0);
         }
@@ -98,30 +104,11 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     }
 
     @Override
-    public void updateCurrencyName(Currency currency, String name) {
-        DKCoins.getInstance().getStorage().updateCurrencyName(currency.getId(), name);
-        String oldName = currency.getName();
-        ((DefaultCurrency)currency).updateName(name);
-        caller.updateAndIgnore(currency.getId(), Document.newDocument()
-                .add("action", SyncAction.CURRENCY_UPDATE_NAME)
-                .add("name", currency.getName()));
-        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsCurrencyEditEvent(currency, DKCoinsCurrencyEditEvent.Operation.CHANGED_NAME, oldName, name));
-    }
-
-    @Override
-    public void updateCurrencySymbol(Currency currency, String symbol) {
-        DKCoins.getInstance().getStorage().updateCurrencySymbol(currency.getId(), symbol);
-        String oldSymbol = currency.getSymbol();
-        ((DefaultCurrency)currency).updateSymbol(symbol);
-        this.caller.updateAndIgnore(currency.getId(), Document.newDocument()
-                .add("action", SyncAction.CURRENCY_UPDATE_SYMBOL)
-                .add("symbol", currency.getSymbol()));
-        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsCurrencyEditEvent(currency, DKCoinsCurrencyEditEvent.Operation.CHANGED_SYMBOL, oldSymbol, symbol));
-    }
-
-    @Override
     public void deleteCurrency(Currency currency) {
-        DKCoins.getInstance().getStorage().deleteCurrency(currency.getId());
+        DefaultDKCoins.getInstance().getStorage().getCurrency().delete()
+                .where("Id", currency.getId())
+                .execute();
+
         this.currencies.remove(currency);
         for (BankAccount account : DKCoins.getInstance().getAccountManager().getCachedAccounts()) {
             account.deleteCredit(currency);
@@ -131,20 +118,26 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
 
     @Override
     public CurrencyExchangeRate getCurrencyExchangeRate(int id) {
-        int currencyId = DKCoins.getInstance().getStorage().getCurrencyExchangeRateCurrencyId(id);
+        int currencyId = getCurrencyExchangeRateCurrencyId(id);
         if(currencyId < 1) return null;
         return getCurrency(currencyId).getExchangeRate(id);
     }
 
     @Override
     public CurrencyExchangeRate getCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency) {
-        return DKCoins.getInstance().getStorage().getCurrencyExchangeRate(selectedCurrency.getId(), targetCurrency.getId());
+        Validate.notNull(selectedCurrency, targetCurrency);
+        return getCurrencyExchangeRateInternal(selectedCurrency, targetCurrency);
     }
 
     @Override
     public CurrencyExchangeRate createCurrencyExchangeRate(Currency selectedCurrency, Currency targetCurrency, double exchangeAmount) {
-        CurrencyExchangeRate exchangeRate = DKCoins.getInstance().getStorage()
-                .createCurrencyExchangeRate(selectedCurrency.getId(), targetCurrency.getId(), exchangeAmount);
+        int id = DefaultDKCoins.getInstance().getStorage().getCurrencyExchangeRate().insert()
+                .set("CurrencyId", selectedCurrency.getId())
+                .set("TargetCurrencyId", targetCurrency.getId())
+                .set("ExchangeAmount", exchangeAmount)
+                .executeAndGetGeneratedKeyAsInt("Id");
+
+        CurrencyExchangeRate exchangeRate = new DefaultCurrencyExchangeRate(id, selectedCurrency, targetCurrency, exchangeAmount);
         caller.updateAndIgnore(selectedCurrency.getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_NEW)
                 .add("exchangeRateId", exchangeRate.getId()));
@@ -152,19 +145,8 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     }
 
     @Override
-    public void updateCurrencyExchangeRateAmount(CurrencyExchangeRate currencyExchangeRate, double exchangeAmount) {
-        DKCoins.getInstance().getStorage().updateCurrencyExchangeAmount(currencyExchangeRate.getCurrency().getId(),
-                currencyExchangeRate.getTargetCurrency().getId(), exchangeAmount);
-        ((DefaultCurrencyExchangeRate)currencyExchangeRate).updateExchangeAmount(exchangeAmount);
-        caller.updateAndIgnore(currencyExchangeRate.getCurrency().getId(), Document.newDocument()
-                .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_UPDATE_AMOUNT)
-                .add("exchangeRateId", currencyExchangeRate.getId())
-                .add("exchangeAmount", currencyExchangeRate.getExchangeAmount()));
-    }
-
-    @Override
     public void deleteCurrencyExchangeRate(CurrencyExchangeRate exchangeRate) {
-        DKCoins.getInstance().getStorage().deleteCurrencyExchangeRate(exchangeRate.getId());
+        DefaultDKCoins.getInstance().getStorage().getCurrencyExchangeRate().delete().where("Id", exchangeRate.getId()).execute();
         caller.updateAndIgnore(exchangeRate.getCurrency().getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_DELETE)
                 .add("exchangeRateId", exchangeRate.getId()));
@@ -185,7 +167,7 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
             for (Currency currency : this.currencies) {
                 if(currency.getId() == id) return;
             }
-            this.currencies.add(DKCoins.getInstance().getStorage().getCurrency(id));
+            this.currencies.add(getCurrencyInternal(id));
         }
     }
 
@@ -218,5 +200,70 @@ public class DefaultCurrencyManager implements CurrencyManager, SynchronisationH
     public void init(SynchronisationCaller<Integer> synchronisationCaller) {
         this.caller = synchronisationCaller;
         this.connected = synchronisationCaller.isConnected();
+    }
+
+    private Collection<Currency> loadCurrencies() {
+        Collection<Currency> currencies = new ArrayList<>();
+        DefaultDKCoins.getInstance().getStorage().getCurrency().find().execute().loadIn(currencies, entry -> new DefaultCurrency(
+                entry.getInt("Id"),
+                entry.getString("Name"),
+                entry.getString("Symbol")));
+        return currencies;
+    }
+
+    private Currency getCurrencyInternal(int id) {
+        return getCurrencyInternal(DefaultDKCoins.getInstance().getStorage().getCurrency().find()
+                .where("Id", id)
+                .execute().firstOrNull());
+    }
+
+    private Currency getCurrencyInternal(String name) {
+        return getCurrencyInternal(DefaultDKCoins.getInstance().getStorage().getCurrency().find()
+                .where("Name", name)
+                .execute().firstOrNull());
+    }
+
+    private Currency searchCurrencyInternal(Object identifier) {
+        QueryResultEntry result = DefaultDKCoins.getInstance().getStorage().getCurrency().find()
+                .or(query -> {
+                    if(identifier instanceof Integer) query.where("Id", identifier);
+                    query.where("Name", identifier).where("Symbol", identifier);
+                }).execute().firstOrNull();
+        return getCurrencyInternal(result);
+    }
+
+    private Currency getCurrencyInternal(QueryResultEntry result) {
+        if(result == null) return null;
+        return new DefaultCurrency(result.getInt("Id"),
+                result.getString("Name"),
+                result.getString("Symbol"));
+    }
+
+    private CurrencyExchangeRate getCurrencyExchangeRateInternal(int id) {
+        QueryResultEntry entry = DefaultDKCoins.getInstance().getStorage().getCurrencyExchangeRate().find()
+                .where("Id", id)
+                .execute().firstOrNull();
+        if(entry == null) return null;
+        return new DefaultCurrencyExchangeRate(id,
+                DKCoins.getInstance().getCurrencyManager().getCurrency("CurrencyId"),
+                DKCoins.getInstance().getCurrencyManager().getCurrency("TargetCurrencyId"),
+                entry.getDouble("ExchangeAmount"));
+    }
+
+    private CurrencyExchangeRate getCurrencyExchangeRateInternal(Currency currency, Currency targetCurrency) {
+        QueryResultEntry entry = DefaultDKCoins.getInstance().getStorage().getCurrencyExchangeRate().find()
+                .where("CurrencyId", currency.getId())
+                .where("TargetCurrencyId", targetCurrency.getId())
+                .execute().firstOrNull();
+        if(entry == null) return null;
+        return new DefaultCurrencyExchangeRate(entry.getInt("Id"), currency, targetCurrency, entry.getDouble("ExchangeAmount"));
+    }
+
+    private int getCurrencyExchangeRateCurrencyId(int id) {
+        QueryResultEntry result = DefaultDKCoins.getInstance().getStorage().getCurrencyExchangeRate().find()
+                .where("Id", id)
+                .execute().firstOrNull();
+        if(result == null) return -1;
+        return result.getInt("CurrencyId");
     }
 }

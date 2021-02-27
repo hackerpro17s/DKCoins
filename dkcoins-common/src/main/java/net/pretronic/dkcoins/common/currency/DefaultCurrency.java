@@ -13,6 +13,8 @@ package net.pretronic.dkcoins.common.currency;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
+import net.pretronic.dkcoins.api.events.currency.DKCoinsCurrencyEditEvent;
+import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.dkcoins.common.SyncAction;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.synchronisation.Synchronizable;
@@ -54,12 +56,40 @@ public class DefaultCurrency implements Currency, Synchronizable {
 
     @Override
     public void setName(String name) {
-        DKCoins.getInstance().getCurrencyManager().updateCurrencyName(this, name);
+        String oldName = getName();
+        DefaultDKCoins instance = DefaultDKCoins.getInstance();
+
+        instance.getStorage().getCurrency().update()
+                .set("Name", name)
+                .where("Id", id)
+                .execute();
+
+        updateName(name);
+
+        instance.getCurrencyManager().getCaller().updateAndIgnore(getId(), Document.newDocument()
+                .add("action", SyncAction.CURRENCY_UPDATE_NAME)
+                .add("name", getName()));
+
+        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsCurrencyEditEvent(this
+                ,DKCoinsCurrencyEditEvent.Operation.CHANGED_NAME, oldName, name));
     }
 
     @Override
     public void setSymbol(String symbol) {
-        DKCoins.getInstance().getCurrencyManager().updateCurrencySymbol(this, symbol);
+        String oldSymbol = getSymbol();
+        DefaultDKCoins instance = DefaultDKCoins.getInstance();
+
+        instance.getStorage().getCurrency().update()
+                .set("Symbol", symbol)
+                .where("Id", id)
+                .execute();
+
+        updateSymbol(symbol);
+
+        instance.getCurrencyManager().getCaller().updateAndIgnore(getId(), Document.newDocument()
+                .add("action", SyncAction.CURRENCY_UPDATE_SYMBOL)
+                .add("symbol", getSymbol()));
+        DKCoins.getInstance().getEventBus().callEvent(new DKCoinsCurrencyEditEvent(this, DKCoinsCurrencyEditEvent.Operation.CHANGED_SYMBOL, oldSymbol, symbol));
     }
 
     @Override
@@ -84,8 +114,9 @@ public class DefaultCurrency implements Currency, Synchronizable {
     @Override
     public CurrencyExchangeRate getExchangeRate(Currency targetCurrency) {
         Validate.notNull(targetCurrency);
-        CurrencyExchangeRate exchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate0 ->
-                exchangeRate0.getTargetCurrency().equals(targetCurrency));
+        CurrencyExchangeRate exchangeRate = Iterators.findOne(this.exchangeRates, exchangeRate0
+                -> exchangeRate0.getTargetCurrency().equals(targetCurrency));
+
         if(exchangeRate == null) {
             exchangeRate = DKCoins.getInstance().getCurrencyManager().getCurrencyExchangeRate(this, targetCurrency);
             if(exchangeRate == null) {
