@@ -33,7 +33,8 @@ public class DefaultMasterBankAccount extends DefaultBankAccount implements Mast
     public BankAccount getSubAccount(int id) {
         BankAccount account = Iterators.findOne(this.subAccounts, account0 -> account0.getId() == id);
         if(account == null) {
-            account = DKCoins.getInstance().getAccountManager().getSubAccount(this, id);
+            account = DKCoins.getInstance().getAccountManager().getAccount(id);
+            if(account.getParent().getId() != getId()) account = null;
         }
         if(account != null) this.subAccounts.add(account);
         return account;

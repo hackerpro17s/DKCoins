@@ -10,6 +10,10 @@
 
 package net.pretronic.dkcoins.common.account;
 
+import net.pretronic.databasequery.api.query.SearchOrder;
+import net.pretronic.databasequery.api.query.function.QueryFunction;
+import net.pretronic.databasequery.api.query.result.QueryResult;
+import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
@@ -22,6 +26,8 @@ import net.pretronic.dkcoins.api.account.transferresult.TransferResultFailCause;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.events.account.DKCoinsAccountTransactEvent;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
+import net.pretronic.dkcoins.common.SyncAction;
+import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
 
@@ -80,7 +86,11 @@ public class DefaultAccountCredit implements AccountCredit {
         Validate.notNull(cause);
         if(properties == null) properties = new ArrayList<>();
         if(reason == null) reason = "none";
-        DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
+
+        setAmountInternal(amount);
+
+
+
         return getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
     }
 
@@ -89,7 +99,11 @@ public class DefaultAccountCredit implements AccountCredit {
         Validate.notNull(cause);
         if(properties == null) properties = new ArrayList<>();
         if(reason == null) reason = "none";
-        DKCoins.getInstance().getAccountManager().addAccountCreditAmount(this, amount);
+
+        addAmountInternal(amount);
+
+
+
         return getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
     }
 
@@ -98,28 +112,44 @@ public class DefaultAccountCredit implements AccountCredit {
         Validate.notNull(cause);
         if(properties == null) properties = new ArrayList<>();
         if(reason == null) reason = "none";
-        DKCoins.getInstance().getAccountManager().removeAccountCreditAmount(this, amount);
+
+        removeAmountInternal(amount);
+
+
+
         return getAccount().addTransaction(this, executor, this, amount, reason, cause, properties);
     }
 
     @Override
-    public void setAmount(double amount) {
-        DKCoins.getInstance().getAccountManager().setAccountCreditAmount(this, amount);
+    public AccountTransaction setAmount(double amount) {
+        setAmountInternal(amount);
+        return getAccount().addTransaction(this, null, this, amount, null, TransferCause.API, new ArrayList<>());
     }
 
     @Override
-    public void addAmount(double amount) {
-        DKCoins.getInstance().getAccountManager().addAccountCreditAmount(this, amount);
+    public AccountTransaction addAmount(double amount) {
+        addAmountInternal(amount);
+        return getAccount().addTransaction(this, null, this, amount, null, TransferCause.API, new ArrayList<>());
     }
 
     @Override
-    public void removeAmount(double amount) {
-        DKCoins.getInstance().getAccountManager().removeAccountCreditAmount(this, amount);
+    public AccountTransaction removeAmount(double amount) {
+        removeAmountInternal(amount);
+        return getAccount().addTransaction(this, null, this, amount, null, TransferCause.API, new ArrayList<>());
     }
 
     @Override
     public int getTopPos() {
-        return DKCoins.getInstance().getStorage().getTopAccountPos(getId());
+        QueryResult result = DefaultDKCoins.getInstance().getStorage().getDatabase()
+                .getRowNumberInnerQueryCollection(DefaultDKCoins.getInstance().getStorage().getAccountCredit(), "Position",
+                        QueryFunction.rowNumberFunction("Amount", SearchOrder.DESC))
+                .find()
+                .get("RowNumber")
+                .where("Id", getId())
+                .execute();
+        QueryResultEntry resultEntry = result.firstOrNull();
+        if(resultEntry == null) return -1;
+        return resultEntry.getInt("RowNumber");
     }
 
     @Override
@@ -164,7 +194,6 @@ public class DefaultAccountCredit implements AccountCredit {
             removeAmount(amount0);
             AccountTransaction transaction = account.addTransaction(this, member, credit, amount0, reason, cause, properties);
             ((DefaultTransferResult)result).setTransaction(transaction);
-            DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountTransactEvent(transaction));
         }
         return result;
     }
@@ -181,6 +210,46 @@ public class DefaultAccountCredit implements AccountCredit {
 
     @Internal
     public void reloadAmount() {
-        this.amount = DefaultDKCoins.getInstance().getStorage().getAccountCreditAmount(this.id);
+        this.amount = DefaultDKCoins.getInstance().getStorage().getAccountCredit().find()
+                .get("Amount")
+                .where("Id", id)
+                .execute().firstOrNull()
+                .getDouble("Amount");
+    }
+
+    @Internal
+    private void setAmountInternal(double amount) {
+        DefaultDKCoins.getInstance().getStorage().getAccountCredit().update()
+                .set("Amount", amount)
+                .where("Id", getId())
+                .execute();
+        updateAmount(amount);
+        DefaultDKCoins.getInstance().getAccountManager().getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
+                .add("creditId", getId()));
+    }
+
+    @Internal
+    private void addAmountInternal(double amount) {
+        DefaultDKCoins.getInstance().getStorage().getAccountCredit().update()
+                .add("Amount", amount)
+                .where("Id", id)
+                .execute();
+        updateAmount(getAmount()+amount);
+        DefaultDKCoins.getInstance().getAccountManager().getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
+                .add("creditId", getId()));
+    }
+
+    @Internal
+    private void removeAmountInternal(double amount) {
+        DefaultDKCoins.getInstance().getStorage().getAccountCredit().update()
+                .subtract("Amount", amount)
+                .where("Id", id)
+                .execute();
+        updateAmount(getAmount()-amount);
+        DefaultDKCoins.getInstance().getAccountManager().getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
+                .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
+                .add("creditId", getId()));
     }
 }

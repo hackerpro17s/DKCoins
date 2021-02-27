@@ -35,8 +35,6 @@ public abstract class DKCoins {
 
     public abstract DKCoinsUserManager getUserManager();
 
-    public abstract DKCoinsStorage getStorage();
-
     public abstract TransactionPropertyBuilder getTransactionPropertyBuilder();
 
     public abstract TransactionFilter newTransactionFilter();

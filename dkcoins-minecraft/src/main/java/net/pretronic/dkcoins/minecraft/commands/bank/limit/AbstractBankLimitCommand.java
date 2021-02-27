@@ -18,7 +18,7 @@
  * under the License.
  */
 
-package net.pretronic.dkcoins.minecraft.commands.bank;
+package net.pretronic.dkcoins.minecraft.commands.bank.limit;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;

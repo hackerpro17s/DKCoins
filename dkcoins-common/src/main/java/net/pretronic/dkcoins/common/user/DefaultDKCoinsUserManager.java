@@ -33,5 +33,4 @@ public abstract class DefaultDKCoinsUserManager implements DKCoinsUserManager {
         return this.coinsUserCache.get("getOrLoad", uniqueId);
     }
 
-
 }
