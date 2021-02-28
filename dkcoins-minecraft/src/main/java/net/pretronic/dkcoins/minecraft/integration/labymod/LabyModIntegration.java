@@ -60,6 +60,7 @@ public class LabyModIntegration {
         sendLabyModMessage(player, "economy", economyObject);
     }
 
+
     public static void sendLabyModMessage(ConnectedMinecraftPlayer player,String key, Document document){
         String json = DocumentFileType.JSON.getWriter().write(document,false);
         byte[] bytes = getBytesToSend( key, json);
