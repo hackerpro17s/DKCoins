@@ -63,7 +63,7 @@ public class LabyModIntegration {
     public static void sendLabyModMessage(ConnectedMinecraftPlayer player,String key, Document document){
         String json = DocumentFileType.JSON.getWriter().write(document,false);
         byte[] bytes = getBytesToSend( key, json);
-        player.sendData("LMC",bytes);
+        player.sendData("lmc",bytes);
     }
 
     private static byte[] getBytesToSend(String messageKey, String messageContents ) {
