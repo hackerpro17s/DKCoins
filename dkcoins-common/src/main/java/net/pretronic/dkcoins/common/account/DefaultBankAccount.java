@@ -158,6 +158,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
         });
     }
 
+
     @Override
     public boolean hasLimitation(AccountMember member, Currency currency, double amount) {
         BankAccount account = member.getAccount();
