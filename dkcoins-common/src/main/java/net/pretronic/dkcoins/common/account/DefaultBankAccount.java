@@ -169,8 +169,9 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
             if(limitation.getComparativeCurrency().equals(currency)) {
                 FindQuery query = storage.getAccountTransaction().find()
                         .getAs(Aggregation.SUM, storage.getAccountTransaction(), "Amount", "TotalAmount")
-                        .where("SourceId", account.getCredit(currency).getId())
-                        .join(storage.getAccountCredit()).on("SourceId", storage.getAccountCredit(), "Id")
+                        .where("SenderAccountId", account.getCredit(currency).getAccount().getId())
+                        .where("CurrencyId", currency.getId())
+                        .join(storage.getAccountCredit()).on("SenderAccountId", storage.getAccountCredit(), "AccountId")
                         .join(storage.getAccountMember()).on(storage.getAccountTransaction(), "SenderId", storage.getAccountMember(), "Id");
                 if(limitation.getMemberRole() != null) {
                     if(limitation.getMemberRole() == memberRole) {
