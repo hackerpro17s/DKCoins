@@ -24,6 +24,7 @@ import net.pretronic.dkcoins.minecraft.listener.InternalListener;
 import net.pretronic.dkcoins.minecraft.listener.MinecraftPlayerListener;
 import net.pretronic.dkcoins.minecraft.migration.EssentialsXMigration;
 import net.pretronic.dkcoins.minecraft.migration.LegacyDKCoinsMigration;
+import net.pretronic.dkcoins.minecraft.migration.TokenManagerMigration;
 import net.pretronic.dkcoins.minecraft.user.MinecraftDKCoinsUser;
 import net.pretronic.dkcoins.minecraft.user.MinecraftDKCoinsUserManager;
 import net.pretronic.libraries.document.Document;
@@ -125,6 +126,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
     private void setupMigration(DKCoins dkCoins) {
         dkCoins.registerMigration(new LegacyDKCoinsMigration());
         dkCoins.registerMigration(new EssentialsXMigration());
+        dkCoins.registerMigration(new TokenManagerMigration());
     }
 
     private void initCurrencyManager(DefaultDKCoins dkCoins) {
