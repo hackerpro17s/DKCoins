@@ -49,6 +49,7 @@ public class TokenManagerMigration implements Migration {
                     int balance = player.toPrimitive().getAsInt();
 
                     if(McNative.getInstance().getPlayerManager().getPlayer(playerId) == null) {
+                        System.out.println(playerId);
                         GameProfile profile = gameProfileLoader.getGameProfile(playerId);
                         if(profile == null) {
                             skipped.incrementAndGet();
