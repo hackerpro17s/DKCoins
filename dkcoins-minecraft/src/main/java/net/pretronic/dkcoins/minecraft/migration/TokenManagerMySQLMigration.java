@@ -108,6 +108,7 @@ public class TokenManagerMySQLMigration implements Migration {
                     .build();
 
             DatabaseDriver driver = DatabaseDriverFactory.create("TokenManager-MySQL-Migration", driverConfig);
+            driver.connect();
 
             Database tokenManagerDatabase = driver.getDatabase(database);
 
@@ -157,7 +158,7 @@ public class TokenManagerMySQLMigration implements Migration {
 
                 }
             }
-
+            driver.disconnect();
 
 
 
