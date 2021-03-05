@@ -20,11 +20,11 @@ import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TokenManagerMigration implements Migration {
+public class TokenManagerYMLMigration implements Migration {
 
     @Override
     public String getName() {
-        return "TokenManager";
+        return "TokenManager-YML";
     }
 
     @Override
