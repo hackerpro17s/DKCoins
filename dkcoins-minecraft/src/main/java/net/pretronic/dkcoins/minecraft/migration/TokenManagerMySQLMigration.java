@@ -44,6 +44,7 @@ public class TokenManagerMySQLMigration implements Migration {
         if(configLocation.exists()) {
             Document config = DocumentFileType.YAML.getReader().read(configLocation);
             Document databaseConfiguration = config.getDocument("data.mysql");
+            System.out.println(DocumentFileType.JSON.getWriter().write(databaseConfiguration, true));
             if(databaseConfiguration == null) {
                 DKCoins.getInstance().getLogger().error("[TokenManager-MySQL-Migration] Database configuration for TokenManager not found.");
                 return new MigrationResultBuilder().setSuccess(false).build();
