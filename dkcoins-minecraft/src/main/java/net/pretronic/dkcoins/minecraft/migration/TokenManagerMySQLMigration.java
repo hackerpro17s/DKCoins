@@ -28,6 +28,7 @@ import org.mcnative.runtime.api.plugin.configuration.Configuration;
 import org.mcnative.runtime.api.plugin.configuration.ConfigurationProvider;
 
 import java.io.File;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -102,6 +103,7 @@ public class TokenManagerMySQLMigration implements Migration {
                     .setConnectionString(url.replace("%hostname%", hostname).replace("%port%", port).replace("%database%", database))
                     .setUsername(username)
                     .setPassword(password)
+                    .setAddress(InetSocketAddress.createUnresolved(hostname, Integer.parseInt(port)))
                     .setDialect(Dialect.MYSQL)
                     .build();
 
