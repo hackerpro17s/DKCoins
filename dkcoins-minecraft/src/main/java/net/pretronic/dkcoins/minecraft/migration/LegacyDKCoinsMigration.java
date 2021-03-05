@@ -47,7 +47,7 @@ public class LegacyDKCoinsMigration implements Migration {
         File location = new File("plugins/DKCoins/legacy-config.yml");
         if(!location.exists()) {
             DKCoins.getInstance().getLogger().error("No dkcoins legacy config was found");
-            return new MigrationResultBuilder().setSuccess(false).setTotalMigrateCount(0).setDkcoinsAccountMigrateCount(0).setMcNativeMigrateCount(0).setSkipped(0).setTime(-1).createMigrationResult();
+            return new MigrationResultBuilder().setSuccess(false).setTotalMigrateCount(0).setDkcoinsAccountMigrateCount(0).setMcNativeMigrateCount(0).setSkipped(0).setTime(-1).build();
         }
         if(DKCoinsLegacy.getInstance() == null) {
             DKCoinsLegacy.setInstance(new DKCoinsLegacy());
@@ -76,6 +76,6 @@ public class LegacyDKCoinsMigration implements Migration {
             totalCount.incrementAndGet();
         }
 
-        return new MigrationResultBuilder().setSuccess(true).setTotalMigrateCount(totalCount.get()).setDkcoinsAccountMigrateCount(dkcoinsCount.get()).setMcNativeMigrateCount(mcNativeCount.get()).setSkipped(0).setTime(System.currentTimeMillis() - start).createMigrationResult();
+        return new MigrationResultBuilder().setSuccess(true).setTotalMigrateCount(totalCount.get()).setDkcoinsAccountMigrateCount(dkcoinsCount.get()).setMcNativeMigrateCount(mcNativeCount.get()).setSkipped(0).setTime(System.currentTimeMillis() - start).build();
     }
 }
