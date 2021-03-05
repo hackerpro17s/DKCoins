@@ -49,7 +49,7 @@ public class TokenManagerMySQLMigration implements Migration {
                 DKCoins.getInstance().getLogger().error("[TokenManager-MySQL-Migration] Database configuration for TokenManager not found.");
                 return new MigrationResultBuilder().setSuccess(false).build();
             }
-            if(!config.getBoolean("enabled")) {
+            if(!databaseConfiguration.getBoolean("enabled")) {
                 DKCoins.getInstance().getLogger().error("[TokenManager-MySQL-Migration] Database not enabled.");
                 return new MigrationResultBuilder().setSuccess(false).build();
             }
