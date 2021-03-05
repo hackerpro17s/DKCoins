@@ -5,6 +5,7 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.migration.Migration;
 import net.pretronic.dkcoins.api.migration.MigrationResult;
+import net.pretronic.dkcoins.api.migration.MigrationResultBuilder;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.entry.DocumentEntry;
@@ -78,7 +79,17 @@ public class TokenManagerMigration implements Migration {
                     skipped.incrementAndGet();
                 }
             }
+            return new MigrationResultBuilder()
+                    .setSuccess(true)
+                    .setTotalMigrateCount(totalCount.get())
+                    .setDkcoinsAccountMigrateCount(dkcoinsCount.get())
+                    .setMcNativeMigrateCount(mcNativeCount.get())
+                    .setSkipped(skipped.get())
+                    .setTime(System.currentTimeMillis() - start)
+                    .build();
         }
-        return null;
+        return new MigrationResultBuilder()
+                .setSuccess(false)
+                .build();
     }
 }
