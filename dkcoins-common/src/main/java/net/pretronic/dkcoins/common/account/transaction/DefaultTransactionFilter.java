@@ -165,9 +165,6 @@ public class DefaultTransactionFilter implements TransactionFilter {
                 transaction.getProperties().add(new DefaultAccountTransactionProperty(entry.getString("Key"), value));
             }
             last = transaction;
-            System.out.println(transaction);
-            System.out.println(transaction.getSource());
-            System.out.println(transaction.getAmount());
         }
         return transactions;
     }
