@@ -483,7 +483,7 @@ public class DefaultAccountManager implements AccountManager {
                     account,
                     null,
                     AccountMemberRole.byIdOrNull(memberRoleId),
-                    DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("CurrencyId")),
+                    DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("ComparativeCurrencyId")),
                     AccountLimitationCalculationType.valueOf(entry.getString("CalculationType")),
                     entry.getDouble("Amount"),
                     AccountLimitationInterval.valueOf(entry.getString("Interval"))));

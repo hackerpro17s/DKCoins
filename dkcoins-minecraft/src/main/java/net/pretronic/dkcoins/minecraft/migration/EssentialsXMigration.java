@@ -25,6 +25,7 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.migration.Migration;
 import net.pretronic.dkcoins.api.migration.MigrationResult;
+import net.pretronic.dkcoins.api.migration.MigrationResultBuilder;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.type.DocumentFileType;
@@ -51,7 +52,7 @@ public class EssentialsXMigration implements Migration {
 
         if(!folderName.exists()) {
             DKCoins.getInstance().getLogger().error("Old Essentials data doesn't exist");
-            return new MigrationResult(false, 0, 0, 0, 0, -1);
+            return new MigrationResultBuilder().setSuccess(false).build();
         }
 
         PlayerDataProvider playerDataProvider = McNative.getInstance().getRegistry().getService(PlayerDataProvider.class);
@@ -95,7 +96,13 @@ public class EssentialsXMigration implements Migration {
                 skipped.incrementAndGet();
             }
         });
-        return new MigrationResult(true, totalCount.get(), dkcoinsCount.get(), mcNativeCount.get(),
-                skipped.get(), System.currentTimeMillis()-start);
+        return new MigrationResultBuilder()
+                .setSuccess(true)
+                .setTotalMigrateCount(totalCount.get())
+                .setDkcoinsAccountMigrateCount(dkcoinsCount.get())
+                .setMcNativeMigrateCount(mcNativeCount.get())
+                .setSkipped(skipped.get())
+                .setTime(System.currentTimeMillis() - start)
+                .build();
     }
 }

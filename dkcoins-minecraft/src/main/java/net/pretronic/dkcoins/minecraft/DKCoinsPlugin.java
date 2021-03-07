@@ -24,6 +24,8 @@ import net.pretronic.dkcoins.minecraft.listener.InternalListener;
 import net.pretronic.dkcoins.minecraft.listener.MinecraftPlayerListener;
 import net.pretronic.dkcoins.minecraft.migration.EssentialsXMigration;
 import net.pretronic.dkcoins.minecraft.migration.LegacyDKCoinsMigration;
+import net.pretronic.dkcoins.minecraft.migration.TokenManagerMySQLMigration;
+import net.pretronic.dkcoins.minecraft.migration.TokenManagerYMLMigration;
 import net.pretronic.dkcoins.minecraft.user.MinecraftDKCoinsUser;
 import net.pretronic.dkcoins.minecraft.user.MinecraftDKCoinsUserManager;
 import net.pretronic.libraries.document.Document;
@@ -36,7 +38,6 @@ import net.pretronic.libraries.synchronisation.UnconnectedSynchronisationCaller;
 import net.pretronic.libraries.utility.io.FileUtil;
 import org.mcnative.runtime.api.McNative;
 import org.mcnative.runtime.api.plugin.MinecraftPlugin;
-import org.mcnative.runtime.api.plugin.configuration.ConfigurationProvider;
 import org.mcnative.runtime.api.serviceprovider.economy.EconomyProvider;
 import org.mcnative.runtime.api.serviceprovider.placeholder.PlaceholderHelper;
 
@@ -125,6 +126,8 @@ public class DKCoinsPlugin extends MinecraftPlugin {
     private void setupMigration(DKCoins dkCoins) {
         dkCoins.registerMigration(new LegacyDKCoinsMigration());
         dkCoins.registerMigration(new EssentialsXMigration());
+        dkCoins.registerMigration(new TokenManagerYMLMigration());
+        dkCoins.registerMigration(new TokenManagerMySQLMigration());
     }
 
     private void initCurrencyManager(DefaultDKCoins dkCoins) {
