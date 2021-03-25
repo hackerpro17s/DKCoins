@@ -8,10 +8,11 @@
  * %license%
  */
 
-package net.pretronic.dkcoins.common.account;
+package net.pretronic.dkcoins.common.account.member;
 
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
+import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
@@ -20,6 +21,8 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.dkcoins.common.DefaultDKCoinsStorage;
 import net.pretronic.dkcoins.common.SyncAction;
+import net.pretronic.dkcoins.common.account.DefaultAccountManager;
+import net.pretronic.dkcoins.common.account.DefaultBankAccount;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.annonations.Internal;
@@ -29,12 +32,12 @@ import java.util.Collection;
 public class DefaultAccountMember implements AccountMember {
 
     private final int id;
-    private final BankAccount account;
+    private final DefaultBankAccount account;
     private final DKCoinsUser user;
     private AccountMemberRole role;
     private boolean receiveNotifications;
 
-    public DefaultAccountMember(int id, BankAccount account, DKCoinsUser user, AccountMemberRole role, boolean receiveNotifications) {
+    public DefaultAccountMember(int id, DefaultBankAccount account, DKCoinsUser user, AccountMemberRole role, boolean receiveNotifications) {
         this.id = id;
         this.account = account;
         this.user = user;
@@ -82,14 +85,13 @@ public class DefaultAccountMember implements AccountMember {
 
     @Override
     public Collection<AccountLimitation> getLimitations() {
-        return Iterators.filter(getAccount().getLimitations(), limitation -> limitation.getMember() != null && limitation.getMember().getId() == getId());
+        return Iterators.filter(getAccount().getLimitations(), limitation -> this.equals(limitation.getMember()));
     }
 
-
     @Override
-    public AccountLimitation getLimitation(Currency comparativeCurrency, double amount, AccountLimitationInterval interval) {
-        return Iterators.findOne(getAccount().getLimitations(), limitation -> {
-            if(limitation.getMember() == null || limitation.getMember().getId() != getId()) return false;
+    public AccountLimitation getLimitation(Currency comparativeCurrency, AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
+        return Iterators.findOne(getLimitations(), limitation -> {
+            if(calculationType != limitation.getCalculationType()) return false;
             if(!comparativeCurrency.equals(limitation.getComparativeCurrency())) return false;
             if(amount != limitation.getAmount()) return false;
             if(interval != limitation.getInterval()) return false;
@@ -99,7 +101,18 @@ public class DefaultAccountMember implements AccountMember {
 
     @Override
     public boolean hasLimitation(Currency currency, double amount) {
-        return getAccount().hasLimitation(this, currency, amount);
+        return this.account.hasLimitationInternal(this, currency, amount);
+    }
+
+    @Override
+    public AccountLimitation addLimitation(Currency comparativeCurrency, AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
+        return this.account.addLimitationInternal(this, null, comparativeCurrency, calculationType, amount, interval);
+    }
+
+    @Override
+    public boolean removeLimitation(AccountLimitation limitation) {
+        if(!this.equals(limitation.getMember())) return false;
+        return getAccount().removeLimitation(limitation);
     }
 
     @Override

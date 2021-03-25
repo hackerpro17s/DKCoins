@@ -44,7 +44,7 @@ public class BankExchangeCommand extends ObjectCommand<BankAccount> {
             commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_HELP);
             return;
         }
-        if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.EXCHANGE)) {
+        if(CommandUtil.hasAccountAccess(commandSender, account, AccessRight.EXCHANGE)) {
             String sourceCurrency0 = args[0];
             String destinationCurrency0 = args[1];
             String amount0 = args[2];
@@ -101,6 +101,8 @@ public class BankExchangeCommand extends ObjectCommand<BankAccount> {
                     }
                 }
             }
+        } else {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS);
         }
     }
 }

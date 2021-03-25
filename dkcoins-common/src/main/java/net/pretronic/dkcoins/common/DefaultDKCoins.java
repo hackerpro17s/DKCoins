@@ -13,12 +13,15 @@ package net.pretronic.dkcoins.common;
 import net.pretronic.databasequery.api.Database;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.DKCoinsFormatter;
+import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.TransactionFilter;
 import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.migration.Migration;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 import net.pretronic.dkcoins.common.account.*;
+import net.pretronic.dkcoins.common.account.member.DefaultAccountMember;
+import net.pretronic.dkcoins.common.account.member.DefaultAccountMemberRole;
 import net.pretronic.dkcoins.common.account.transaction.DefaultAccountTransaction;
 import net.pretronic.dkcoins.common.account.transaction.DefaultTransactionFilter;
 import net.pretronic.dkcoins.common.currency.DefaultCurrency;
@@ -141,12 +144,17 @@ public class DefaultDKCoins extends DKCoins {
         VariableDescriberRegistry.registerDescriber(DefaultCurrencyExchangeRate.class);
         VariableDescriberRegistry.registerDescriber(DefaultBankAccount.class);
         VariableDescriberRegistry.registerDescriber(DefaultAccountMember.class);
-        VariableDescriberRegistry.registerDescriber(AccountMemberRole.class);
+
+        VariableDescriber<DefaultAccountMemberRole> roleVariableDescriber = VariableDescriberRegistry.registerDescriber(DefaultAccountMemberRole.class);
+        roleVariableDescriber.registerFunction("parentRoleName", role -> role.getParentRole() == null ? "none" : role.getParentRole().getName());
+
         VariableDescriberRegistry.registerDescriber(DefaultAccountCredit.class);
         VariableDescriberRegistry.registerDescriber(DefaultAccountLimitation.class);
         VariableDescriberRegistry.registerDescriber(DefaultRankedAccountCredit.class);
 
         VariableDescriber<DefaultAccountTransaction> describer = VariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class);
+
+        VariableDescriberRegistry.registerDescriber(AccessRight.class);
     }
 
     public static DefaultDKCoins getInstance() {

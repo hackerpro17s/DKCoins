@@ -190,17 +190,12 @@ public class DefaultAccountCredit implements AccountCredit {
         TransferResult result = canTransfer(member, credit, amount0);
         if(result.isSuccess()) {
             double amount = getCurrency().exchange(amount0, credit.getCurrency());
-            credit.addAmount(amount);
-            removeAmount(amount0);
+            ((DefaultAccountCredit)credit).addAmountInternal(amount);
+            removeAmountInternal(amount0);
             AccountTransaction transaction = account.addTransaction(this, member, credit, amount0, reason, cause, properties);
             ((DefaultTransferResult)result).setTransaction(transaction);
         }
         return result;
-    }
-
-    @Internal
-    public void updateAmount(double amount) {
-        this.amount = amount;
     }
 
     @Override
@@ -223,7 +218,7 @@ public class DefaultAccountCredit implements AccountCredit {
                 .set("Amount", amount)
                 .where("Id", getId())
                 .execute();
-        updateAmount(amount);
+        this.amount = amount;
         DefaultDKCoins.getInstance().getAccountManager().getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
                 .add("creditId", getId()));
@@ -235,7 +230,7 @@ public class DefaultAccountCredit implements AccountCredit {
                 .add("Amount", amount)
                 .where("Id", id)
                 .execute();
-        updateAmount(getAmount()+amount);
+        this.amount = getAmount()+amount;
         DefaultDKCoins.getInstance().getAccountManager().getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
                 .add("creditId", getId()));
@@ -247,7 +242,7 @@ public class DefaultAccountCredit implements AccountCredit {
                 .subtract("Amount", amount)
                 .where("Id", id)
                 .execute();
-        updateAmount(getAmount()-amount);
+        this.amount = getAmount()-amount;
         DefaultDKCoins.getInstance().getAccountManager().getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
                 .add("creditId", getId()));

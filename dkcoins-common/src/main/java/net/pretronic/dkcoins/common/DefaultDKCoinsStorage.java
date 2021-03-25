@@ -21,6 +21,7 @@ public class DefaultDKCoinsStorage {
     private final Database database;
     private final DatabaseCollection accountType;
     private final DatabaseCollection account;
+    //private final DatabaseCollection accountRoles;
     private final DatabaseCollection accountCredit;
     private final DatabaseCollection accountMember;
     private final DatabaseCollection accountTransaction;
@@ -33,6 +34,7 @@ public class DefaultDKCoinsStorage {
         this.database = database;
         this.accountType = createAccountTypeDatabaseCollection();
         this.account = createAccountDatabaseCollection();
+        //this.accountRoles = createAccountRolesDatabaseCollection();
         this.currency = createCurrencyDatabaseCollection();
         this.currencyExchangeRate = createCurrencyExchangeRateDatabaseCollection();
         this.accountCredit = createAccountCreditDatabaseCollection();
@@ -53,6 +55,10 @@ public class DefaultDKCoinsStorage {
     public DatabaseCollection getAccount() {
         return account;
     }
+
+    /*public DatabaseCollection getAccountRoles() {
+        return accountRoles;
+    }*/
 
     public DatabaseCollection getAccountCredit() {
         return accountCredit;
@@ -178,4 +184,13 @@ public class DefaultDKCoinsStorage {
                 .field("Interval", DataType.STRING, FieldOption.NOT_NULL)
                 .create();
     }
+
+    /*private DatabaseCollection createAccountRolesDatabaseCollection() {
+        return this.database.createCollection("dkcoins_account_role")
+                .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
+                .field("Name", DataType.STRING, FieldOption.NOT_NULL)
+                .field("ParentRoleId", DataType.INTEGER, ForeignKey.of(this.database.getName(), "dkcoins_account_role", "Id", ForeignKey.Option.CASCADE))
+                .field("AccessRights", DataType.LONG_TEXT, FieldOption.NOT_NULL)
+                .create();
+    }*/
 }

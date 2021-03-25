@@ -62,7 +62,7 @@ public class BankTransferCommand extends ObjectCommand<BankAccount> {
             return;
         }
         // /pay <bank> amount currency
-        if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.WITHDRAW)) {
+        if(CommandUtil.hasAccountAccess(commandSender, account, AccessRight.WITHDRAW)) {
             String receiver0 = args[0];
             String amount0 = args[1];
             String currency0 = args.length == 3 ? args[2] : null;
@@ -94,6 +94,8 @@ public class BankTransferCommand extends ObjectCommand<BankAccount> {
             if(CommandUtil.canTransferAndSendMessage(commandSender, amount, false)) {
                 transfer(commandSender, account, receiver, amount, currency, args);
             }
+        } else {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS);
         }
     }
 

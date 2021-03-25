@@ -10,7 +10,9 @@
 
 package net.pretronic.dkcoins.api.account;
 
+import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
