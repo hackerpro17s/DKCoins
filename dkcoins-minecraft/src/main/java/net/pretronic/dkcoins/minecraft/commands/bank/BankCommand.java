@@ -51,6 +51,7 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
         registerCommand(new BankSettingsCommand(owner));
         registerCommand(new BankRoleCommand(owner));
         registerCommand(new BankLimitCommand(owner, Messages.COMMAND_BANK_LIMIT_HELP));
+        registerCommand(infoCommand);
     }
 
     @Override

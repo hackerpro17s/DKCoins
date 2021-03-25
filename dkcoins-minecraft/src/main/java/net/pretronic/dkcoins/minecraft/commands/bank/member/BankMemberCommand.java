@@ -52,6 +52,7 @@ public class BankMemberCommand extends MultipleMainObjectCommand<BankAccount, Ac
         registerCommand(new BankMemberRoleCommand(owner));
         registerCommand(new BankMemberRemoveCommand(owner));
         registerCommand(new BankLimitCommand(owner, Messages.COMMAND_BANK_MEMBER_LIMIT_HELP));
+        registerCommand(infoCommand);
     }
 
     @Override

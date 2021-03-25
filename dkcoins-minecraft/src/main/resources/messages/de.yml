@@ -96,12 +96,12 @@ messages:
 
   dkcoins.command.bank.member.help: '${dkcoins.prefix} &cFalsche Verwendung vom member Befehl&8:
   &7/bank <name> member
-   &8- list
-   &8- <name> add
-   &8- <name> remove
-   &8- <name> role <role>
-   &8- <name> help
-   &8- <name> limit'
+   &8- &7list
+   &8- &7<name> add
+   &8- &7<name> remove
+   &8- &7<name> role <role>
+   &8- &7<name> help
+   &8- &7<name> limit'
 
   dkcoins.command.bank.member.add: '${dkcoins.prefix} &e{member.displayName} &7wurde zu deiner Bank hinzugefügt'
   dkcoins.command.bank.member.role: '${dkcoins.prefix} &7Du hast die Rolle &e{member.role.name} &7für das Mitglied &e{member.displayName} &7gesetzt'
@@ -219,7 +219,8 @@ messages:
    &8- &eUSER_BASED'
 
   dkcoins.command.bank.role.help: '${dkcoins.prefix} &cFalsche Verwendung vom bank role Befehl&8:
-  &7/bank <name> role <name> limit
-   &8- &7[list]
-   &8- &7set <interval> <amount> <calculationType> <currency>
-   &8- &7remove <interval> <amount> <calculationType> <currency>'
+  &7/bank <name> role <name>
+   &8- &7info
+   &8- &7limit [list]
+   &8- &7limit set <interval> <amount> <calculationType> <currency>
+   &8- &7limit remove <interval> <amount> <calculationType> <currency>'

@@ -219,10 +219,11 @@ messages:
    &8- &eUSER_BASED'
 
   dkcoins.command.bank.role.help: '${dkcoins.prefix} &cInvalid usage of bank role command&8:
-  &7/bank <name> role <name> limit
-   &8- &7[list]
-   &8- &7set <interval> <amount> <calculationType> <currency>
-   &8- &7remove <interval> <amount> <calculationType> <currency>'
+  &7/bank <name> role <name>
+   &8- &7info
+   &8- &7limit [list]
+   &8- &7limit set <interval> <amount> <calculationType> <currency>
+   &8- &7limit remove <interval> <amount> <calculationType> <currency>'
 
   dkcoins.command.bank.role.list: '${dkcoins.prefix} &7Roles&8:
   @for("role" in {roles}, ${dkcoins.command.bank.role.list.loop},"\n")'

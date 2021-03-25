@@ -29,6 +29,7 @@ public class BankRoleCommand extends MultipleMainObjectCommand<BankAccount, Acco
         this.infoCommand = new BankRoleInfoCommand(owner);
 
         registerCommand(new BankLimitCommand(owner, Messages.COMMAND_BANK_ROLE_LIMIT_HELP));
+        registerCommand(infoCommand);
     }
 
     @Override
