@@ -1,6 +1,5 @@
 package net.pretronic.dkcoins.minecraft.commands.bank.limit;
 
-import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.limitation.LimitationAble;
 import net.pretronic.dkcoins.minecraft.Messages;

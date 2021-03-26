@@ -23,7 +23,6 @@ package net.pretronic.dkcoins.minecraft.commands.bank.member;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
-import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.account.member.DefaultAccountMemberRole;
 import net.pretronic.dkcoins.minecraft.Messages;

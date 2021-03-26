@@ -10,18 +10,23 @@ import net.pretronic.dkcoins.api.account.member.RoleAble;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.message.Textable;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
 
-public class BankLimitSetCommand extends ObjectCommand<LimitationAble> {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+public class BankLimitSetCommand extends ObjectCommand<LimitationAble> implements Completable {
 
     private final Textable helpMessage;
 
@@ -77,5 +82,23 @@ public class BankLimitSetCommand extends ObjectCommand<LimitationAble> {
         } else {
             commandSender.sendMessage(helpMessage);
         }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender commandSender, String[] args) {
+        if(args.length == 3){
+            Collection<String> result = new ArrayList<>();
+            for (AccountLimitationCalculationType type : AccountLimitationCalculationType.values()) {
+                if(type.name().startsWith(args[0].toUpperCase())){
+                    result.add(type.name());
+                }
+            }
+            return result;
+        }else if(args.length == 4){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName
+                    ,currency -> currency.getName().toLowerCase().startsWith(args[3].toLowerCase()));
+        }
+        return Collections.emptyList();
     }
 }

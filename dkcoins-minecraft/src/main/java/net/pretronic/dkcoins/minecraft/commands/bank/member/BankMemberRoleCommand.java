@@ -27,15 +27,24 @@ import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.common.account.member.DefaultAccountMemberRole;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.DefinedCompletable;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.command.object.ObjectCompletable;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
 
-public class BankMemberRoleCommand extends ObjectCommand<AccountMember> {
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+public class BankMemberRoleCommand extends ObjectCommand<AccountMember> implements DefinedCompletable<AccountMember> {
 
     public BankMemberRoleCommand(ObjectOwner owner) {
         super(owner, CommandConfiguration.name("role"));
@@ -75,5 +84,18 @@ public class BankMemberRoleCommand extends ObjectCommand<AccountMember> {
                         VariableSet.create().addDescribed("targetRole", member.getRole()));
             }
         }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender sender, AccountMember member, String[] args) {
+        if(args.length == 0){
+            return Iterators.map(member.getAccount().getRoles()
+                    ,AccountMemberRole::getName);
+        }else if(args.length == 1){
+            return Iterators.map(member.getAccount().getRoles()
+                    ,AccountMemberRole::getName
+                    ,member1 -> member1.getName().toLowerCase().startsWith(args[0].toLowerCase()));
+        }
+        return Collections.emptyList();
     }
 }

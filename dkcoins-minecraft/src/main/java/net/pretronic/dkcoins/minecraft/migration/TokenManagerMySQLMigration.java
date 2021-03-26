@@ -17,15 +17,12 @@ import net.pretronic.dkcoins.api.migration.MigrationResult;
 import net.pretronic.dkcoins.api.migration.MigrationResultBuilder;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.document.entry.DocumentEntry;
 import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.utility.Convert;
 import org.mcnative.runtime.api.McNative;
 import org.mcnative.runtime.api.player.data.PlayerDataProvider;
 import org.mcnative.runtime.api.player.profile.GameProfile;
 import org.mcnative.runtime.api.player.profile.GameProfileLoader;
-import org.mcnative.runtime.api.plugin.configuration.Configuration;
-import org.mcnative.runtime.api.plugin.configuration.ConfigurationProvider;
 
 import java.io.File;
 import java.net.InetSocketAddress;

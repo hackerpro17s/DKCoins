@@ -19,6 +19,7 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
@@ -27,7 +28,9 @@ import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 
-public class BankExchangeCommand extends ObjectCommand<BankAccount> {
+import java.util.Collection;
+
+public class BankExchangeCommand extends ObjectCommand<BankAccount> implements Completable {
 
     // bank <name> exchange <sourceCurrency> <targetCurrency> <amount>
     public BankExchangeCommand(ObjectOwner owner) {
@@ -104,5 +107,10 @@ public class BankExchangeCommand extends ObjectCommand<BankAccount> {
         } else {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS);
         }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender sender, String[] args) {
+        return null;
     }
 }

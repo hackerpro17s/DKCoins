@@ -13,7 +13,7 @@ package net.pretronic.dkcoins.minecraft.commands.bank;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
-import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.commands.bank.limit.BankLimitCommand;
@@ -25,12 +25,15 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.*;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import net.pretronic.libraries.utility.map.Triple;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
-public class BankCommand extends MainObjectCommand<BankAccount> implements DefinedNotFindable<BankAccount>, ObjectNotFindable {
+public class BankCommand extends MainObjectCommand<BankAccount> implements DefinedNotFindable<BankAccount>, ObjectNotFindable, ObjectCompletable {
 
     private final ObjectCommand<String> createCommand;
     private final BankInfoCommand infoCommand;
@@ -51,7 +54,9 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
         registerCommand(new BankSettingsCommand(owner));
         registerCommand(new BankRoleCommand(owner));
         registerCommand(new BankLimitCommand(owner, Messages.COMMAND_BANK_LIMIT_HELP));
+
         registerCommand(infoCommand);
+        registerCommand(createCommand);
     }
 
     @Override
@@ -62,7 +67,6 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
 
     @Override
     public void commandNotFound(CommandSender commandSender, BankAccount account, String command, String[] args) {
-        System.out.println("command not found " + command + "|" + Arrays.toString(args));
         if(account != null && command == null) {
             infoCommand.execute(commandSender, account, args);
         } else {
@@ -81,7 +85,6 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
 
     @Override
     public void objectNotFound(CommandSender commandSender, String command, String[] args) {
-        System.out.println("object not found " + command + "|" + Arrays.toString(args));
         if(command.equalsIgnoreCase("list") || command.equalsIgnoreCase("l")) {
             this.listCommand.execute(commandSender, args);
         } else if(args.length > 0 && (args[0].equalsIgnoreCase("create") || args[0].equalsIgnoreCase("c"))) {
@@ -98,5 +101,16 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_NO_ACCESS);
         }
         super.execute(commandSender, account, args);
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender sender, String name) {
+        if(sender instanceof MinecraftPlayer){
+            DKCoinsUser user = ((MinecraftPlayer) sender).getAs(DKCoinsUser.class);
+            return Iterators.map(user.getAccounts()
+                    ,BankAccount::getName
+                    , account -> account.getName().toLowerCase().startsWith(name.toLowerCase()));
+        }
+        return Collections.emptyList();
     }
 }

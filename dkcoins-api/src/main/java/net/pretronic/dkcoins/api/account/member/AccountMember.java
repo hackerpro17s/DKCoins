@@ -12,13 +12,8 @@ package net.pretronic.dkcoins.api.account.member;
 
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
-import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
-import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.limitation.LimitationAble;
-import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
-
-import java.util.Collection;
 
 public interface AccountMember extends LimitationAble, RoleAble {
 

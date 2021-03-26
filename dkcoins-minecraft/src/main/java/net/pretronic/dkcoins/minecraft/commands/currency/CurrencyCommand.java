@@ -26,17 +26,16 @@ import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.currency.edit.CurrencyEditCommand;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.command.Command;
-import net.pretronic.libraries.command.command.object.DefinedNotFindable;
-import net.pretronic.libraries.command.command.object.MainObjectCommand;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
-import net.pretronic.libraries.command.command.object.ObjectNotFindable;
+import net.pretronic.libraries.command.command.object.*;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Arrays;
+import java.util.Collection;
 
-public class CurrencyCommand extends MainObjectCommand<Currency> implements DefinedNotFindable<Currency>, ObjectNotFindable {
+public class CurrencyCommand extends MainObjectCommand<Currency> implements DefinedNotFindable<Currency>, ObjectNotFindable, ObjectCompletable {
 
     private final ObjectCommand<String> createCommand;
     private final ObjectCommand<Currency> infoCommand;
@@ -49,9 +48,12 @@ public class CurrencyCommand extends MainObjectCommand<Currency> implements Defi
         this.listCommand = new CurrencyListCommand(owner);
         this.infoCommand = new CurrencyInfoCommand(owner);
 
-        registerCommand(infoCommand);
         registerCommand(new CurrencyDeleteCommand(owner));
         registerCommand(new CurrencyEditCommand(owner));
+
+        registerCommand(infoCommand);
+        registerCommand(createCommand);
+        registerCommand(listCommand);
     }
 
     @Override
@@ -79,5 +81,12 @@ public class CurrencyCommand extends MainObjectCommand<Currency> implements Defi
             commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create()
                     .add("name", command));
         }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender sender, String name) {
+        return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                ,Currency::getName
+                ,currency -> currency.getName().toLowerCase().startsWith(name.toLowerCase()));
     }
 }

@@ -13,8 +13,6 @@ package net.pretronic.dkcoins.api.account.member;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.limitation.LimitationAble;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 public interface AccountMemberRole extends LimitationAble, RoleAble {

@@ -5,14 +5,19 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.currency.CurrencyExchangeRate;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
-public class CurrencyEditExchangeRateCommand extends ObjectCommand<Currency> {
+import java.util.Collection;
+import java.util.Collections;
+
+public class CurrencyEditExchangeRateCommand extends ObjectCommand<Currency> implements Completable {
 
     public CurrencyEditExchangeRateCommand(ObjectOwner owner) {
         super(owner, CommandConfiguration.name("exchangeRate", "exchange"));
@@ -56,5 +61,18 @@ public class CurrencyEditExchangeRateCommand extends ObjectCommand<Currency> {
         CurrencyExchangeRate exchangeRate = currency.setExchangeRate(targetCurrency, amount);
         sender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_DONE_EXCHANGE_RATE, VariableSet.create()
                 .addDescribed("exchangeRate", exchangeRate));
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender commandSender, String[] args) {
+        if(args.length == 0){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName);
+        }else if(args.length == 1){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName
+                    ,currency -> currency.getName().toLowerCase().startsWith(args[0].toLowerCase()));
+        }
+        return Collections.emptyList();
     }
 }

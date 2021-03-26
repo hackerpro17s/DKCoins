@@ -1,6 +1,5 @@
 package net.pretronic.dkcoins.minecraft.commands.bank.role;
 
-import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;

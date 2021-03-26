@@ -28,16 +28,29 @@ import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.commands.bank.limit.BankLimitCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.DefinedNotFindable;
+import net.pretronic.libraries.command.command.object.ObjectCompletable;
 import net.pretronic.libraries.command.command.object.multiple.MultipleMainObjectCommand;
+import net.pretronic.libraries.command.command.object.multiple.MultipleObjectCompletable;
 import net.pretronic.libraries.command.command.object.multiple.MultipleObjectNotFindable;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.libraries.utility.map.Pair;
+import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.network.component.server.ServerStatusResponse;
+import org.mcnative.runtime.api.player.ConnectedMinecraftPlayer;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
-public class BankMemberCommand extends MultipleMainObjectCommand<BankAccount, AccountMember> implements DefinedNotFindable<AccountMember>, MultipleObjectNotFindable<BankAccount> {
+public class BankMemberCommand extends MultipleMainObjectCommand<BankAccount, AccountMember> implements DefinedNotFindable<AccountMember>
+        , MultipleObjectNotFindable<BankAccount>, MultipleObjectCompletable<BankAccount> {
 
     private final BankMemberListCommand listCommand;
     private final BankMemberInfoCommand infoCommand;
@@ -57,7 +70,6 @@ public class BankMemberCommand extends MultipleMainObjectCommand<BankAccount, Ac
 
     @Override
     public void execute(CommandSender commandSender, BankAccount account, String[] args) {
-        System.out.println("Member access check");
         if(account.getType().getName().equalsIgnoreCase("User")) {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_USER_NOT_POSSIBLE);
             return;
@@ -94,5 +106,17 @@ public class BankMemberCommand extends MultipleMainObjectCommand<BankAccount, Ac
         } else {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_EXISTS, VariableSet.create().add("name", command));
         }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender commandSender, BankAccount account, String name) {
+        List<String> result = new ArrayList<>();
+        result.addAll(Iterators.map(McNative.getInstance().getLocal().getConnectedPlayers()
+                , MinecraftPlayer::getName
+                , player -> player.getName().toLowerCase().startsWith(name.toLowerCase())));
+        result.addAll(Iterators.map(account.getMembers()
+                ,AccountMember::getName
+                ,member -> member.getName().toLowerCase().startsWith(name.toLowerCase())));
+        return result;
     }
 }

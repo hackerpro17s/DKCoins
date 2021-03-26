@@ -18,7 +18,6 @@ import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
-import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.events.account.DKCoinsAccountCreateEvent;
 import net.pretronic.dkcoins.api.events.account.DKCoinsAccountDeleteEvent;

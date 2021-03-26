@@ -23,7 +23,6 @@ package net.pretronic.dkcoins.minecraft;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.account.TransferCause;
 import net.pretronic.dkcoins.common.account.member.DefaultAccountMemberRole;
