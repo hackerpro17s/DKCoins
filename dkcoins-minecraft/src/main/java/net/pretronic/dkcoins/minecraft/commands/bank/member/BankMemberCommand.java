@@ -79,6 +79,12 @@ public class BankMemberCommand extends MultipleMainObjectCommand<BankAccount, Ac
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS);
             return;
         }
+
+        if(args.length == 0) {
+            this.listCommand.execute(commandSender, account, args);
+            return;
+        }
+
         super.execute(commandSender, account, args);
     }
 

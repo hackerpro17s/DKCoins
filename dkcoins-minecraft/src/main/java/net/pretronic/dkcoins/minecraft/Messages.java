@@ -79,6 +79,8 @@ public class Messages {
             Text.ofMessageKey("dkcoins.command.bank.transfer.failure.notEnoughAccessRights");
     public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_DISABLED =
             Text.ofMessageKey("dkcoins.command.bank.transfer.failure.disabled");
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_SAME_ACCOUNT =
+            Text.ofMessageKey("dkcoins.command.bank.transfer.failure.sameAccount");
 
 
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_LIST = Text.ofMessageKey("dkcoins.command.bank.member.list");

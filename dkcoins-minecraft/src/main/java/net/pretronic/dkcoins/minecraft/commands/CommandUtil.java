@@ -100,6 +100,10 @@ public final class CommandUtil {
                 commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_DISABLED);
                 break;
             }
+            case SAME_ACCOUNT: {
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_SAME_ACCOUNT);
+                break;
+            }
         }
     }
 

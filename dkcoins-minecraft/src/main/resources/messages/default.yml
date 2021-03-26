@@ -73,6 +73,7 @@ messages:
   dkcoins.command.bank.exchange.failure.limit: '${dkcoins.prefix} &cYou have reached your limit'
   dkcoins.command.bank.exchange.failure.notEnoughAccessRights: '${dkcoins.prefix} &cYou are not allowed to perform this action'
   dkcoins.command.bank.exchange.failure.disabled: '${dkcoins.prefix} &cExchange is disabled for this currency'
+  dkcoins.command.bank.transfer.failure.sameAccount: '${dkcoins.prefix} &cIt is not possible to transfer to the same account.'
 
   dkcoins.command.bank.transfer.help: '${dkcoins.prefix} &cInvalid usage of transfer command&8:
   &8» &7/bank <name> transfer <receiver> <amount> [currency]'
