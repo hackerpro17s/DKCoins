@@ -138,7 +138,6 @@ public class DKCoinsPlugin extends MinecraftPlugin {
     private void registerVariableDescribers() {
         VariableDescriberRegistry.registerDescriber(DefaultCurrency.class);
         VariableDescriberRegistry.registerDescriber(DefaultCurrencyExchangeRate.class);
-        VariableDescriberRegistry.registerDescriber(DefaultAccountMember.class);
         VariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class);
 
         VariableDescriber<DefaultAccountMemberRole> roleVariableDescriber = VariableDescriberRegistry.registerDescriber(DefaultAccountMemberRole.class);
@@ -150,6 +149,9 @@ public class DKCoinsPlugin extends MinecraftPlugin {
 
         VariableDescriber<DefaultBankAccount> describer = VariableDescriberRegistry.registerDescriber(DefaultBankAccount.class);
         ColoredString.makeFunctionColored(describer,"displayName");
+
+        VariableDescriber<DefaultAccountMember> describer2 = VariableDescriberRegistry.registerDescriber(DefaultAccountMember.class);
+        ColoredString.makeFunctionColored(describer2,"displayName");
 
         VariableDescriberRegistry.registerDescriber(AccessRight.class);
     }

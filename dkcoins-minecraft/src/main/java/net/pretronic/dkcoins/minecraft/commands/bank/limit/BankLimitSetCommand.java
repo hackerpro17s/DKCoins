@@ -89,7 +89,7 @@ public class BankLimitSetCommand extends ObjectCommand<LimitationAble> implement
         if(args.length == 3){
             Collection<String> result = new ArrayList<>();
             for (AccountLimitationCalculationType type : AccountLimitationCalculationType.values()) {
-                if(type.name().startsWith(args[0].toUpperCase())){
+                if(type.name().startsWith(args[2].toUpperCase())){
                     result.add(type.name());
                 }
             }

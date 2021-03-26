@@ -25,10 +25,12 @@ import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class BankExchangeCommand extends ObjectCommand<BankAccount> implements Completable {
 
@@ -111,6 +113,19 @@ public class BankExchangeCommand extends ObjectCommand<BankAccount> implements C
 
     @Override
     public Collection<String> complete(CommandSender sender, String[] args) {
-        return null;
+        if(args.length == 0){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName);
+        }else  if(args.length == 1){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName
+                    ,currency -> currency.getName().toLowerCase().startsWith(args[0].toLowerCase()));
+        }else  if(args.length == 2){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName
+                    ,currency -> currency.getName().toLowerCase().startsWith(args[1].toLowerCase())
+                            && !currency.getName().equalsIgnoreCase(args[0]));
+        }
+        return Collections.emptyList();
     }
 }

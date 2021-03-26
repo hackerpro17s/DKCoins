@@ -141,7 +141,7 @@ public class DKCoinsBankAdminCommand extends BasicCommand implements Completable
                     ,MinecraftPlayer::getName
                     ,player -> player.getName().toLowerCase().startsWith(args[0].toLowerCase()));
         }else if(args.length == 2){
-            return Iterators.filter(ACTIONS, server -> server.startsWith(args[0].toLowerCase()));
+            return Iterators.filter(ACTIONS, server -> server.startsWith(args[1].toLowerCase()));
         }else if(args.length == 4){
             return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
                     ,Currency::getName

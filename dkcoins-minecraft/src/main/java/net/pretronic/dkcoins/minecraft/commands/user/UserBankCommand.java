@@ -193,7 +193,7 @@ public class UserBankCommand extends BasicCommand implements Completable {
             if(command.equalsIgnoreCase("pay")){
                 return Iterators.map(McNative.getInstance().getLocal().getConnectedPlayers()
                         ,MinecraftPlayer::getName
-                        ,player -> player.getName().toLowerCase().startsWith(args[0].toLowerCase()));
+                        ,player -> player.getName().toLowerCase().startsWith(args[1].toLowerCase()));
             }
         }
         return Collections.emptyList();
