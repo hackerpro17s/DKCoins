@@ -105,6 +105,7 @@ public class BankCommand extends MainObjectCommand<BankAccount> implements Defin
 
     @Override
     public Collection<String> complete(CommandSender sender, String name) {
+        System.out.println("COMPLETE "+sender);
         if(sender instanceof MinecraftPlayer){
             DKCoinsUser user = ((MinecraftPlayer) sender).getAs(DKCoinsUser.class);
             return Iterators.map(user.getAccounts()

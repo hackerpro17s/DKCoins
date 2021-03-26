@@ -66,8 +66,6 @@ public class DefaultDKCoins extends DKCoins {
         this.transactionPropertyBuilder = transactionPropertyBuilder;
         this.formatter = formatter;
         this.migrations = new ArrayList<>();
-
-        registerVariableDescribers();
     }
 
     @Override
@@ -136,24 +134,6 @@ public class DefaultDKCoins extends DKCoins {
         if(getAccountManager().searchAccountType("User") == null) {
             getAccountManager().createAccountType("User", "");
         }
-    }
-
-    private void registerVariableDescribers() {
-        VariableDescriberRegistry.registerDescriber(DefaultCurrency.class);
-        VariableDescriberRegistry.registerDescriber(DefaultCurrencyExchangeRate.class);
-        VariableDescriberRegistry.registerDescriber(DefaultBankAccount.class);
-        VariableDescriberRegistry.registerDescriber(DefaultAccountMember.class);
-
-        VariableDescriber<DefaultAccountMemberRole> roleVariableDescriber = VariableDescriberRegistry.registerDescriber(DefaultAccountMemberRole.class);
-        roleVariableDescriber.registerFunction("parentRoleName", role -> role.getParentRole() == null ? "none" : role.getParentRole().getName());
-
-        VariableDescriberRegistry.registerDescriber(DefaultAccountCredit.class);
-        VariableDescriberRegistry.registerDescriber(DefaultAccountLimitation.class);
-        VariableDescriberRegistry.registerDescriber(DefaultRankedAccountCredit.class);
-
-        VariableDescriber<DefaultAccountTransaction> describer = VariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class);
-
-        VariableDescriberRegistry.registerDescriber(AccessRight.class);
     }
 
     public static DefaultDKCoins getInstance() {

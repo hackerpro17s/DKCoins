@@ -11,10 +11,19 @@
 package net.pretronic.dkcoins.minecraft;
 
 import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
+import net.pretronic.dkcoins.common.account.DefaultAccountCredit;
+import net.pretronic.dkcoins.common.account.DefaultAccountLimitation;
+import net.pretronic.dkcoins.common.account.DefaultBankAccount;
+import net.pretronic.dkcoins.common.account.DefaultRankedAccountCredit;
+import net.pretronic.dkcoins.common.account.member.DefaultAccountMember;
+import net.pretronic.dkcoins.common.account.member.DefaultAccountMemberRole;
+import net.pretronic.dkcoins.common.account.transaction.DefaultAccountTransaction;
 import net.pretronic.dkcoins.common.currency.DefaultCurrency;
+import net.pretronic.dkcoins.common.currency.DefaultCurrencyExchangeRate;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;
@@ -31,6 +40,7 @@ import net.pretronic.dkcoins.minecraft.user.MinecraftDKCoinsUserManager;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.logging.level.LogLevel;
+import net.pretronic.libraries.message.bml.variable.describer.VariableDescriber;
 import net.pretronic.libraries.message.bml.variable.describer.VariableDescriberRegistry;
 import net.pretronic.libraries.plugin.lifecycle.Lifecycle;
 import net.pretronic.libraries.plugin.lifecycle.LifecycleState;
@@ -40,6 +50,7 @@ import org.mcnative.runtime.api.McNative;
 import org.mcnative.runtime.api.plugin.MinecraftPlugin;
 import org.mcnative.runtime.api.serviceprovider.economy.EconomyProvider;
 import org.mcnative.runtime.api.serviceprovider.placeholder.PlaceholderHelper;
+import org.mcnative.runtime.api.text.format.ColoredString;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,6 +67,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         loadConfig();
         VariableDescriberRegistry.registerDescriber(MinecraftDKCoinsUser.class);
         registerEconomyProvider();
+        registerVariableDescribers();
         PlaceholderHelper.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
 
         TransactionPropertyBuilder builder = member -> new ArrayList<>();
@@ -122,6 +134,26 @@ public class DKCoinsPlugin extends MinecraftPlugin {
             getLogger().info("Economy provider enabled with priority " + DKCoinsConfig.ECONOMY_PROVIDER_PRIORITY);
         }
     }
+
+    private void registerVariableDescribers() {
+        VariableDescriberRegistry.registerDescriber(DefaultCurrency.class);
+        VariableDescriberRegistry.registerDescriber(DefaultCurrencyExchangeRate.class);
+        VariableDescriberRegistry.registerDescriber(DefaultAccountMember.class);
+        VariableDescriberRegistry.registerDescriber(DefaultAccountTransaction.class);
+
+        VariableDescriber<DefaultAccountMemberRole> roleVariableDescriber = VariableDescriberRegistry.registerDescriber(DefaultAccountMemberRole.class);
+        roleVariableDescriber.registerFunction("parentRoleName", role -> role.getParentRole() == null ? "none" : role.getParentRole().getName());
+
+        VariableDescriberRegistry.registerDescriber(DefaultAccountCredit.class);
+        VariableDescriberRegistry.registerDescriber(DefaultAccountLimitation.class);
+        VariableDescriberRegistry.registerDescriber(DefaultRankedAccountCredit.class);
+
+        VariableDescriber<DefaultBankAccount> describer = VariableDescriberRegistry.registerDescriber(DefaultBankAccount.class);
+        ColoredString.makeFunctionColored(describer,"displayName");
+
+        VariableDescriberRegistry.registerDescriber(AccessRight.class);
+    }
+
 
     private void setupMigration(DKCoins dkCoins) {
         dkCoins.registerMigration(new LegacyDKCoinsMigration());

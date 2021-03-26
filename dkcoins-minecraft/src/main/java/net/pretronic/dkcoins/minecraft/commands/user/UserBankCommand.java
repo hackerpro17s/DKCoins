@@ -124,7 +124,7 @@ public class UserBankCommand extends BasicCommand implements Completable {
                 }
             } else {
                 commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create()
-                        .add("currency", getCurrency().getName()));
+                        .addDescribed("currency", getCurrency()));
             }
         } else if(action.equalsIgnoreCase("top")) {
             this.topCommand.execute(commandSender, getCurrency(), args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
