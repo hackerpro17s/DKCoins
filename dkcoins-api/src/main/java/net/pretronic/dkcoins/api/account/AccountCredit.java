@@ -48,13 +48,10 @@ public interface AccountCredit {
 
     AccountTransaction removeAmount(AccountMember executor, double amount, String reason, String cause, Collection<AccountTransactionProperty> properties);
 
-    //Without transaction add
     AccountTransaction setAmount(double amount);
 
-    //Without transaction add
     AccountTransaction addAmount(double amount);
 
-    //Without transaction add
     AccountTransaction removeAmount(double amount);
 
     int getTopPos();

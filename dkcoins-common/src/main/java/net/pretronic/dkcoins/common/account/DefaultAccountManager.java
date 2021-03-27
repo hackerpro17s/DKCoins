@@ -18,7 +18,6 @@ import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
-import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.events.account.DKCoinsAccountCreateEvent;
 import net.pretronic.dkcoins.api.events.account.DKCoinsAccountDeleteEvent;
@@ -26,6 +25,8 @@ import net.pretronic.dkcoins.api.events.account.DKCoinsAccountPreCreateEvent;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.dkcoins.common.DefaultDKCoinsStorage;
+import net.pretronic.dkcoins.common.account.member.DefaultAccountMember;
+import net.pretronic.dkcoins.common.account.member.DefaultAccountMemberRole;
 import net.pretronic.dkcoins.common.user.DefaultDKCoinsUser;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.caching.synchronisation.ArraySynchronizableCache;
@@ -140,7 +141,7 @@ public class DefaultAccountManager implements AccountManager {
         DefaultBankAccount account = new DefaultBankAccount(id, name, type,
                 disabled, parent);
 
-        account.addMember(creator, null, AccountMemberRole.OWNER, true);
+        account.addMember(creator, null, account.getRole(DefaultAccountMemberRole.OWNER), true);
 
         accountCache.insert(account);
         DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountPreCreateEvent(account, creator));
@@ -158,7 +159,7 @@ public class DefaultAccountManager implements AccountManager {
 
         DefaultMasterBankAccount account = new DefaultMasterBankAccount(id, name, type, disabled, parent);;
 
-        account.addMember(creator, null, AccountMemberRole.OWNER, true);
+        account.addMember(creator, null, account.getRole(DefaultAccountMemberRole.OWNER), true);
 
         accountCache.insert(account);
         this.accountCache.getCaller().createAndIgnore(account.getId(), Document.newDocument());
@@ -327,8 +328,7 @@ public class DefaultAccountManager implements AccountManager {
                 .or(query -> {
                     query.where("Name", identifier).where("Symbol", identifier);
                     if(identifier instanceof Integer) query.where("Id", identifier);
-                })
-                .execute().firstOrNull();
+                }).execute().firstOrNull();
         if(result == null) return null;
         return new DefaultAccountType(result.getInt("Id"), result.getString("Name"), result.getString("Symbol"));
     }
@@ -482,7 +482,7 @@ public class DefaultAccountManager implements AccountManager {
             account.addLoadedLimitation(new DefaultAccountLimitation(entry.getInt("Id"),
                     account,
                     null,
-                    AccountMemberRole.byIdOrNull(memberRoleId),
+                    account.getRole(memberRoleId),
                     DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("ComparativeCurrencyId")),
                     AccountLimitationCalculationType.valueOf(entry.getString("CalculationType")),
                     entry.getDouble("Amount"),
@@ -496,7 +496,7 @@ public class DefaultAccountManager implements AccountManager {
         for (QueryResultEntry entry : storage.getAccountMember().find().where("AccountId", id).execute()) {
             DefaultAccountMember member = new DefaultAccountMember(entry.getInt("Id"), account,
                     DKCoins.getInstance().getUserManager().getUser(entry.getUniqueId("UserId")),
-                    AccountMemberRole.byId(entry.getInt("RoleId")), entry.getBoolean("ReceiveNotifications"));
+                    account.getRole(entry.getInt("RoleId")), entry.getBoolean("ReceiveNotifications"));
             loadAccountMemberLimitations(member);
             account.addLoadedMember(member);
         }

@@ -54,6 +54,7 @@ messages:
   &7/bank <name> exchange <source> <target> <amount>
   &7/bank <name> member
   &7/bank <name> limit
+
   &7/bank <name> statement'
 
   dkcoins.command.bank.list: '${dkcoins.prefix} &7Your accounts&8:
@@ -65,13 +66,14 @@ messages:
   dkcoins.command.bank.credits.loop: ' &8- &e{credit.formattedAmount}&8{credit.currency.symbol}'
 
   dkcoins.command.bank.exchange.help: '${dkcoins.prefix} &cInvalid usage of &eexchange &ccommand&8:
-  &8» /bank <name> exchange <source> <target> <amount>'
+  &8» &7/bank <name> exchange <source> <target> <amount>'
   dkcoins.command.bank.exchange.success: '${dkcoins.prefix} &7Successfully exchanged &e{sourceAmount}{sourceCurrency.symbol} &7to &e{targetAmount}{targetCurrency.symbol}'
   dkcoins.command.bank.exchange.failure.notEnoughAmount: '${dkcoins.prefix} &cThe account has not enough money'
   dkcoins.command.bank.exchange.failure.masterAccountNotEnoughAmount: '${dkcoins.prefix} &cThe master account has not enough money'
   dkcoins.command.bank.exchange.failure.limit: '${dkcoins.prefix} &cYou have reached your limit'
   dkcoins.command.bank.exchange.failure.notEnoughAccessRights: '${dkcoins.prefix} &cYou are not allowed to perform this action'
   dkcoins.command.bank.exchange.failure.disabled: '${dkcoins.prefix} &cExchange is disabled for this currency'
+  dkcoins.command.bank.transfer.failure.sameAccount: '${dkcoins.prefix} &cIt is not possible to transfer to the same account.'
 
   dkcoins.command.bank.transfer.help: '${dkcoins.prefix} &cInvalid usage of transfer command&8:
   &8» &7/bank <name> transfer <receiver> <amount> [currency]'
@@ -95,12 +97,12 @@ messages:
 
   dkcoins.command.bank.member.help: '${dkcoins.prefix} &cInvalid usage of member command&8:
   &7/bank <name> member
-   &8- list
-   &8- <name> add
-   &8- <name> remove
-   &8- <name> role <role>
-   &8- <name> help
-   &8- <name> limit'
+   &8- &7list
+   &8- &7<name> add
+   &8- &7<name> remove
+   &8- &7<name> role <role>
+   &8- &7<name> help
+   &8- &7<name> limit'
 
   dkcoins.command.bank.member.add: '${dkcoins.prefix} &e{member.displayName} &7was added to this bank'
   dkcoins.command.bank.member.role: '${dkcoins.prefix} &7You have set &e{member.role.name} &7for member &e{member.displayName}'
@@ -169,7 +171,7 @@ messages:
   &7/currency <name> edit exchangeRate <targetCurrency> disable'
   dkcoins.command.currency.edit.done.name: '${dkcoins.prefix} &7You have changed the name of &e{oldName} &7to &e{currency.name}'
   dkcoins.command.currency.edit.done.symbol: '${dkcoins.prefix} &7You have changed the symbol from &e{oldSymbol} &7to &e{currency.symbol}'
-  dkcoins.command.currency.edit.done.exchangeRate: '${dkcoins.prefix} &7You have set the exchange rate to the currency &e{exchangeRate.targetCurrency} &7to &e{exchangeRate.formattedExchangeAmount}'
+  dkcoins.command.currency.edit.done.exchangeRate: '${dkcoins.prefix} &7You have set the exchange rate to the currency &e{exchangeRate.targetCurrency.name} &7to &e{exchangeRate.formattedExchangeAmount}'
   dkcoins.command.currency.edit.disable.exchangeRate: '${dkcoins.prefix} &cYou have disabled the exchange from &e{currency.name} &cto &e{targetCurrency.name}'
   dkcoins.command.currency.edit.exchangeRate.amountNotValid: '${dkcoins.prefix} &e{value} &cas a exchange rate is not valid'
 
@@ -218,7 +220,22 @@ messages:
    &8- &eUSER_BASED'
 
   dkcoins.command.bank.role.help: '${dkcoins.prefix} &cInvalid usage of bank role command&8:
-  &7/bank <name> role <name> limit
-   &8- &7[list]
-   &8- &7set <interval> <amount> <calculationType> <currency>
-   &8- &7remove <interval> <amount> <calculationType> <currency>'
+  &7/bank <name> role <name>
+   &8- &7info
+   &8- &7limit [list]
+   &8- &7limit set <interval> <amount> <calculationType> <currency>
+   &8- &7limit remove <interval> <amount> <calculationType> <currency>'
+
+  dkcoins.command.bank.role.list: '${dkcoins.prefix} &7Roles&8:
+  @for("role" in {roles}, ${dkcoins.command.bank.role.list.loop},"\n")'
+  dkcoins.command.bank.role.list.loop: ' &8- &e{role.name}'
+
+  dkcoins.command.bank.role.info: '${dkcoins.prefix} &7Role&8: &e{role.name}
+  &8» &7Parent role&8: &e{role.parentRoleName}
+  &8» &7Child roles&8: @for("role" in {role.childRoles}, ${dkcoins.command.bank.role.info.childRoles}, ",")
+  &8» &7AccessRights&8:@for("accessRight" in {role.accessRights}, ${dkcoins.command.bank.role.info.accessRight}, ",")'
+  dkcoins.command.bank.role.info.accessRight: " &7{accessRight.name}&8"
+  dkcoins.command.bank.role.info.childRoles: " &7{role.name}&8"
+  dkcoins.command.bank.role.limitation: '${dkcoins.prefix} &7Limitations&8: @for("limitation" in {limitations}, ${dkcoins.command.bank.role.info.limitation.loop},"\n", "\n")'
+  dkcoins.command.bank.role.info.limitation.loop: ' &8- &e{limitation.formattedAmount}{limitation.comparativeCurrency.name} &7in an interval of &e{limitation.interval} &7Type&8: &e{limitation.calculationType}'
+  dkcoins.command.bank.role.info.noLimitation: '&7No limitations'

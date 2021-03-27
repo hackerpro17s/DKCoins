@@ -19,15 +19,20 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 
-public class BankExchangeCommand extends ObjectCommand<BankAccount> {
+import java.util.Collection;
+import java.util.Collections;
+
+public class BankExchangeCommand extends ObjectCommand<BankAccount> implements Completable {
 
     // bank <name> exchange <sourceCurrency> <targetCurrency> <amount>
     public BankExchangeCommand(ObjectOwner owner) {
@@ -44,7 +49,7 @@ public class BankExchangeCommand extends ObjectCommand<BankAccount> {
             commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_HELP);
             return;
         }
-        if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.EXCHANGE)) {
+        if(CommandUtil.hasAccountAccess(commandSender, account, AccessRight.EXCHANGE)) {
             String sourceCurrency0 = args[0];
             String destinationCurrency0 = args[1];
             String amount0 = args[2];
@@ -101,6 +106,26 @@ public class BankExchangeCommand extends ObjectCommand<BankAccount> {
                     }
                 }
             }
+        } else {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS);
         }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender sender, String[] args) {
+        if(args.length == 0){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName);
+        }else  if(args.length == 1){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName
+                    ,currency -> currency.getName().toLowerCase().startsWith(args[0].toLowerCase()));
+        }else  if(args.length == 2){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName
+                    ,currency -> currency.getName().toLowerCase().startsWith(args[1].toLowerCase())
+                            && !currency.getName().equalsIgnoreCase(args[0]));
+        }
+        return Collections.emptyList();
     }
 }

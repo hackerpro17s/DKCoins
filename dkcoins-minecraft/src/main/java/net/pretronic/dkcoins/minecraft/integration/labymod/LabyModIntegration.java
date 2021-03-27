@@ -23,7 +23,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.AccountType;
-import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.utility.exception.OperationFailedException;
@@ -31,8 +30,6 @@ import org.mcnative.runtime.api.player.ConnectedMinecraftPlayer;
 import org.mcnative.runtime.api.protocol.MinecraftProtocolVersion;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.UUID;
 
 public class LabyModIntegration {
 

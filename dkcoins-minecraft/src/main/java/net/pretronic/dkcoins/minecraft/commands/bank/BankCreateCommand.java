@@ -34,23 +34,22 @@ public class BankCreateCommand extends ObjectCommand<String> {
             return;
         }
         OnlineMinecraftPlayer player = (OnlineMinecraftPlayer)commandSender;
-        if(args.length < 1) {
-            commandSender.sendMessage(Messages.COMMAND_BANK_CREATE_HELP);
-            return;
-        }
-        String accountType0 = args[0];
+
+        String accountType0 = args.length == 1 ? args[0] : "Bank";
         AccountType accountType = DKCoins.getInstance().getAccountManager().searchAccountType(accountType0);
         if(accountType == null) {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_TYPE_NOT_EXISTS, VariableSet.create()
                     .add("name", accountType0));
             return;
         }
+
         BankAccount account = DKCoins.getInstance().getAccountManager().getAccount(bankName, accountType0);
         if(account != null) {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_ALREADY_EXISTS, VariableSet.create()
                     .addDescribed("account", account));
             return;
         }
+
         String requiredPermission = "dkcoins.account.type.permission."+accountType0;
         if(!commandSender.hasPermission(requiredPermission)) {
             commandSender.sendMessage(Messages.ERROR_NO_PERMISSION);

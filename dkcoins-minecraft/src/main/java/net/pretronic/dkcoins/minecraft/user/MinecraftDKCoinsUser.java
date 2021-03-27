@@ -28,6 +28,7 @@ import org.mcnative.runtime.api.player.MinecraftPlayer;
 import java.util.UUID;
 
 public class MinecraftDKCoinsUser extends DefaultDKCoinsUser {
+
     public MinecraftDKCoinsUser(UUID uniqueId) {
         super(uniqueId);
     }

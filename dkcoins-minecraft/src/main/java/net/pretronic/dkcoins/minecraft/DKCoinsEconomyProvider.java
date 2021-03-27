@@ -23,9 +23,9 @@ package net.pretronic.dkcoins.minecraft;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.account.TransferCause;
+import net.pretronic.dkcoins.common.account.member.DefaultAccountMemberRole;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.utility.Validate;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
@@ -178,7 +178,8 @@ public class DKCoinsEconomyProvider implements EconomyProvider {
     @Override
     public boolean isBankOwner(String name, MinecraftPlayer owner) {
         Validate.notNull(name, owner);
-        return DKCoins.getInstance().getAccountManager().searchAccount(name).getMember(owner.getAs(DKCoinsUser.class)).getRole() == AccountMemberRole.OWNER;
+        BankAccount account = DKCoins.getInstance().getAccountManager().searchAccount(name);
+        return account.getMember(owner.getAs(DKCoinsUser.class)).getRole().equals(account.getRole(DefaultAccountMemberRole.OWNER));
     }
 
     @Override

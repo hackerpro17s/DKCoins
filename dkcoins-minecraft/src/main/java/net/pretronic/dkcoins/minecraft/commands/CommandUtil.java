@@ -20,7 +20,6 @@ import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.command.sender.ConsoleCommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
 import org.mcnative.runtime.api.McNative;
 import org.mcnative.runtime.api.player.ConnectedMinecraftPlayer;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
@@ -45,57 +44,27 @@ public final class CommandUtil {
         return buildReason(args, start, args.length);
     }
 
-    public static String getPlayerName(DKCoinsUser user) {
-        return McNative.getInstance().getPlayerManager().getPlayer(user.getUniqueId()).getName();
-    }
-
-    public static boolean hasAccess(CommandSender commandSender, BankAccount account, AccessRight accessRight) {
-        if(commandSender instanceof ConsoleCommandSender) return true;
+    public static boolean hasAccountAccess(CommandSender commandSender, BankAccount account, AccessRight accessRight) {
+        if(commandSender instanceof ConsoleCommandSender || commandSender.hasPermission("dkcoins.admin")) return true;
         if(commandSender instanceof MinecraftPlayer) {
             AccountMember member = account.getMember(DKCoins.getInstance().getUserManager()
                     .getUser(((MinecraftPlayer)commandSender).getUniqueId()));
             if(member != null) {
                 return member.canAccess(accessRight);
             } else {
-                commandSender.sendMessage(Messages.ERROR_ACCOUNT_NO_ACCESS);
+                return false;
             }
         }
         return false;
     }
 
-    public static boolean hasAccessAndSendMessage(CommandSender commandSender, BankAccount account, AccessRight accessRight) {
-        if(!hasAccess(commandSender, account, accessRight)) {
-            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS,
-                    VariableSet.create().add("accessRight", accessRight));
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean hasAccountAccess(CommandSender commandSender, BankAccount account) {
-        return (commandSender instanceof ConsoleCommandSender
-                || commandSender.hasPermission("dkcoins.admin")
-                || (commandSender instanceof MinecraftPlayer
-                && account.isMember(DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer)commandSender).getUniqueId()))));
-    }
-
-    public static boolean hasAccountAccessAndSendMessage(CommandSender commandSender, BankAccount account) {
-        if(!hasAccountAccess(commandSender, account)) {
-            commandSender.sendMessage(Messages.ERROR_ACCOUNT_NO_ACCESS);
-            return false;
-        }
-        return true;
-    }
-
-    public static AccountMember parseAccountMember(CommandSender commandSender, String name, BankAccount account) {
+    public static AccountMember parseAccountMember(BankAccount account, String name) {
         DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(name);
         if(user == null) {
-            commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS, VariableSet.create().add("name", name));
             return null;
         }
         AccountMember accountMember = account.getMember(user);
         if(accountMember == null) {
-            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_EXISTS, VariableSet.create().add("name", name));
             return null;
         }
         return accountMember;
@@ -129,6 +98,10 @@ public final class CommandUtil {
             }
             case TRANSFER_DISABLED: {
                 commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_DISABLED);
+                break;
+            }
+            case SAME_ACCOUNT: {
+                commandSender.sendMessage(Messages.COMMAND_BANK_TRANSFER_FAILURE_SAME_ACCOUNT);
                 break;
             }
         }

@@ -31,19 +31,26 @@ import net.pretronic.dkcoins.common.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.command.BasicCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.network.component.server.ServerStatusResponse;
+import org.mcnative.runtime.api.player.ConnectedMinecraftPlayer;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
-public class DKCoinsBankAdminCommand extends BasicCommand {
+public class DKCoinsBankAdminCommand extends BasicCommand implements Completable {
+
+    private final List<String> ACTIONS = Arrays.asList("set","add","remove");
 
     public DKCoinsBankAdminCommand(ObjectOwner owner) {
         super(owner, CommandConfiguration.newBuilder()
@@ -122,5 +129,24 @@ public class DKCoinsBankAdminCommand extends BasicCommand {
             commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_REMOVE, VariableSet.create()
                     .addDescribed("transaction", transaction));
         }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender commandSender, String[] args) {
+        if(args.length == 0){
+            return Iterators.map(McNative.getInstance().getLocal().getConnectedPlayers()
+                    ,MinecraftPlayer::getName);
+        }else if(args.length == 1){
+            return Iterators.map(McNative.getInstance().getLocal().getConnectedPlayers()
+                    ,MinecraftPlayer::getName
+                    ,player -> player.getName().toLowerCase().startsWith(args[0].toLowerCase()));
+        }else if(args.length == 2){
+            return Iterators.filter(ACTIONS, server -> server.startsWith(args[1].toLowerCase()));
+        }else if(args.length == 4){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName
+                    ,currency -> currency.getName().toLowerCase().startsWith(args[3].toLowerCase()));
+        }
+        return Collections.emptyList();
     }
 }
