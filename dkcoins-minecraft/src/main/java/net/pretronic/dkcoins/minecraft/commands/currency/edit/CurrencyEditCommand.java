@@ -18,32 +18,32 @@
  * under the License.
  */
 
-package net.pretronic.dkcoins.minecraft.commands.bank.member;
+package net.pretronic.dkcoins.minecraft.commands.currency.edit;
 
-import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.command.object.DefinedNotFindable;
+import net.pretronic.libraries.command.command.object.MainObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
-public class BankMemberInfoCommand extends ObjectCommand<AccountMember> {
+public class CurrencyEditCommand extends MainObjectCommand<Currency> implements DefinedNotFindable<Currency> {
 
-    public BankMemberInfoCommand(ObjectOwner owner) {
-        super(owner, CommandConfiguration.name("info"));
+    public CurrencyEditCommand(ObjectOwner owner) {
+        super(owner, CommandConfiguration.name("edit"));
+        registerCommand(new CurrencyEditNameCommand(owner));
+        registerCommand(new CurrencyEditSymbolCommand(owner));
+        registerCommand(new CurrencyEditExchangeRateCommand(owner));
     }
 
     @Override
-    public void execute(CommandSender commandSender, AccountMember member, String[] strings) {
-        commandSender.sendMessage(Messages.COMMAND_BANK_MEMBER_INFO,
-                VariableSet.create().addDescribed("member", member));
+    public Currency getObject(CommandSender sender, String name) {
+        throw new UnsupportedOperationException("No objects available (Objects should be forwarded)");
+    }
 
-        if(member.getLimitations().isEmpty()) {
-            commandSender.sendMessage(Messages.COMMAND_BANK_INFO_NO_LIMITATION, VariableSet.create());
-        } else {
-            commandSender.sendMessage(Messages.COMMAND_BANK_INFO_LIMITATION, VariableSet.create()
-                    .addDescribed("limitations", member.getLimitations()));
-        }
+    @Override
+    public void commandNotFound(CommandSender sender, Currency object, String command, String[] args) {
+        sender.sendMessage(Messages.COMMAND_CURRENCY_EDIT_HELP);
     }
 }

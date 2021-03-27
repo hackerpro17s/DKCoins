@@ -34,7 +34,7 @@ public class BankDeleteCommand extends ObjectCommand<BankAccount> {
             commandSender.sendMessage(Messages.ERROR_NOT_FROM_CONSOLE);
             return;
         }
-        if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.DELETE)) {
+        if(CommandUtil.hasAccountAccess(commandSender, account, AccessRight.DELETE)) {
             if(!account.getType().getName().equalsIgnoreCase("User")) {
                 DKCoins.getInstance().getAccountManager().deleteAccount(account, CommandUtil.getUserByCommandSender(commandSender));
                 commandSender.sendMessage(Messages.COMMAND_BANK_DELETE_DONE, VariableSet.create()
@@ -42,6 +42,8 @@ public class BankDeleteCommand extends ObjectCommand<BankAccount> {
             } else {
                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_USER_DELETE_NOT_POSSIBLE);
             }
+        } else {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS);
         }
     }
 }

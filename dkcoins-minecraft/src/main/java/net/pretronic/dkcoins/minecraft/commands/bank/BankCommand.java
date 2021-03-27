@@ -12,9 +12,11 @@ package net.pretronic.dkcoins.minecraft.commands.bank;
 
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
-import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
+import net.pretronic.dkcoins.api.account.access.AccessRight;
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.dkcoins.minecraft.commands.bank.limit.BankLimitCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.member.BankMemberCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.role.BankRoleCommand;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
@@ -23,86 +25,92 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.*;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
-import net.pretronic.libraries.utility.map.Triple;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
-public class BankCommand extends MainObjectCommand<BankAccount> implements DefinedNotFindable<BankAccount>, ObjectNotFindable, ObjectCommandPrecondition<BankAccount> {
+public class BankCommand extends MainObjectCommand<BankAccount> implements DefinedNotFindable<BankAccount>, ObjectNotFindable, ObjectCompletable {
 
     private final ObjectCommand<String> createCommand;
+    private final BankInfoCommand infoCommand;
     private final Command listCommand;
 
     public BankCommand(ObjectOwner owner) {
         super(owner, DKCoinsConfig.COMMAND_BANK);
+
+        this.createCommand = new BankCreateCommand(owner);
+        this.infoCommand = new BankInfoCommand(owner);
+        this.listCommand = new BankListCommand(owner);
+
         registerCommand(new BankTransferCommand(owner, CommandConfiguration.newBuilder().name("transfer").aliases("pay").create(),Messages.COMMAND_BANK_TRANSFER_HELP));
         registerCommand(new BankExchangeCommand(owner));
-        this.createCommand = new BankCreateCommand(owner);
         registerCommand(new BankDeleteCommand(owner));
-        this.listCommand = new BankListCommand(owner);
         registerCommand(new BankMemberCommand(owner));
         registerCommand(new BankStatementCommand(owner));
         registerCommand(new BankSettingsCommand(owner));
         registerCommand(new BankRoleCommand(owner));
-        registerCommand(new LimitCommandMapper(owner));
+        registerCommand(new BankLimitCommand(owner, Messages.COMMAND_BANK_LIMIT_HELP));
+
+        registerCommand(infoCommand);
+        registerCommand(createCommand);
     }
 
     @Override
     public BankAccount getObject(CommandSender commandSender, String name) {
+        if(name.equalsIgnoreCase("list")) return null;
         return DKCoins.getInstance().getAccountManager().searchAccount(name);
     }
 
     @Override
     public void commandNotFound(CommandSender commandSender, BankAccount account, String command, String[] args) {
-        if(account != null) {
-            if(command == null) {
-                if(CommandUtil.hasAccountAccessAndSendMessage(commandSender, account)) {
-                    commandSender.sendMessage(Messages.COMMAND_BANK_CREDITS, VariableSet.create()
-                            .addDescribed("credits", account.getCredits()));
-                }
-            } else {
-                commandSender.sendMessage(Messages.COMMAND_BANK_HELP);
-            }
+        if(account != null && command == null) {
+            infoCommand.execute(commandSender, account, args);
         } else {
-            listCommand.execute(commandSender, args);
+            if(command == null && (args == null || args.length == 0)) {
+                listCommand.execute(commandSender, args);
+            } else {
+                if(account != null && "create".equalsIgnoreCase(command) || "c".equalsIgnoreCase(command)) {
+                    commandSender.sendMessage(Messages.ERROR_ACCOUNT_ALREADY_EXISTS, VariableSet.create()
+                            .addDescribed("account", account));
+                } else {
+                    commandSender.sendMessage(Messages.COMMAND_BANK_HELP);
+                }
+            }
         }
     }
 
     @Override
     public void objectNotFound(CommandSender commandSender, String command, String[] args) {
-        if(command.equalsIgnoreCase("list")) {
+        if(command.equalsIgnoreCase("list") || command.equalsIgnoreCase("l")) {
             this.listCommand.execute(commandSender, args);
-            return;
-        } else if(command.equalsIgnoreCase("help")) {
-            commandSender.sendMessage(Messages.COMMAND_BANK_HELP);
-            return;
-        } else if(args.length > 0) {
-            if(args[0].equalsIgnoreCase("create")) {
-                createCommand.execute(commandSender, command, Arrays.copyOfRange(args, 1, args.length));
-                return;
-            }
+        } else if(args.length > 0 && (args[0].equalsIgnoreCase("create") || args[0].equalsIgnoreCase("c"))) {
+            createCommand.execute(commandSender, command, Arrays.copyOfRange(args, 1, args.length));
+        } else {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create()
+                    .add("name", command));
         }
-        commandSender.sendMessage(Messages.ERROR_ACCOUNT_NOT_EXISTS, VariableSet.create()
-                .add("name", command));
     }
 
     @Override
-    public boolean checkPrecondition(CommandSender commandSender, BankAccount account) {
-        return CommandUtil.hasAccountAccessAndSendMessage(commandSender, account);
+    public void execute(CommandSender commandSender, BankAccount account, String[] args) {
+        if(!CommandUtil.hasAccountAccess(commandSender, account, AccessRight.VIEW)) {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_NO_ACCESS);
+        }
+        super.execute(commandSender, account, args);
     }
 
-    private static class LimitCommandMapper extends ObjectCommand<BankAccount> {
-
-        private final BankLimitCommand limitCommand;
-
-        public LimitCommandMapper(ObjectOwner owner) {
-            super(owner, CommandConfiguration.name("limit"));
-            this.limitCommand = new BankLimitCommand(owner);
+    @Override
+    public Collection<String> complete(CommandSender sender, String name) {
+        if(sender instanceof MinecraftPlayer){
+            DKCoinsUser user = ((MinecraftPlayer) sender).getAs(DKCoinsUser.class);
+            return Iterators.map(user.getAccounts()
+                    ,BankAccount::getName
+                    , account -> account.getName().toLowerCase().startsWith(name.toLowerCase()));
         }
-
-        @Override
-        public void execute(CommandSender commandSender, BankAccount account, String[] args) {
-            this.limitCommand.execute(commandSender, new Triple<>(account, AccountMemberRole.ADMIN, account), args);
-        }
+        return Collections.emptyList();
     }
 }

@@ -32,12 +32,14 @@ import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.config.CreditAlias;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.command.BasicCommand;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.McNative;
@@ -46,9 +48,9 @@ import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 import org.mcnative.runtime.api.service.entity.living.Player;
 import org.mcnative.runtime.api.service.world.World;
 
-import java.util.Arrays;
+import java.util.*;
 
-public class UserBankCommand extends BasicCommand {
+public class UserBankCommand extends BasicCommand implements Completable {
 
     private final CreditAlias creditAlias;
     private final ObjectCommand<Currency> topCommand;
@@ -122,7 +124,7 @@ public class UserBankCommand extends BasicCommand {
                 }
             } else {
                 commandSender.sendMessage(Messages.COMMAND_USER_BANK_HELP, VariableSet.create()
-                        .add("currency", getCurrency().getName()));
+                        .addDescribed("currency", getCurrency()));
             }
         } else if(action.equalsIgnoreCase("top")) {
             this.topCommand.execute(commandSender, getCurrency(), args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
@@ -167,5 +169,33 @@ public class UserBankCommand extends BasicCommand {
         } else {
             CommandUtil.handleTransferFailCauses(result, commandSender);
         }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender commandSender, String[] args) {
+        if(args.length == 0){
+            List<String> result = new ArrayList<>();
+            result.add("top");
+            result.add("pay");
+            result.addAll(Iterators.map(McNative.getInstance().getLocal().getConnectedPlayers()
+                    ,MinecraftPlayer::getName));
+            return result;
+        }else if(args.length == 1){
+            List<String> result = new ArrayList<>();
+            if("top".startsWith(args[0].toLowerCase())) result.add("top");
+            if("pay".startsWith(args[0].toLowerCase())) result.add("pay");
+            result.addAll(Iterators.map(McNative.getInstance().getLocal().getConnectedPlayers()
+                    ,MinecraftPlayer::getName
+                    ,player -> player.getName().toLowerCase().startsWith(args[0].toLowerCase())));
+            return result;
+        }else if(args.length == 2){
+            String command = args[0];
+            if(command.equalsIgnoreCase("pay")){
+                return Iterators.map(McNative.getInstance().getLocal().getConnectedPlayers()
+                        ,MinecraftPlayer::getName
+                        ,player -> player.getName().toLowerCase().startsWith(args[1].toLowerCase()));
+            }
+        }
+        return Collections.emptyList();
     }
 }

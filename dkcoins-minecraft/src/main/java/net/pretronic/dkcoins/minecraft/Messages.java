@@ -79,6 +79,8 @@ public class Messages {
             Text.ofMessageKey("dkcoins.command.bank.transfer.failure.notEnoughAccessRights");
     public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_DISABLED =
             Text.ofMessageKey("dkcoins.command.bank.transfer.failure.disabled");
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_SAME_ACCOUNT =
+            Text.ofMessageKey("dkcoins.command.bank.transfer.failure.sameAccount");
 
 
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_LIST = Text.ofMessageKey("dkcoins.command.bank.member.list");
@@ -111,8 +113,6 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_BANK_BANK_STATEMENT_FILTER_OPTION_NOT_FOUND = Text.ofMessageKey("dkcoins.command.bank.bankStatement.filterOption.notFound");
 
     public static final MessageKeyComponent COMMAND_BANK_BANK_STATEMENT = Text.ofMessageKey("dkcoins.command.bank.bankStatement");
-
-    public static final MessageKeyComponent COMMAND_TRANSFER_HELP = Text.ofMessageKey("dkcoins.command.transfer.help");
 
     public static final MessageKeyComponent COMMAND_CURRENCY_HELP = Text.ofMessageKey("dkcoins.command.currency.help");
 
@@ -147,4 +147,10 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_BANK_SETTINGS_NOT_VALID = Text.ofMessageKey("dkcoins.bank.settings.notValid");
 
     public static final MessageKeyComponent COMMAND_DKCOINS_HELP = Text.ofMessageKey("dkcoins.command.dkcoins.help");
+
+    public static final MessageKeyComponent COMMAND_BANK_ROLE_LIST = Text.ofMessageKey("dkcoins.command.bank.role.list");
+
+    public static final MessageKeyComponent COMMAND_BANK_ROLE_INFO = Text.ofMessageKey("dkcoins.command.bank.role.info");
+    public static final MessageKeyComponent COMMAND_BANK_ROLE_INFO_NO_LIMITATION = Text.ofMessageKey("dkcoins.command.bank.role.info.noLimitation");
+    public static final MessageKeyComponent COMMAND_BANK_ROLE_INFO_LIMITATION = Text.ofMessageKey("dkcoins.command.bank.role.limitation");
 }

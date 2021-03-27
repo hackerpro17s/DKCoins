@@ -11,8 +11,7 @@
 package net.pretronic.dkcoins.api.account;
 
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
-import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
-import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
+import net.pretronic.dkcoins.api.account.limitation.LimitationAble;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
@@ -24,7 +23,7 @@ import net.pretronic.libraries.utility.annonations.Nullable;
 
 import java.util.Collection;
 
-public interface BankAccount {
+public interface BankAccount extends LimitationAble {
 
     int getId();
 
@@ -64,6 +63,7 @@ public interface BankAccount {
     void deleteCredit(Currency currency);
 
 
+    /*
     Collection<AccountLimitation> getLimitations();
 
     AccountLimitation getLimitation(int id);
@@ -82,7 +82,9 @@ public interface BankAccount {
                                      AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
         return removeLimitation(getLimitation(member, role, comparativeCurrency, calculationType, amount, interval));
     }
+     */
 
+    AccountLimitation getLimitation(int id);
 
     boolean isMember(DKCoinsUser user);
 
@@ -95,6 +97,13 @@ public interface BankAccount {
     AccountMember addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role, boolean receiveNotifications);
 
     boolean removeMember(AccountMember member, AccountMember remover);
+
+
+    Collection<AccountMemberRole> getRoles();
+
+    AccountMemberRole getRole(int id);
+
+    AccountMemberRole getRole(String name);
 
 
     AccountTransaction addTransaction(AccountCredit source, AccountMember sender, AccountCredit receiver, double amount, String reason,

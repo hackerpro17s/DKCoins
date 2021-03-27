@@ -61,11 +61,11 @@ public class DefaultCurrencyExchangeRate implements CurrencyExchangeRate {
         DefaultDKCoins instance = DefaultDKCoins.getInstance();
 
         instance.getStorage().getCurrencyExchangeRate().update()
-                .set("ExchangeAmount", exchangeAmount)
+                .set("ExchangeAmount", amount)
                 .where("CurrencyId", currency.getId())
                 .where("TargetCurrencyId", targetCurrency.getId())
                 .execute();
-        updateExchangeAmount(exchangeAmount);
+        updateExchangeAmount(amount);
 
         instance.getCurrencyManager().getCaller().updateAndIgnore(getCurrency().getId(), Document.newDocument()
                 .add("action", SyncAction.CURRENCY_EXCHANGE_RATE_UPDATE_AMOUNT)

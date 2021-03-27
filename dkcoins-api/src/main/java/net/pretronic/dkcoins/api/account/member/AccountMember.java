@@ -12,14 +12,10 @@ package net.pretronic.dkcoins.api.account.member;
 
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
-import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
-import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
-import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.account.limitation.LimitationAble;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
-import java.util.Collection;
-
-public interface AccountMember {
+public interface AccountMember extends LimitationAble, RoleAble {
 
     int getId();
 
@@ -35,19 +31,11 @@ public interface AccountMember {
         return getUser().getDisplayName();
     }
 
-    AccountMemberRole getRole();
-
     void setRole(AccountMemberRole role);
 
     default boolean canAccess(AccessRight right) {
         return getRole().canAccess(right);
     }
-
-    Collection<AccountLimitation> getLimitations();
-
-    AccountLimitation getLimitation(Currency comparativeCurrency, double amount, AccountLimitationInterval interval);
-
-    boolean hasLimitation(Currency currency, double amount);
 
     boolean receiveNotifications();
 

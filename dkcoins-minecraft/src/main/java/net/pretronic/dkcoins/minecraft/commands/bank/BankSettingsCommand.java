@@ -24,15 +24,25 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
+import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.Convert;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.McNative;
 
-public class BankSettingsCommand extends ObjectCommand<BankAccount> {
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+public class BankSettingsCommand extends ObjectCommand<BankAccount> implements Completable {
+
+    private final static List<String> COMMANDS = Collections.singletonList("receivenotifications");
+    private final static List<String> COMMANDS_BOOLEAN = Arrays.asList("true","false");
 
     public BankSettingsCommand(ObjectOwner owner) {
         super(owner, CommandConfiguration.name("settings", "edit"));
@@ -75,5 +85,19 @@ public class BankSettingsCommand extends ObjectCommand<BankAccount> {
                         .add("value", args[1]));
             }
         }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender commandSender, String[] args) {
+        if(args.length == 0) return COMMANDS;
+        else if(args.length == 1){
+            return Iterators.filter(COMMANDS, command -> command.startsWith(args[0].toLowerCase()));
+        }else if(args.length == 2){
+            String command = args[0];
+            if(command.equalsIgnoreCase("receivenotifications")){
+                return Iterators.filter(COMMANDS_BOOLEAN, command0 -> command0.startsWith(args[1].toLowerCase()));
+            }
+        }
+        return Collections.emptyList();
     }
 }

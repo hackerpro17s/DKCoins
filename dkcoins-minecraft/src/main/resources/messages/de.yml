@@ -66,7 +66,7 @@ messages:
   dkcoins.command.bank.credits.loop: ' &8- &e{credit.formattedAmount}&8{credit.currency.symbol}'
 
   dkcoins.command.bank.exchange.help: '${dkcoins.prefix} &cFalsche Verwendung vom &eexchange &cBefehl&8:
-  &8» /bank <name> exchange <source> <target> <amount>'
+  &8» &7/bank <name> exchange <source> <target> <amount>'
   dkcoins.command.bank.exchange.success: '${dkcoins.prefix} &7Erfolgreicher Austausch von &e{sourceAmount}{sourceCurrency.symbol} &7zu &e{targetAmount}{targetCurrency.symbol}'
   dkcoins.command.bank.exchange.failure.notEnoughAmount: '${dkcoins.prefix} &cDieses Konto hat nicht genügend Guthaben'
   dkcoins.command.bank.exchange.failure.masterAccountNotEnoughAmount: '${dkcoins.prefix} &cDein Master Konto hat nicht genügend Guthaben'
@@ -96,12 +96,12 @@ messages:
 
   dkcoins.command.bank.member.help: '${dkcoins.prefix} &cFalsche Verwendung vom member Befehl&8:
   &7/bank <name> member
-   &8- list
-   &8- <name> add
-   &8- <name> remove
-   &8- <name> role <role>
-   &8- <name> help
-   &8- <name> limit'
+   &8- &7list
+   &8- &7<name> add
+   &8- &7<name> remove
+   &8- &7<name> role <role>
+   &8- &7<name> help
+   &8- &7<name> limit'
 
   dkcoins.command.bank.member.add: '${dkcoins.prefix} &e{member.displayName} &7wurde zu deiner Bank hinzugefügt'
   dkcoins.command.bank.member.role: '${dkcoins.prefix} &7Du hast die Rolle &e{member.role.name} &7für das Mitglied &e{member.displayName} &7gesetzt'
@@ -170,7 +170,7 @@ messages:
   &7/currency <name> edit exchangeRate <targetCurrency> disable'
   dkcoins.command.currency.edit.done.name: '${dkcoins.prefix} &7Du hast den Namen zu &e{currency.name} &7geändert'
   dkcoins.command.currency.edit.done.symbol: '${dkcoins.prefix} &7Du hast das Symbol zu &e{currency.symbol} &7geändert'
-  dkcoins.command.currency.edit.done.exchangeRate: '${dkcoins.prefix} &7Du hast den Wechselkurs zu der Währung &e{exchangeRate.targetCurrency} &7zu &e{exchangeRate.formattedExchangeAmount} &7geändert'
+  dkcoins.command.currency.edit.done.exchangeRate: '${dkcoins.prefix} &7Du hast den Wechselkurs zu der Währung &e{exchangeRate.targetCurrency.name} &7zu &e{exchangeRate.formattedExchangeAmount} &7geändert'
   dkcoins.command.currency.edit.disable.exchangeRate: '${dkcoins.prefix} &cDu hast den Wechselkurs von &e{currency.name} &czu &e{targetCurrency.name} &cdeaktiviert'
   dkcoins.command.currency.edit.exchangeRate.amountNotValid: '${dkcoins.prefix} &e{value} &cist keine erlaubte Austauschrate'
 
@@ -219,7 +219,8 @@ messages:
    &8- &eUSER_BASED'
 
   dkcoins.command.bank.role.help: '${dkcoins.prefix} &cFalsche Verwendung vom bank role Befehl&8:
-  &7/bank <name> role <name> limit
-   &8- &7[list]
-   &8- &7set <interval> <amount> <calculationType> <currency>
-   &8- &7remove <interval> <amount> <calculationType> <currency>'
+  &7/bank <name> role <name>
+   &8- &7info
+   &8- &7limit [list]
+   &8- &7limit set <interval> <amount> <calculationType> <currency>
+   &8- &7limit remove <interval> <amount> <calculationType> <currency>'

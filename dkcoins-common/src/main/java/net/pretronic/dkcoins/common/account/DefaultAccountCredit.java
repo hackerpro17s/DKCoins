@@ -14,7 +14,6 @@ import net.pretronic.databasequery.api.query.SearchOrder;
 import net.pretronic.databasequery.api.query.function.QueryFunction;
 import net.pretronic.databasequery.api.query.result.QueryResult;
 import net.pretronic.databasequery.api.query.result.QueryResultEntry;
-import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
@@ -24,7 +23,6 @@ import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.account.transferresult.TransferResultFailCause;
 import net.pretronic.dkcoins.api.currency.Currency;
-import net.pretronic.dkcoins.api.events.account.DKCoinsAccountTransactEvent;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.dkcoins.common.SyncAction;
 import net.pretronic.libraries.document.Document;
@@ -169,6 +167,9 @@ public class DefaultAccountCredit implements AccountCredit {
         if(member.hasLimitation(getCurrency(), amount)) {
             return new DefaultTransferResult(TransferResultFailCause.LIMIT);
         }
+        if(getAccount().equals(target.getAccount())) {
+            return new DefaultTransferResult(TransferResultFailCause.SAME_ACCOUNT);
+        }
         return new DefaultTransferResult(null);
     }
 
@@ -190,17 +191,12 @@ public class DefaultAccountCredit implements AccountCredit {
         TransferResult result = canTransfer(member, credit, amount0);
         if(result.isSuccess()) {
             double amount = getCurrency().exchange(amount0, credit.getCurrency());
-            credit.addAmount(amount);
-            removeAmount(amount0);
+            ((DefaultAccountCredit)credit).addAmountInternal(amount);
+            removeAmountInternal(amount0);
             AccountTransaction transaction = account.addTransaction(this, member, credit, amount0, reason, cause, properties);
             ((DefaultTransferResult)result).setTransaction(transaction);
         }
         return result;
-    }
-
-    @Internal
-    public void updateAmount(double amount) {
-        this.amount = amount;
     }
 
     @Override
@@ -223,7 +219,7 @@ public class DefaultAccountCredit implements AccountCredit {
                 .set("Amount", amount)
                 .where("Id", getId())
                 .execute();
-        updateAmount(amount);
+        this.amount = amount;
         DefaultDKCoins.getInstance().getAccountManager().getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
                 .add("creditId", getId()));
@@ -235,7 +231,7 @@ public class DefaultAccountCredit implements AccountCredit {
                 .add("Amount", amount)
                 .where("Id", id)
                 .execute();
-        updateAmount(getAmount()+amount);
+        this.amount = getAmount()+amount;
         DefaultDKCoins.getInstance().getAccountManager().getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
                 .add("creditId", getId()));
@@ -247,7 +243,7 @@ public class DefaultAccountCredit implements AccountCredit {
                 .subtract("Amount", amount)
                 .where("Id", id)
                 .execute();
-        updateAmount(getAmount()-amount);
+        this.amount = getAmount()-amount;
         DefaultDKCoins.getInstance().getAccountManager().getAccountCache().getCaller().updateAndIgnore(getAccount().getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_AMOUNT_UPDATE)
                 .add("creditId", getId()));

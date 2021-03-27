@@ -21,18 +21,23 @@ import net.pretronic.dkcoins.common.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
+import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.McNative;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
 import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 import org.mcnative.runtime.api.text.components.MessageComponent;
 
-public class BankTransferCommand extends ObjectCommand<BankAccount> {
+import java.util.Collection;
+import java.util.Collections;
+
+public class BankTransferCommand extends ObjectCommand<BankAccount> implements Completable {
 
     private final MessageComponent<?> helpMessage;
 
@@ -62,7 +67,7 @@ public class BankTransferCommand extends ObjectCommand<BankAccount> {
             return;
         }
         // /pay <bank> amount currency
-        if(CommandUtil.hasAccessAndSendMessage(commandSender, account, AccessRight.WITHDRAW)) {
+        if(CommandUtil.hasAccountAccess(commandSender, account, AccessRight.WITHDRAW)) {
             String receiver0 = args[0];
             String amount0 = args[1];
             String currency0 = args.length == 3 ? args[2] : null;
@@ -94,6 +99,8 @@ public class BankTransferCommand extends ObjectCommand<BankAccount> {
             if(CommandUtil.canTransferAndSendMessage(commandSender, amount, false)) {
                 transfer(commandSender, account, receiver, amount, currency, args);
             }
+        } else {
+            commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS);
         }
     }
 
@@ -119,5 +126,22 @@ public class BankTransferCommand extends ObjectCommand<BankAccount> {
         } else {
             CommandUtil.handleTransferFailCauses(result, commandSender);
         }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender commandSender, String[] args) {
+        if(args.length == 0){
+            return Iterators.map(McNative.getInstance().getLocal().getConnectedPlayers()
+                    ,MinecraftPlayer::getName);
+        }else if(args.length == 1){
+            return Iterators.map(McNative.getInstance().getLocal().getConnectedPlayers()
+                    ,MinecraftPlayer::getName
+                    ,player -> player.getName().toLowerCase().startsWith(args[0].toLowerCase()));
+        }else if(args.length == 3){
+            return Iterators.map(DKCoins.getInstance().getCurrencyManager().getCurrencies()
+                    ,Currency::getName
+                    ,currency -> currency.getName().toLowerCase().startsWith(args[2].toLowerCase()));
+        }
+        return Collections.emptyList();
     }
 }

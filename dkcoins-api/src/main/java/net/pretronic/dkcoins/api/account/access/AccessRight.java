@@ -20,5 +20,9 @@ public enum AccessRight {
     MEMBER_MANAGEMENT,
     ADMIN_MANAGEMENT,
     LIMIT_MANAGEMENT,
-    DELETE
+    DELETE;
+
+    public String getName() {
+        return this.name();
+    }
 }

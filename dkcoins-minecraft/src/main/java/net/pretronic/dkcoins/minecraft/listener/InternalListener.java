@@ -38,7 +38,7 @@ public class InternalListener {
     public void onCurrencyEdit(DKCoinsCurrencyEditEvent event) {
         if(event.getOperation() == DKCoinsCurrencyEditEvent.Operation.CHANGED_NAME) {
             if(DKCoinsConfig.CURRENCY_DEFAULT.equals(event.getCurrency())) {
-                Configuration configuration = DKCoinsPlugin.getInstance().getConfiguration();//@Todo maybe cache config in mcnative
+                Configuration configuration = DKCoinsPlugin.getInstance().getConfiguration();
                 configuration.load(DKCoinsConfig.class);
                 configuration.set("currency.default", event.getCurrency().getName());
                 configuration.save();

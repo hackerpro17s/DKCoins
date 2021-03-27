@@ -20,11 +20,14 @@ import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.MasterBankAccount;
+import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitation;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationInterval;
+import net.pretronic.dkcoins.api.account.limitation.LimitationAble;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.AccountMemberRole;
+import net.pretronic.dkcoins.api.account.member.RoleAble;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
@@ -37,6 +40,8 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.dkcoins.common.DefaultDKCoinsStorage;
 import net.pretronic.dkcoins.common.SyncAction;
+import net.pretronic.dkcoins.common.account.member.DefaultAccountMember;
+import net.pretronic.dkcoins.common.account.member.DefaultAccountMemberRole;
 import net.pretronic.dkcoins.common.account.transaction.DefaultAccountTransaction;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.synchronisation.Synchronizable;
@@ -59,6 +64,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
     private final Collection<AccountCredit> credits;
     private final Collection<AccountLimitation> limitations;
     private final Collection<AccountMember> members;
+    private final Collection<AccountMemberRole> roles;
 
     public DefaultBankAccount(int id, String name, AccountType type, boolean disabled, MasterBankAccount parent) {
         Validate.isTrue(id > 0);
@@ -68,9 +74,13 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
         this.type = type;
         this.disabled = disabled;
         this.parent = parent;
+
         this.limitations = new ArrayList<>();
         this.credits = new ArrayList<>();
         this.members = new ArrayList<>();
+
+        this.roles = new ArrayList<>();
+        initDefaultRoles();
     }
 
     @Override
@@ -135,8 +145,28 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
     }
 
     @Override
+    public BankAccount getAccount() {
+        return this;
+    }
+
+    @Override
     public Collection<AccountLimitation> getLimitations() {
         return this.limitations;
+    }
+
+    @Override
+    public AccountLimitation getLimitation(Currency comparativeCurrency, AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
+        return getLimitationInternal(null, null, comparativeCurrency, calculationType, amount, interval);
+    }
+
+    @Override
+    public boolean hasLimitation(Currency currency, double amount) {
+        return hasLimitationInternal(this, currency, amount);
+    }
+
+    @Override
+    public AccountLimitation addLimitation(Currency comparativeCurrency, AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
+        return addLimitationInternal(null, null, comparativeCurrency, calculationType, amount, interval);
     }
 
     @Override
@@ -144,9 +174,9 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
         return Iterators.findOne(this.limitations, limitation -> limitation.getId() == id);
     }
 
-    @Override
-    public AccountLimitation getLimitation(AccountMember member, AccountMemberRole role, Currency comparativeCurrency,
-                                           AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
+    @Internal
+    public AccountLimitation getLimitationInternal(AccountMember member, AccountMemberRole role, Currency comparativeCurrency,
+                                                   AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
         return Iterators.findOne(this.limitations, limitation -> {
             if(!(member == null || member.equals(limitation.getMember()))) return false;
             if(!(role == null || role.equals(limitation.getMemberRole()))) return false;
@@ -158,14 +188,12 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
         });
     }
 
-
-    @Override
-    public boolean hasLimitation(AccountMember member, Currency currency, double amount) {
-        BankAccount account = member.getAccount();
-        AccountMemberRole memberRole = member.getRole();
+    @Internal
+    public boolean hasLimitationInternal(LimitationAble entity, Currency currency, double amount) {
+        BankAccount account = entity.getAccount();
         DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
 
-        for (AccountLimitation limitation : account.getLimitations()) {
+        for (AccountLimitation limitation : entity.getLimitations()) {
 
             if(limitation.getComparativeCurrency().equals(currency)) {
                 FindQuery query = storage.getAccountTransaction().find()
@@ -174,18 +202,23 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
                         .where(storage.getAccountTransaction().getName() + ".CurrencyId", currency.getId())
                         .join(storage.getAccountCredit()).on("SenderAccountId", storage.getAccountCredit(), "AccountId")
                         .join(storage.getAccountMember()).on(storage.getAccountTransaction(), "SenderId", storage.getAccountMember(), "Id");
-                if(limitation.getMemberRole() != null) {
-                    if(limitation.getMemberRole() == memberRole) {
-                        query.where("RoleId", memberRole.getId());
+                if(limitation.getMemberRole() != null && entity instanceof RoleAble) {
+                    RoleAble roleAble = ((RoleAble) entity);
+                    if(limitation.getMemberRole() == roleAble.getRole()) {
+                        query.where("RoleId", roleAble.getRole().getId());
                     } else {
                         continue;
                     }
                 }
-                if(limitation.getMember() != null && limitation.getMember().getId() == member.getId()) {
-                    query.where("SenderId", member.getId());
-                } else if(limitation.getCalculationType() == AccountLimitationCalculationType.USER_BASED) {
-                    query.where("SenderId", member.getId());
+                if(entity instanceof AccountMember) {
+                    AccountMember member = ((AccountMember) entity);
+                    if(limitation.getMember() != null && limitation.getMember().getId() == member.getId()) {
+                        query.where("SenderId", member.getId());
+                    } else if(limitation.getCalculationType() == AccountLimitationCalculationType.USER_BASED) {
+                        query.where("SenderId", member.getId());
+                    }
                 }
+
                 query.whereHigher("Time", getStartLimitationTime(limitation));
                 QueryResult result = query.execute();
                 if(!result.isEmpty()) {
@@ -294,9 +327,9 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
                 .add("creditId", credit.getId()));
     }
 
-    @Override
-    public AccountLimitation addLimitation(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
-                                           AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
+    @Internal
+    public AccountLimitation addLimitationInternal(@Nullable AccountMember member, @Nullable AccountMemberRole role, Currency comparativeCurrency,
+                                                   AccountLimitationCalculationType calculationType, double amount, AccountLimitationInterval interval) {
         Validate.notNull(comparativeCurrency);
         Validate.isTrue(amount > 0);
 
@@ -371,6 +404,21 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
 
         DKCoins.getInstance().getEventBus().callEvent(new DKCoinsAccountMemberRemoveEvent(member.getUser(), remover));
         return ((DefaultBankAccount)member.getAccount()).removeLoadedMember(member);
+    }
+
+    @Override
+    public Collection<AccountMemberRole> getRoles() {
+        return this.roles;
+    }
+
+    @Override
+    public AccountMemberRole getRole(int id) {
+        return Iterators.findOne(this.roles, role -> role.getId() == id);
+    }
+
+    @Override
+    public AccountMemberRole getRole(String name) {
+        return Iterators.findOne(this.roles, role -> role.getName().equalsIgnoreCase(name));
     }
 
     @Override
@@ -458,6 +506,20 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
         this.disabled = disabled;
     }
 
+    private void initDefaultRoles() {
+        DefaultAccountMemberRole owner = new DefaultAccountMemberRole(this, 1, "OWNER", null, AccessRight.ADMIN_MANAGEMENT, AccessRight.DELETE);
+        DefaultAccountMemberRole admin = new DefaultAccountMemberRole(this, 2, "ADMIN", owner, AccessRight.LIMIT_MANAGEMENT, AccessRight.ROLE_MANAGEMENT);
+        DefaultAccountMemberRole manager = new DefaultAccountMemberRole(this, 3, "MANAGER", admin, AccessRight.MEMBER_MANAGEMENT, AccessRight.EXCHANGE);
+        DefaultAccountMemberRole user = new DefaultAccountMemberRole(this, 4, "USER", manager, AccessRight.WITHDRAW, AccessRight.DEPOSIT);
+        DefaultAccountMemberRole guest = new DefaultAccountMemberRole(this, 5, "GUEST", user, AccessRight.VIEW);
+
+        this.roles.add(owner);
+        this.roles.add(admin);
+        this.roles.add(manager);
+        this.roles.add(user);
+        this.roles.add(guest);
+    }
+
     @Override
     public void onUpdate(Document data) {
         switch (data.getString("action")) {
@@ -501,7 +563,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
                 addLoadedLimitation(new DefaultAccountLimitation(entry.getInt("Id"),
                         this,
                         null,
-                        AccountMemberRole.byIdOrNull(memberRoleId),
+                        getRole(memberRoleId),
                         DKCoins.getInstance().getCurrencyManager().getCurrency(entry.getInt("CurrencyId")),
                         AccountLimitationCalculationType.valueOf(entry.getString("CalculationType")),
                         entry.getDouble("Amount"),
@@ -523,7 +585,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
             }
             case SyncAction.ACCOUNT_MEMBER_UPDATE_ROLE: {
                 DefaultAccountMember member = (DefaultAccountMember) getMember(data.getInt("memberId"));
-                member.updateRole(AccountMemberRole.byId(data.getInt("roleId")));
+                member.updateRole(getRole(data.getInt("roleId")));
                 break;
             }
             case SyncAction.ACCOUNT_MEMBER_UPDATE_RECEIVE_NOTIFICATIONS: {
