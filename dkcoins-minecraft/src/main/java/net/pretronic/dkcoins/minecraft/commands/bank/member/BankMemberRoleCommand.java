@@ -63,9 +63,8 @@ public class BankMemberRoleCommand extends ObjectCommand<AccountMember> implemen
                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_NOT_EXISTS, VariableSet.create().add("name", role0));
                 return;
             }
-            if(commandSender instanceof ConsoleCommandSender || (commandSender instanceof MinecraftPlayer
-                    && !member.getAccount().getMember(DKCoins.getInstance().getUserManager()
-                    .getUser(((MinecraftPlayer)commandSender).getUniqueId())).getRole().isHigher(member.getRole()))) {
+
+            if(CommandUtil.hasTargetAccess(commandSender, member.getAccount(), member))  {
                 AccountMember self = CommandUtil.getAccountMemberByCommandSender(commandSender, member.getAccount());
                 if(commandSender instanceof MinecraftPlayer && member.equals(self)) {
                     commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_YOURSELF);
@@ -79,19 +78,16 @@ public class BankMemberRoleCommand extends ObjectCommand<AccountMember> implemen
                         self.setRole(member.getAccount().getRole(DefaultAccountMemberRole.ADMIN));
                     }
                 }
-            } else {
-                commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER,
-                        VariableSet.create().addDescribed("targetRole", member.getRole()));
             }
         }
     }
 
     @Override
     public Collection<String> complete(CommandSender sender, AccountMember member, String[] args) {
-        if(args.length == 0){
+        if(args.length == 1){
             return Iterators.map(member.getAccount().getRoles()
                     ,AccountMemberRole::getName);
-        }else if(args.length == 1){
+        }else if(args.length == 2){
             return Iterators.map(member.getAccount().getRoles()
                     ,AccountMemberRole::getName
                     ,member1 -> member1.getName().toLowerCase().startsWith(args[0].toLowerCase()));
