@@ -41,6 +41,11 @@ public class BankLimitSetCommand extends ObjectCommand<LimitationAble> implement
         if(commandSender instanceof MinecraftPlayer) {
             if(entity instanceof RoleAble) {
                 RoleAble target = (RoleAble) entity;
+                System.out.println("Debug:"+entity.getAccount().getMembers());
+                for (AccountMember member : entity.getAccount().getMembers()) {
+                    System.out.println(member.getName() + ":" + member.getRole());
+                }
+                System.out.println("---");
                 AccountMember sender = entity.getAccount().getMember(((MinecraftPlayer)commandSender).getAs(DKCoinsUser.class));
                 if(!sender.getRole().isHigher(target.getRole())) {
                     commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER,
