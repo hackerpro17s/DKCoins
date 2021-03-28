@@ -81,6 +81,8 @@ public class DefaultAccountMemberRole implements AccountMemberRole {
         return false;
     }
 
+    //Current: OWNER: parent null
+    //Target: GUEST
     @Override
     public boolean isHigher(AccountMemberRole role) {
         Validate.notNull(role);
