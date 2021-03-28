@@ -22,6 +22,7 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.libraries.utility.annonations.Nullable;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public interface BankAccount extends LimitationAble {
 
@@ -93,6 +94,8 @@ public interface BankAccount extends LimitationAble {
     AccountMember getMember(DKCoinsUser user);
 
     AccountMember getMember(int id);
+
+    AccountMember getMember(UUID uniqueId);
 
     AccountMember addMember(DKCoinsUser user, AccountMember adder, AccountMemberRole role, boolean receiveNotifications);
 

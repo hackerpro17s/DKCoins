@@ -53,6 +53,7 @@ import net.pretronic.libraries.utility.annonations.Nullable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.UUID;
 
 public class DefaultBankAccount implements BankAccount, Synchronizable {
 
@@ -272,6 +273,11 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
     @Override
     public AccountMember getMember(int id) {
         return Iterators.findOne(this.members, member -> member.getId() == id);
+    }
+
+    @Override
+    public AccountMember getMember(UUID uniqueId) {
+        return Iterators.findOne(this.members, member -> member.getUser().getUniqueId().equals(uniqueId));
     }
 
     @Override
