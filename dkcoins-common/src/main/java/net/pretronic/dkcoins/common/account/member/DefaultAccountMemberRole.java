@@ -81,15 +81,15 @@ public class DefaultAccountMemberRole implements AccountMemberRole {
         return false;
     }
 
-    //Current: OWNER: parent null
-    //Target: GUEST
+    //Current: MANAGER
+    //Target: OWNER
     @Override
     public boolean isHigher(AccountMemberRole role) {
         Validate.notNull(role);
-        AccountMemberRole parent = getParentRole();
+        AccountMemberRole parent = this;
         while (parent != null) {
             if(parent.equals(role)) return false;
-            parent = getParentRole();
+            parent = parent.getParentRole();
         }
         return true;
     }
