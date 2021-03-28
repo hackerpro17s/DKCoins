@@ -29,6 +29,7 @@ import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -82,29 +83,7 @@ public class BankExchangeCommand extends ObjectCommand<BankAccount> implements C
                         .add("sourceAmount", DKCoinsConfig.formatCurrencyAmount(amount))
                         .add("targetAmount", sourceCurrency.exchange(amount, targetCurrency)));
             } else {
-                switch (result.getFailCause()) {
-                    case LIMIT: {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_LIMIT);
-                        break;
-                    }
-                    case NOT_ENOUGH_AMOUNT: {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_NOT_ENOUGH_AMOUNT);
-                        break;
-                    }
-                    case NOT_ENOUGH_ACCESS_RIGHTS: {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS);
-                        break;
-                    }
-                    case MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT: {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
-                        break;
-                    }
-                    case TRANSFER_DISABLED: {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_DISABLED, VariableSet.create()
-                                .addDescribed("sourceCurrency", sourceCurrency).addDescribed("targetCurrency", targetCurrency));
-                        break;
-                    }
-                }
+                CommandUtil.handleTransferFailCauses(result, commandSender);
             }
         } else {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS);
