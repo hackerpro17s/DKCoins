@@ -59,7 +59,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
             case "balance": {
                 Currency currency = parseCurrency(parameters,1);
                 DKCoinsUser user = player.getAs(DKCoinsUser.class);
-                return user.getDefaultAccount().getCredit(currency).getAmount();
+                return DKCoins.getInstance().getFormatter().formatCurrencyAmount(user.getDefaultAccount().getCredit(currency).getAmount());
             }
             case "player": {
                 DKCoinsUser user;
