@@ -21,6 +21,7 @@
 package net.pretronic.dkcoins.minecraft.commands.dkcoins;
 
 import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.NoPermissionAble;
 import net.pretronic.libraries.command.NotFindable;
 import net.pretronic.libraries.command.command.MainCommand;
@@ -33,7 +34,7 @@ public class DKCoinsCommand extends MainCommand implements NotFindable, NoPermis
     private final DKCoinsInfoCommand infoCommand;
 
     public DKCoinsCommand(ObjectOwner owner) {
-        super(owner, CommandConfiguration.newBuilder().name("dkcoins").permission("dkcoins.admin").create());
+        super(owner, CommandConfiguration.newBuilder().name("dkcoins").permission(DKCoinsConfig.PERMISSIONS_ADMIN).create());
         infoCommand = new DKCoinsInfoCommand(owner);
         registerCommand(new DKCoinsMigrationCommand(owner));
         registerCommand(new DKCoinsBankAdminCommand(owner));

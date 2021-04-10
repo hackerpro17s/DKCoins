@@ -53,6 +53,7 @@ import net.pretronic.libraries.utility.annonations.Nullable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.UUID;
 
 public class DefaultBankAccount implements BankAccount, Synchronizable {
 
@@ -275,10 +276,18 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
     }
 
     @Override
+    public AccountMember getMember(UUID uniqueId) {
+        return Iterators.findOne(this.members, member -> member.getUser().getUniqueId().equals(uniqueId));
+    }
+
+    @Override
     public void setName(String name) {
         DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
         DefaultAccountManager accountManager = DefaultDKCoins.getInstance().getAccountManager();
-        storage.getAccount().update().set("Name", name).where("Id", id).execute();
+        storage.getAccount().update()
+                .set("Name", name)
+                .where("Id", id)
+                .execute();
         updateName(name);
         accountManager.getAccountCache().getCaller().updateAndIgnore(getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_UPDATE_NAME)
@@ -290,7 +299,10 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
         DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
         DefaultAccountManager accountManager = DefaultDKCoins.getInstance().getAccountManager();
 
-        storage.getAccount().update().set("Disabled", disabled).where("Id", id).execute();
+        storage.getAccount().update()
+                .set("Disabled", disabled)
+                .where("Id", id)
+                .execute();
 
         updateDisabled(disabled);
         accountManager.getAccountCache().getCaller().updateAndIgnore(getId(), Document.newDocument()
@@ -303,7 +315,10 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
         DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
         DefaultAccountManager accountManager = DefaultDKCoins.getInstance().getAccountManager();
 
-        int creditId = storage.getAccountCredit().insert().set("AccountId", getId()).set("CurrencyId", currency.getId()).set("Amount", amount)
+        int creditId = storage.getAccountCredit().insert()
+                .set("AccountId", getId())
+                .set("CurrencyId", currency.getId())
+                .set("Amount", amount)
                 .executeAndGetGeneratedKeyAsInt("Id");
         AccountCredit credit = new DefaultAccountCredit(creditId, this, currency, amount);
         addLoadedAccountCredit(credit);
@@ -320,7 +335,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
         DefaultAccountManager accountManager = DefaultDKCoins.getInstance().getAccountManager();
 
         AccountCredit credit = getCredit(currency);
-        storage.getAccountCredit().delete().where("Id", id).execute();
+        storage.getAccountCredit().delete().where("Id", credit.getId()).execute();
         ((DefaultBankAccount)credit.getAccount()).deleteLoadedAccountCredit(credit);
         accountManager.getAccountCache().getCaller().updateAndIgnore(getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_CREDIT_DELETE)
@@ -362,7 +377,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
         DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
         DefaultAccountManager accountManager = DefaultDKCoins.getInstance().getAccountManager();
 
-        storage.getAccountLimitation().delete().where("Id", id).execute();
+        storage.getAccountLimitation().delete().where("Id", limitation.getId()).execute();
         accountManager.getAccountCache().getCaller().updateAndIgnore(getId(),
                 Document.newDocument()
                         .add("action", SyncAction.ACCOUNT_LIMITATION_REMOVE)
@@ -397,7 +412,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
         DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
         DefaultAccountManager accountManager = DefaultDKCoins.getInstance().getAccountManager();
 
-        storage.getAccountMember().delete().where("Id", id).execute();
+        storage.getAccountMember().delete().where("Id", member.getId()).execute();
         accountManager.getAccountCache().getCaller().updateAndIgnore(getId(), Document.newDocument()
                 .add("action", SyncAction.ACCOUNT_MEMBER_REMOVE)
                 .add("memberId", member.getId()));

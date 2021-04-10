@@ -9,6 +9,7 @@ import net.pretronic.dkcoins.api.account.member.RoleAble;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
+import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
@@ -37,15 +38,9 @@ public class BankLimitRemoveCommand extends ObjectCommand<LimitationAble> implem
 
     @Override
     public void execute(CommandSender commandSender, LimitationAble entity, String[] args) {
-        if(commandSender instanceof MinecraftPlayer) {
-            if(entity instanceof RoleAble) {
-                RoleAble target = (RoleAble) entity;
-                AccountMember sender = entity.getAccount().getMember(((MinecraftPlayer)commandSender).getAs(DKCoinsUser.class));
-                if(!sender.getRole().isHigher(target.getRole())) {
-                    commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER,
-                            VariableSet.create().addDescribed("targetRole", target.getRole()));
-                    return;
-                }
+        if(entity instanceof RoleAble) {
+            if(!CommandUtil.hasTargetAccess(commandSender, entity.getAccount(), (RoleAble) entity)) {
+                return;
             }
         }
 
@@ -88,7 +83,15 @@ public class BankLimitRemoveCommand extends ObjectCommand<LimitationAble> implem
 
     @Override
     public Collection<String> complete(CommandSender commandSender, String[] args) {
-        if(args.length == 3){
+        if(args.length == 1) {
+            Collection<String> result = new ArrayList<>();
+            for (AccountLimitationInterval interval : AccountLimitationInterval.values()) {
+                if(interval.name().startsWith(args[0].toUpperCase())){
+                    result.add(interval.name());
+                }
+            }
+            return result;
+        } else if(args.length == 3){
             Collection<String> result = new ArrayList<>();
             for (AccountLimitationCalculationType type : AccountLimitationCalculationType.values()) {
                 if(type.name().startsWith(args[2].toUpperCase())){
