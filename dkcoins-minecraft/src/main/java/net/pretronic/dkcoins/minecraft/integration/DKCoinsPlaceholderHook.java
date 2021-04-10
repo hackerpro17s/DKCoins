@@ -132,6 +132,4 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
         }
         return currency;
     }
-
-
 }
