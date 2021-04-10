@@ -55,7 +55,7 @@ public class DKCoinsBankAdminCommand extends BasicCommand implements Completable
     public DKCoinsBankAdminCommand(ObjectOwner owner) {
         super(owner, CommandConfiguration.newBuilder()
                 .name("admin").aliases("bankAdmin")
-                .permission("dkcoins.admin").create());
+                .create());
     }
 
     @Override

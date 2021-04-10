@@ -27,6 +27,7 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Validate;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
 import org.mcnative.runtime.api.serviceprovider.placeholder.PlaceholderHook;
 
@@ -51,15 +52,16 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
     dkcoins_bank_(bank)_balance_[currency]
      */
 
-
     @Override
     public Object onRequest(MinecraftPlayer player, String parameter) {
         String[] parameters = parameter.toLowerCase().split("_");
         switch (parameters[0].toLowerCase()) {
             case "balance": {
                 Currency currency = parseCurrency(parameters,1);
+                Validate.notNull(currency, "Error: Currency can't be parsed from parameter (" + parameter + ")");
                 DKCoinsUser user = player.getAs(DKCoinsUser.class);
-                return user.getDefaultAccount().getCredit(currency).getAmount();
+                Validate.notNull(user, "Error: Can't parse DKCoinsUser for UUID("+player.getUniqueId().toString()+")");
+                return DKCoins.getInstance().getFormatter().formatCurrencyAmount(user.getDefaultAccount().getCredit(currency).getAmount());
             }
             case "player": {
                 DKCoinsUser user;
@@ -69,7 +71,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                         switch (parameters[2].toLowerCase()) {
                             case "balance": {
                                 Currency currency = parseCurrency(parameters, 3);
-                                return user.getDefaultAccount().getCredit(currency).getAmount();
+                                return DKCoins.getInstance().getFormatter().formatCurrencyAmount(user.getDefaultAccount().getCredit(currency).getAmount());
                             }
                         }
                     }
@@ -89,7 +91,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                             }
                             case "balance": {
                                 BankAccount account = DKCoins.getInstance().getAccountManager().getAccountByRank(currency, rank);
-                                return account.getCredit(currency).getAmount();
+                                return DKCoins.getInstance().getFormatter().formatCurrencyAmount(account.getCredit(currency).getAmount());
                             }
                         }
                     }
@@ -104,7 +106,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                         switch (parameters[2].toLowerCase()) {
                             case "balance": {
                                 Currency currency = parseCurrency(parameters, 3);
-                                return account.getCredit(currency).getAmount();
+                                return DKCoins.getInstance().getFormatter().formatCurrencyAmount(account.getCredit(currency).getAmount());
                             }
                         }
                     }

@@ -133,6 +133,9 @@ public class DKCoinsConfig {
             .enabled(McNative.getInstance().getPlatform().isService())
             .create();
 
+
+    public static String PERMISSIONS_ADMIN = "dkcoins.admin";
+
     public static void init() {
         CURRENCY_DEFAULT = DKCoins.getInstance().getCurrencyManager().searchCurrency(CURRENCY_DEFAULT0);
         CURRENCY_FORMAT = new DecimalFormat(CURRENCY_FORMAT0);

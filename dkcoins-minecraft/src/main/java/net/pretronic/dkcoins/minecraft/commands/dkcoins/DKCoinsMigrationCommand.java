@@ -40,7 +40,6 @@ public class DKCoinsMigrationCommand extends BasicCommand {
 
     public DKCoinsMigrationCommand(ObjectOwner owner) {
         super(owner, CommandConfiguration.newBuilder().name("migrate")
-                .permission("dkcoins.admin")
                 .aliases("migration", "m")
                 .create());
     }

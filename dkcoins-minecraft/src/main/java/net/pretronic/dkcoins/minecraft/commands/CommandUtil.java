@@ -13,13 +13,16 @@ package net.pretronic.dkcoins.minecraft.commands;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
+import net.pretronic.dkcoins.api.account.limitation.LimitationAble;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
+import net.pretronic.dkcoins.api.account.member.RoleAble;
 import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.command.sender.ConsoleCommandSender;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
 import org.mcnative.runtime.api.McNative;
 import org.mcnative.runtime.api.player.ConnectedMinecraftPlayer;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
@@ -45,7 +48,7 @@ public final class CommandUtil {
     }
 
     public static boolean hasAccountAccess(CommandSender commandSender, BankAccount account, AccessRight accessRight) {
-        if(commandSender instanceof ConsoleCommandSender || commandSender.hasPermission("dkcoins.admin")) return true;
+        if(commandSender instanceof ConsoleCommandSender || commandSender.hasPermission(DKCoinsConfig.PERMISSIONS_ADMIN)) return true;
         if(commandSender instanceof MinecraftPlayer) {
             AccountMember member = account.getMember(DKCoins.getInstance().getUserManager()
                     .getUser(((MinecraftPlayer)commandSender).getUniqueId()));
@@ -56,6 +59,19 @@ public final class CommandUtil {
             }
         }
         return false;
+    }
+
+    public static boolean hasTargetAccess(CommandSender commandSender, BankAccount account, RoleAble entity) {
+        if(commandSender instanceof MinecraftPlayer && !commandSender.hasPermission(DKCoinsConfig.PERMISSIONS_ADMIN)) {
+            AccountMember sender = account.getMember(((MinecraftPlayer)commandSender).getAs(DKCoinsUser.class));
+
+            if(!sender.getRole().isHigher(entity.getRole())) {
+                commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER,
+                        VariableSet.create().addDescribed("targetRole", entity.getRole()));
+                return false;
+            }
+        }
+        return true;
     }
 
     public static AccountMember parseAccountMember(BankAccount account, String name) {

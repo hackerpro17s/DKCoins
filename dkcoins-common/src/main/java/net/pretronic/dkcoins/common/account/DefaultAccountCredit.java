@@ -167,7 +167,7 @@ public class DefaultAccountCredit implements AccountCredit {
         if(member.hasLimitation(getCurrency(), amount)) {
             return new DefaultTransferResult(TransferResultFailCause.LIMIT);
         }
-        if(getAccount().equals(target.getAccount())) {
+        if(this.equals(target)) {
             return new DefaultTransferResult(TransferResultFailCause.SAME_ACCOUNT);
         }
         return new DefaultTransferResult(null);
