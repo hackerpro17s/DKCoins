@@ -16,6 +16,7 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public interface AccountManager {
 
@@ -33,6 +34,8 @@ public interface AccountManager {
     BankAccount getAccount(int id);
 
     BankAccount getAccount(String name, AccountType type);
+
+    BankAccount getAccountByOwner(UUID uniqueId, AccountType type);
 
     default BankAccount getAccount(String name, String type) {
         return getAccount(name, searchAccountType(type));

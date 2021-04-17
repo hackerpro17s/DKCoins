@@ -16,6 +16,7 @@ import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
@@ -72,7 +73,7 @@ public class BankExchangeCommand extends ObjectCommand<BankAccount> implements C
             double amount = Double.parseDouble(amount0);
 
             OnlineMinecraftPlayer player = (OnlineMinecraftPlayer) commandSender;
-            AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
+            AccountMember member = account.getMember(player.getAs(DKCoinsUser.class));
 
             TransferResult result = account.exchangeAccountCredit(member, sourceCurrency, targetCurrency, amount,
                     CommandUtil.buildReason(args, 3), DKCoins.getInstance().getTransactionPropertyBuilder().build(member));

@@ -13,6 +13,7 @@ package net.pretronic.dkcoins.common.account;
 import net.pretronic.databasequery.api.query.SearchOrder;
 import net.pretronic.databasequery.api.query.result.QueryResultEntry;
 import net.pretronic.databasequery.api.query.type.FindQuery;
+import net.pretronic.databasequery.api.query.type.join.JoinType;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.*;
 import net.pretronic.dkcoins.api.account.limitation.AccountLimitationCalculationType;
@@ -35,10 +36,7 @@ import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultAccountManager implements AccountManager {
@@ -117,6 +115,12 @@ public class DefaultAccountManager implements AccountManager {
     public BankAccount getAccount(String name, AccountType type) {
         if(type == null) return null;
         return this.accountCache.get("nameAndType", name, type);
+    }
+
+    @Override
+    public BankAccount getAccountByOwner(UUID uniqueId, AccountType type) {
+        Validate.notNull(uniqueId, type);
+        return this.accountCache.get("uniqueIdAndType", uniqueId, type);
     }
 
     @Override
@@ -440,6 +444,35 @@ public class DefaultAccountManager implements AccountManager {
             @Override
             public boolean check(BankAccount account, Object[] identifiers) {
                 return account.getCredit((int) identifiers[0]) != null;
+            }
+        }).registerQuery("uniqueIdAndType", new CacheQuery<BankAccount>() {
+
+            @Override
+            public boolean check(BankAccount account, Object[] identifiers) {
+                UUID uniqueId = (UUID) identifiers[0];
+                AccountType type = (AccountType) identifiers[1];
+                return account.getType().equals(type) && account.getMember(uniqueId) != null;
+            }
+
+            @Override
+            public void validate(Object[] identifiers) {
+                Validate.isTrue(identifiers.length == 2
+                        && identifiers[0] instanceof UUID
+                        && identifiers[1] instanceof AccountType);
+            }
+
+            @Override
+            public BankAccount load(Object[] identifiers) {
+                UUID uniqueId = (UUID) identifiers[0];
+                AccountType type = (AccountType) identifiers[1];
+
+                DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
+
+                return getAccountInternal(storage.getAccount().find()
+                        .join(storage.getAccountMember()).on("Id", "AccountId")
+                        .where("TypeId", type.getId())
+                        .where("UserId", uniqueId)
+                        .execute().firstOrNull());
             }
         });
 

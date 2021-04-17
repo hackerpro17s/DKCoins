@@ -14,9 +14,9 @@ import java.util.UUID;
 
 public interface DKCoinsUserManager {
 
+    DKCoinsUser getUser(UUID uniqueId, String name);
+
     DKCoinsUser getUser(UUID uniqueId);
 
     DKCoinsUser getUser(String name);
-
-    DKCoinsUser constructNewUser(UUID uniqueId);
 }

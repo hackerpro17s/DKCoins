@@ -50,8 +50,7 @@ public final class CommandUtil {
     public static boolean hasAccountAccess(CommandSender commandSender, BankAccount account, AccessRight accessRight) {
         if(commandSender instanceof ConsoleCommandSender || commandSender.hasPermission(DKCoinsConfig.PERMISSIONS_ADMIN)) return true;
         if(commandSender instanceof MinecraftPlayer) {
-            AccountMember member = account.getMember(DKCoins.getInstance().getUserManager()
-                    .getUser(((MinecraftPlayer)commandSender).getUniqueId()));
+            AccountMember member = getAccountMemberByCommandSender(commandSender, account);
             if(member != null) {
                 return member.canAccess(accessRight);
             } else {
@@ -63,7 +62,7 @@ public final class CommandUtil {
 
     public static boolean hasTargetAccess(CommandSender commandSender, BankAccount account, RoleAble entity) {
         if(commandSender instanceof MinecraftPlayer && !commandSender.hasPermission(DKCoinsConfig.PERMISSIONS_ADMIN)) {
-            AccountMember sender = account.getMember(((MinecraftPlayer)commandSender).getAs(DKCoinsUser.class));
+            AccountMember sender = CommandUtil.getAccountMemberByCommandSender(commandSender, account);
 
             if(!sender.getRole().isHigher(entity.getRole())) {
                 commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_ROLE_LOWER,
@@ -75,7 +74,7 @@ public final class CommandUtil {
     }
 
     public static AccountMember parseAccountMember(BankAccount account, String name) {
-        DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(name);
+        DKCoinsUser user = McNative.getInstance().getPlayerManager().getPlayer(name).getAs(DKCoinsUser.class);
         if(user == null) {
             return null;
         }
@@ -88,7 +87,7 @@ public final class CommandUtil {
 
     public static AccountMember getAccountMemberByCommandSender(CommandSender commandSender, BankAccount account) {
         if(commandSender instanceof MinecraftPlayer) {
-            DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer)commandSender).getUniqueId());
+            DKCoinsUser user = ((MinecraftPlayer) commandSender).getAs(DKCoinsUser.class);
             return account.getMember(user);
         }
         return null;
@@ -125,7 +124,7 @@ public final class CommandUtil {
 
     public static DKCoinsUser getUserByCommandSender(CommandSender commandSender) {
         if(commandSender instanceof MinecraftPlayer) {
-            return DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer) commandSender).getUniqueId());
+            return ((MinecraftPlayer)commandSender).getAs(DKCoinsUser.class);
         }
         return null;
     }

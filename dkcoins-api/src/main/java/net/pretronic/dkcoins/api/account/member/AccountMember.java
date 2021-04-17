@@ -27,10 +27,6 @@ public interface AccountMember extends LimitationAble, RoleAble {
         return getUser().getName();
     }
 
-    default String getDisplayName() {
-        return getUser().getDisplayName();
-    }
-
     void setRole(AccountMemberRole role);
 
     default boolean canAccess(AccessRight right) {

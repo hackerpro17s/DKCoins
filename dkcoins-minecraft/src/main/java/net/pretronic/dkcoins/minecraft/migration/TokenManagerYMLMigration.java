@@ -65,7 +65,7 @@ public class TokenManagerYMLMigration implements Migration {
                         if(DKCoins.getInstance().getAccountManager().getAccount(name, "User") == null) {
                             BankAccount account = DKCoins.getInstance().getAccountManager().createAccount(name,
                                     DKCoins.getInstance().getAccountManager().searchAccountType("User"),
-                                    false, null, DKCoins.getInstance().getUserManager().getUser(playerId));
+                                    false, null, user);
                             account.getCredit(currency).setAmount(balance);
                             dkcoinsCount.incrementAndGet();
                         }
