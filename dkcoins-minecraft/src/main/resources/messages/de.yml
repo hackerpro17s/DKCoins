@@ -204,7 +204,8 @@ messages:
   &7/dkcoins migrate <name> [currency]
   &7/dkcoins admin <bank> set <amount> [currency]
   &7/dkcoins admin <bank> add <amount> [currency]
-  &7/dkcoins admin <bank> remove <amount> [currency]'
+  &7/dkcoins admin <bank> remove <amount> [currency]
+  &7/dkcoins admin <bank> reset [currency]'
 
   dkcoins.error.account.limitation.interval.notValid: '${dkcoins.prefix} &cDas Intervall &e{value} &cexistiert nicht
   &7

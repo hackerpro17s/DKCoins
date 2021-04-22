@@ -16,17 +16,24 @@ import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.limitation.LimitationAble;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.member.RoleAble;
+import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
+import net.pretronic.dkcoins.api.account.transaction.AccountTransactionProperty;
 import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
+import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.dkcoins.common.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.command.sender.ConsoleCommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.GeneralUtil;
 import org.mcnative.runtime.api.McNative;
 import org.mcnative.runtime.api.player.ConnectedMinecraftPlayer;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 public final class CommandUtil {
@@ -151,5 +158,28 @@ public final class CommandUtil {
             return false;
         }
         return true;
+    }
+
+    public static double parseAmount(CommandSender commandSender, String amount0) {
+        if(!GeneralUtil.isNumber(amount0)) {
+            commandSender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create()
+                    .add("value", amount0));
+            return -1;
+        }
+        return Double.parseDouble(amount0);
+    }
+
+    public static Currency parseCurrency(CommandSender commandSender, String currency0) {
+        if(currency0 == null) {
+            return DKCoinsConfig.CURRENCY_DEFAULT;
+        } else {
+            Currency currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(currency0);
+            if(currency == null) {
+                commandSender.sendMessage(Messages.ERROR_CURRENCY_NOT_EXISTS, VariableSet.create()
+                        .add("name", currency0));
+                return null;
+            }
+            return currency;
+        }
     }
 }

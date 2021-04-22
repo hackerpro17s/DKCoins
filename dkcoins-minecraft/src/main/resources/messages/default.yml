@@ -132,6 +132,7 @@ messages:
   dkcoins.command.bank.admin.add: '${dkcoins.prefix} &7You have added &e{transaction.amount}{transaction.currency.symbol} &7to bank &e{transaction.receiver.account.name}'
   dkcoins.command.bank.admin.remove: '${dkcoins.prefix} &7You have removed &e{transaction.amount}{transaction.currency.symbol} &7to bank &e{transaction.receiver.account.name}'
   dkcoins.command.bank.admin.set: '${dkcoins.prefix} &7You have set &e{transaction.amount}{transaction.currency.symbol} &7to bank &e{transaction.receiver.account.name}'
+  dkcoins.command.bank.admin.reset: '${dkcoins.prefix} &7You have reset the balance for the currency &e{transaction.currency.symbol} &7of the bank &e{transaction.receiver.account.name}'
 
   dkcoins.command.bank.bankStatement.filterOption.wrong: '${dkcoins.prefix} &e{filterOption} &cis a wrong option &8» &cUse option=value'
   dkcoins.command.bank.bankStatement.filterOption.notFound: '${dkcoins.prefix} &e{filterOption} &cis not a valid filter option'
@@ -205,7 +206,8 @@ messages:
   &7/dkcoins migrate <name> [currency]
   &7/dkcoins admin <bank> set <amount> [currency]
   &7/dkcoins admin <bank> add <amount> [currency]
-  &7/dkcoins admin <bank> remove <amount> [currency]'
+  &7/dkcoins admin <bank> remove <amount> [currency]
+  &7/dkcoins admin <bank> reset [currency]'
 
   dkcoins.error.account.limitation.interval.notValid: '${dkcoins.prefix} &cAn interval with the name &e{value} &cdoes not exist
   &7

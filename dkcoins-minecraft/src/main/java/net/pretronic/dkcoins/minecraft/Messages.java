@@ -108,6 +108,7 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_ADD = Text.ofMessageKey("dkcoins.command.bank.admin.add");
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_REMOVE = Text.ofMessageKey("dkcoins.command.bank.admin.remove");
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_SET = Text.ofMessageKey("dkcoins.command.bank.admin.set");
+    public static final MessageKeyComponent COMMAND_BANK_ADMIN_RESET = Text.ofMessageKey("dkcoins.command.bank.admin.reset");
 
     public static final MessageKeyComponent COMMAND_BANK_BANK_STATEMENT_FILTER_OPTION_WRONG = Text.ofMessageKey("dkcoins.command.bank.bankStatement.filterOption.wrong");
     public static final MessageKeyComponent COMMAND_BANK_BANK_STATEMENT_FILTER_OPTION_NOT_FOUND = Text.ofMessageKey("dkcoins.command.bank.bankStatement.filterOption.notFound");
