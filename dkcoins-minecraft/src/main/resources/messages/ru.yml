@@ -181,7 +181,8 @@ messages:
   &7/dkcoins migrate <Имя> [Валюта]
   &7/dkcoins admin <Банк> set <Количество> [Валюта]
   &7/dkcoins admin <Банк> add <Количество> [Валюта]
-  &7/dkcoins admin <Банк> remove <Количество> [Валюта]'
+  &7/dkcoins admin <Банк> remove <Количество> [Валюта]
+  &7/dkcoins admin <bank> reset [Валюта]'
   dkcoins.error.account.limitation.interval.notValid: '${dkcoins.prefix} &cИнтервал с названием &e{value} &cне существует
   &7
   &8» &7Интервалы&8:

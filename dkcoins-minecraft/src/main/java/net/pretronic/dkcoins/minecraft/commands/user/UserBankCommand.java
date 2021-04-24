@@ -82,7 +82,7 @@ public class UserBankCommand extends BasicCommand implements Completable {
             }
         }
 
-        DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(((MinecraftPlayer)commandSender).getUniqueId());
+        DKCoinsUser user = ((MinecraftPlayer) commandSender).getAs(DKCoinsUser.class);
         if(args.length == 0) {
             AccountCredit credit = user.getDefaultAccount().getCredit(getCurrency());
             commandSender.sendMessage(Messages.COMMAND_USER_BANK_AMOUNT, VariableSet.create()
@@ -129,7 +129,13 @@ public class UserBankCommand extends BasicCommand implements Completable {
         } else if(action.equalsIgnoreCase("top")) {
             this.topCommand.execute(commandSender, getCurrency(), args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
         } else {
-            DKCoinsUser target = DKCoins.getInstance().getUserManager().getUser(action);
+            MinecraftPlayer player = McNative.getInstance().getPlayerManager().getPlayer(action);
+            if(player == null) {
+                commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS, VariableSet.create()
+                        .add("name", action));
+                return;
+            }
+            DKCoinsUser target = player.getAs(DKCoinsUser.class);
             if(target == null) {
                 commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS, VariableSet.create()
                         .add("name", action));

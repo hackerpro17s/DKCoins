@@ -13,6 +13,7 @@ package net.pretronic.dkcoins.minecraft.commands.bank;
 import net.pretronic.dkcoins.api.DKCoins;
 import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.BankAccount;
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.command.object.ObjectCommand;
@@ -55,8 +56,7 @@ public class BankCreateCommand extends ObjectCommand<String> {
             commandSender.sendMessage(Messages.ERROR_NO_PERMISSION);
             return;
         }
-        account = DKCoins.getInstance().getAccountManager().createAccount(bankName, accountType, false, null,
-                DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
+        account = DKCoins.getInstance().getAccountManager().createAccount(bankName, accountType, false, null, player.getAs(DKCoinsUser.class));
         player.sendMessage(Messages.COMMAND_BANK_CREATE_DONE, VariableSet.create()
                 .addDescribed("account", account));
     }

@@ -57,6 +57,9 @@ import java.util.UUID;
 
 public class DefaultBankAccount implements BankAccount, Synchronizable {
 
+    public static final BankAccount DUMMY_ALL = new DefaultBankAccount(-1, "DUMMY_ALL", null, false, null);
+
+
     private final int id;
     private String name;
     private final AccountType type;
@@ -68,8 +71,9 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
     private final Collection<AccountMemberRole> roles;
 
     public DefaultBankAccount(int id, String name, AccountType type, boolean disabled, MasterBankAccount parent) {
-        Validate.isTrue(id > 0);
-        Validate.notNull(name, type);
+        if(id > 0) Validate.notNull(type);
+        Validate.notNull(name);
+
         this.id = id;
         this.name = name;
         this.type = type;

@@ -39,8 +39,7 @@ public class BankMemberRemoveCommand extends ObjectCommand<AccountMember> {
 
     @Override
     public void execute(CommandSender commandSender, AccountMember member, String[] strings) {
-        if(commandSender instanceof MinecraftPlayer && member.equals(member.getAccount().getMember(DKCoins.getInstance().getUserManager()
-                .getUser(((MinecraftPlayer)commandSender).getUniqueId())))) {
+        if(commandSender instanceof MinecraftPlayer && member.equals(member.getAccount().getMember(CommandUtil.getUserByCommandSender(commandSender)))) {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_YOURSELF);
             return;
         }

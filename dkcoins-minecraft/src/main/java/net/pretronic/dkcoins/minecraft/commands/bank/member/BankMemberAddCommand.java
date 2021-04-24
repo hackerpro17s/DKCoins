@@ -33,6 +33,7 @@ import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.libraries.utility.map.Pair;
+import org.mcnative.runtime.api.McNative;
 
 public class BankMemberAddCommand extends ObjectCommand<Pair<BankAccount, String>> {
 
@@ -45,7 +46,7 @@ public class BankMemberAddCommand extends ObjectCommand<Pair<BankAccount, String
         BankAccount account = pair.getKey();
         String userName = pair.getValue();
 
-        DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(userName);
+        DKCoinsUser user = McNative.getInstance().getPlayerManager().getPlayer(userName).getAs(DKCoinsUser.class);
         if(user == null) {
             commandSender.sendMessage(Messages.ERROR_USER_NOT_EXISTS, VariableSet.create().add("name", userName));
             return;
