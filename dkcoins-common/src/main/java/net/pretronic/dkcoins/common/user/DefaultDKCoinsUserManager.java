@@ -14,13 +14,14 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 import net.pretronic.libraries.caching.ArrayCache;
 import net.pretronic.libraries.caching.Cache;
+import net.pretronic.libraries.utility.annonations.Internal;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public abstract class DefaultDKCoinsUserManager implements DKCoinsUserManager {
+public class DefaultDKCoinsUserManager implements DKCoinsUserManager {
 
-    protected final Cache<DKCoinsUser> coinsUserCache;
+    private final Cache<DKCoinsUser> coinsUserCache;
 
     public DefaultDKCoinsUserManager() {
         this.coinsUserCache = new ArrayCache<DKCoinsUser>()
@@ -28,9 +29,24 @@ public abstract class DefaultDKCoinsUserManager implements DKCoinsUserManager {
                 .setMaxSize(500);
     }
 
+    @Internal
+    public Cache<DKCoinsUser> getUserCache() {
+        return coinsUserCache;
+    }
+
+    @Override
+    public DKCoinsUser getUser(UUID uniqueId, String name) {
+        return this.coinsUserCache.get("byUUIDAndName", uniqueId);
+    }
+
     @Override
     public DKCoinsUser getUser(UUID uniqueId) {
-        return this.coinsUserCache.get("getOrLoad", uniqueId);
+        return this.coinsUserCache.get("byUUID", uniqueId);
+    }
+
+    @Override
+    public DKCoinsUser getUser(String name) {
+        return this.coinsUserCache.get("byName", name);
     }
 
 }

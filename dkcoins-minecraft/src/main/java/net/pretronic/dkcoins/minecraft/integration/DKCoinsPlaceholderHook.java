@@ -28,6 +28,7 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.Validate;
+import org.mcnative.runtime.api.McNative;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
 import org.mcnative.runtime.api.serviceprovider.placeholder.PlaceholderHook;
 
@@ -64,9 +65,8 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                 return DKCoins.getInstance().getFormatter().formatCurrencyAmount(user.getDefaultAccount().getCredit(currency).getAmount());
             }
             case "player": {
-                DKCoinsUser user;
                 if(parameter.length() > 2) {
-                    user = DKCoins.getInstance().getUserManager().getUser(parameters[1]);
+                    DKCoinsUser user = McNative.getInstance().getPlayerManager().getPlayer(parameters[1]).getAs(DKCoinsUser.class);
                     if(user != null) {
                         switch (parameters[2].toLowerCase()) {
                             case "balance": {

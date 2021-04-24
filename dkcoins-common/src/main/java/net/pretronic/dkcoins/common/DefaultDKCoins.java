@@ -26,6 +26,7 @@ import net.pretronic.dkcoins.common.account.transaction.DefaultTransactionFilter
 import net.pretronic.dkcoins.common.currency.DefaultCurrency;
 import net.pretronic.dkcoins.common.currency.DefaultCurrencyExchangeRate;
 import net.pretronic.dkcoins.common.currency.DefaultCurrencyManager;
+import net.pretronic.dkcoins.common.user.DefaultDKCoinsUserManager;
 import net.pretronic.libraries.event.EventBus;
 import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.libraries.message.bml.variable.describer.VariableDescriber;
@@ -43,12 +44,12 @@ public class DefaultDKCoins extends DKCoins {
     private final DefaultDKCoinsStorage storage;
     private final DefaultAccountManager accountManager;
     private final DefaultCurrencyManager currencyManager;
-    private final DKCoinsUserManager userManager;
+    private final DefaultDKCoinsUserManager userManager;
     private final TransactionPropertyBuilder transactionPropertyBuilder;
     private final Collection<Migration> migrations;
     private final DKCoinsFormatter formatter;
 
-    public DefaultDKCoins(PretronicLogger logger, EventBus eventBus, Database database, DKCoinsUserManager userManager
+    public DefaultDKCoins(PretronicLogger logger, EventBus eventBus, Database database, DefaultDKCoinsUserManager userManager
             , TransactionPropertyBuilder transactionPropertyBuilder, DKCoinsFormatter formatter) {
         Validate.notNull(logger,
                 eventBus,
@@ -89,7 +90,7 @@ public class DefaultDKCoins extends DKCoins {
     }
 
     @Override
-    public DKCoinsUserManager getUserManager() {
+    public DefaultDKCoinsUserManager getUserManager() {
         return this.userManager;
     }
 

@@ -107,7 +107,7 @@ public class BankTransferCommand extends ObjectCommand<BankAccount> implements C
     private void transfer(CommandSender commandSender, BankAccount account, BankAccount receiver, double amount, Currency currency, String[] args) {
 
         OnlineMinecraftPlayer player = (OnlineMinecraftPlayer) commandSender;
-        AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
+        AccountMember member = account.getMember(player.getAs(DKCoinsUser.class));
 
         TransferResult result = account.getCredit(currency).transfer(member, amount, receiver.getCredit(currency),
                 CommandUtil.buildReason(args, 3), TransferCause.TRANSFER,

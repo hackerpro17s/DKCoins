@@ -47,7 +47,7 @@ public class BankListCommand extends BasicCommand {
             return;
         }
         OnlineMinecraftPlayer player = (OnlineMinecraftPlayer) commandSender;
-        DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(player.getUniqueId());
+        DKCoinsUser user = player.getAs(DKCoinsUser.class);
         List<AccountMember> members = Iterators.map(user.getAccounts(), account -> account.getMember(user));
         player.sendMessage(Messages.COMMAND_BANK_LIST, VariableSet.create()
                 .addDescribed("members", members));
