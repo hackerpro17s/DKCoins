@@ -37,7 +37,7 @@ public class DefaultDKCoinsUserManager implements DKCoinsUserManager {
 
     @Override
     public DKCoinsUser getUser(UUID uniqueId, String name) {
-        return this.coinsUserCache.get("byUUIDAndName", uniqueId);
+        return this.coinsUserCache.get("byUUIDAndName", uniqueId,name);
     }
 
     @Override

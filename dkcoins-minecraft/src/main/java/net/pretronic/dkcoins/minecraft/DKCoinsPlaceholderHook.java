@@ -66,11 +66,9 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                 if(parameter.length() > 2) {
                     DKCoinsUser user = McNative.getInstance().getPlayerManager().getPlayer(parameters[1]).getAs(DKCoinsUser.class);
                     if(user != null) {
-                        switch (parameters[2].toLowerCase()) {
-                            case "balance": {
-                                Currency currency = parseCurrency(parameters, 3);
-                                return user.getDefaultAccount().getCredit(currency).getAmount();
-                            }
+                        if ("balance".equalsIgnoreCase(parameters[2])) {
+                            Currency currency = parseCurrency(parameters, 3);
+                            return user.getDefaultAccount().getCredit(currency).getAmount();
                         }
                     }
                 }
@@ -101,11 +99,9 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                     String bank0 = parameters[1];
                     BankAccount account = DKCoins.getInstance().getAccountManager().searchAccount(bank0);
                     if(account != null) {
-                        switch (parameters[2].toLowerCase()) {
-                            case "balance": {
-                                Currency currency = parseCurrency(parameters, 3);
-                                return account.getCredit(currency).getAmount();
-                            }
+                        if ("balance".equalsIgnoreCase(parameters[2])) {
+                            Currency currency = parseCurrency(parameters, 3);
+                            return account.getCredit(currency).getAmount();
                         }
                     }
                 }

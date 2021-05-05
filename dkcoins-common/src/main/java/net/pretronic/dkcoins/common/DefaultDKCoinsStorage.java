@@ -116,7 +116,7 @@ public class DefaultDKCoinsStorage {
     private DatabaseCollection createAccountDatabaseCollection() {
         return this.database.createCollection("dkcoins_account")
                 .field("Id", DataType.INTEGER, FieldOption.PRIMARY_KEY, FieldOption.AUTO_INCREMENT)
-                .field("Name", DataType.STRING, FieldOption.NOT_NULL)
+                .field("Name", DataType.STRING, FieldOption.NOT_NULL,FieldOption.UNIQUE)
                 .field("TypeId", DataType.INTEGER, ForeignKey.of(this.accountType, "Id", ForeignKey.Option.CASCADE, null), FieldOption.NOT_NULL)
                 .field("Disabled", DataType.BOOLEAN, FieldOption.NOT_NULL)
                 .field("ParentId", DataType.INTEGER, ForeignKey.of(this.database.getName(),"dkcoins_account", "Id", ForeignKey.Option.CASCADE, null))
