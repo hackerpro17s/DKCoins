@@ -79,6 +79,8 @@ public class Messages {
             Text.ofMessageKey("dkcoins.command.bank.transfer.failure.notEnoughAccessRights");
     public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_DISABLED =
             Text.ofMessageKey("dkcoins.command.bank.transfer.failure.disabled");
+    public static final MessageKeyComponent COMMAND_BANK_TRANSFER_FAILURE_SAME_ACCOUNT =
+            Text.ofMessageKey("dkcoins.command.bank.transfer.failure.sameAccount");
 
 
     public static final MessageKeyComponent COMMAND_BANK_MEMBER_LIST = Text.ofMessageKey("dkcoins.command.bank.member.list");
@@ -106,6 +108,7 @@ public class Messages {
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_ADD = Text.ofMessageKey("dkcoins.command.bank.admin.add");
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_REMOVE = Text.ofMessageKey("dkcoins.command.bank.admin.remove");
     public static final MessageKeyComponent COMMAND_BANK_ADMIN_SET = Text.ofMessageKey("dkcoins.command.bank.admin.set");
+    public static final MessageKeyComponent COMMAND_BANK_ADMIN_RESET = Text.ofMessageKey("dkcoins.command.bank.admin.reset");
 
     public static final MessageKeyComponent COMMAND_BANK_BANK_STATEMENT_FILTER_OPTION_WRONG = Text.ofMessageKey("dkcoins.command.bank.bankStatement.filterOption.wrong");
     public static final MessageKeyComponent COMMAND_BANK_BANK_STATEMENT_FILTER_OPTION_NOT_FOUND = Text.ofMessageKey("dkcoins.command.bank.bankStatement.filterOption.notFound");

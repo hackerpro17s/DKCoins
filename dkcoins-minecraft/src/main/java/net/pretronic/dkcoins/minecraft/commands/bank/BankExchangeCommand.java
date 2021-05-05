@@ -16,6 +16,7 @@ import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.transferresult.TransferResult;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
@@ -29,6 +30,7 @@ import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -71,7 +73,7 @@ public class BankExchangeCommand extends ObjectCommand<BankAccount> implements C
             double amount = Double.parseDouble(amount0);
 
             OnlineMinecraftPlayer player = (OnlineMinecraftPlayer) commandSender;
-            AccountMember member = account.getMember(DKCoins.getInstance().getUserManager().getUser(player.getUniqueId()));
+            AccountMember member = account.getMember(player.getAs(DKCoinsUser.class));
 
             TransferResult result = account.exchangeAccountCredit(member, sourceCurrency, targetCurrency, amount,
                     CommandUtil.buildReason(args, 3), DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
@@ -82,29 +84,7 @@ public class BankExchangeCommand extends ObjectCommand<BankAccount> implements C
                         .add("sourceAmount", DKCoinsConfig.formatCurrencyAmount(amount))
                         .add("targetAmount", sourceCurrency.exchange(amount, targetCurrency)));
             } else {
-                switch (result.getFailCause()) {
-                    case LIMIT: {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_LIMIT);
-                        break;
-                    }
-                    case NOT_ENOUGH_AMOUNT: {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_NOT_ENOUGH_AMOUNT);
-                        break;
-                    }
-                    case NOT_ENOUGH_ACCESS_RIGHTS: {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_NOT_ENOUGH_ACCESS_RIGHTS);
-                        break;
-                    }
-                    case MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT: {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_MASTER_ACCOUNT_NOT_ENOUGH_AMOUNT);
-                        break;
-                    }
-                    case TRANSFER_DISABLED: {
-                        commandSender.sendMessage(Messages.COMMAND_BANK_EXCHANGE_FAILURE_DISABLED, VariableSet.create()
-                                .addDescribed("sourceCurrency", sourceCurrency).addDescribed("targetCurrency", targetCurrency));
-                        break;
-                    }
-                }
+                CommandUtil.handleTransferFailCauses(result, commandSender);
             }
         } else {
             commandSender.sendMessage(Messages.ERROR_ACCOUNT_MEMBER_NOT_ENOUGH_ACCESS_RIGHTS);

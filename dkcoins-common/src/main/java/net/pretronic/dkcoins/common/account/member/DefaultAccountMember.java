@@ -125,7 +125,8 @@ public class DefaultAccountMember implements AccountMember {
         DefaultDKCoinsStorage storage = DefaultDKCoins.getInstance().getStorage();
         DefaultAccountManager accountManager = DefaultDKCoins.getInstance().getAccountManager();
 
-        storage.getAccountMember().update().set("ReceiveNotifications", receiveNotifications)
+        storage.getAccountMember().update()
+                .set("ReceiveNotifications", receiveNotifications)
                 .where("Id", getId())
                 .execute();
 

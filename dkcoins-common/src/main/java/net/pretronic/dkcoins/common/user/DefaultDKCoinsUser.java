@@ -15,16 +15,20 @@ import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
+import net.pretronic.libraries.utility.Validate;
 
 import java.util.Collection;
 import java.util.UUID;
 
-public abstract class DefaultDKCoinsUser implements DKCoinsUser {
+public class DefaultDKCoinsUser implements DKCoinsUser {
 
     private final UUID uniqueId;
+    private final String name;
     private boolean userAccountsLoaded;
 
-    public DefaultDKCoinsUser(UUID uniqueId) {
+    public DefaultDKCoinsUser(UUID uniqueId, String name) {
+        Validate.notNull(uniqueId, name);
+        this.name = name;
         this.uniqueId = uniqueId;
         this.userAccountsLoaded = false;
     }
@@ -35,6 +39,11 @@ public abstract class DefaultDKCoinsUser implements DKCoinsUser {
     }
 
     @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
     public Collection<BankAccount> getAccounts() {
         return DKCoins.getInstance().getAccountManager().getAccounts(this);
     }
@@ -42,7 +51,11 @@ public abstract class DefaultDKCoinsUser implements DKCoinsUser {
     @Override
     public BankAccount getDefaultAccount() {
         AccountType accountType = DKCoins.getInstance().getAccountManager().searchAccountType("User");
-        return DKCoins.getInstance().getAccountManager().getAccount(getName(), accountType);
+        BankAccount account = DKCoins.getInstance().getAccountManager().getAccountByOwner(getUniqueId(), accountType);
+        if(account == null) {
+            account = DKCoins.getInstance().getAccountManager().createAccount(getName(), accountType, false, null, this);
+        }
+        return account;
     }
 
     @Override

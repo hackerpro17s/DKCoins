@@ -20,8 +20,6 @@
 
 package net.pretronic.dkcoins.minecraft.listener;
 
-import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountType;
 import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.libraries.event.Listener;
@@ -30,19 +28,14 @@ import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 
 public class MinecraftPlayerListener {
 
-    @Listener()
+    @Listener
     public void onPlayerLogin(MinecraftPlayerPostLoginEvent event) {
-       // OnlineMinecraftPlayer player = event.getOnlinePlayer();
+        OnlineMinecraftPlayer player = event.getOnlinePlayer();
+        DKCoinsUser user = player.getAs(DKCoinsUser.class);
+        BankAccount userAccount = user.getDefaultAccount();
 
-      //  initUserAccount(player);
-    }
-
-    private void initUserAccount(OnlineMinecraftPlayer player) {
-        AccountType accountType = DKCoins.getInstance().getAccountManager().searchAccountType("User");
-        BankAccount account = DKCoins.getInstance().getAccountManager().getAccount(player.getName(), accountType);
-        if(account == null) {
-            DKCoins.getInstance().getAccountManager().createAccount(player.getName(),
-                    accountType, false, null, player.getAs(DKCoinsUser.class));
+        if(!userAccount.getName().equalsIgnoreCase(player.getName())) {
+            userAccount.setName(player.getName());
         }
     }
 }

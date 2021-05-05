@@ -22,8 +22,6 @@ public interface DKCoinsUser {
 
     String getName();
 
-    String getDisplayName();
-
     Collection<BankAccount> getAccounts();
 
     BankAccount getDefaultAccount();

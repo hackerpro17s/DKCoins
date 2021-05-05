@@ -11,6 +11,8 @@
 package net.pretronic.dkcoins.minecraft;
 
 import net.pretronic.dkcoins.api.DKCoins;
+import net.pretronic.dkcoins.api.account.AccountType;
+import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
@@ -24,6 +26,8 @@ import net.pretronic.dkcoins.common.account.member.DefaultAccountMemberRole;
 import net.pretronic.dkcoins.common.account.transaction.DefaultAccountTransaction;
 import net.pretronic.dkcoins.common.currency.DefaultCurrency;
 import net.pretronic.dkcoins.common.currency.DefaultCurrencyExchangeRate;
+import net.pretronic.dkcoins.common.user.DefaultDKCoinsUser;
+import net.pretronic.dkcoins.common.user.DefaultDKCoinsUserManager;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankCommand;
 import net.pretronic.dkcoins.minecraft.commands.bank.BankTransferCommand;
 import net.pretronic.dkcoins.minecraft.commands.currency.CurrencyCommand;
@@ -35,8 +39,8 @@ import net.pretronic.dkcoins.minecraft.migration.EssentialsXMigration;
 import net.pretronic.dkcoins.minecraft.migration.LegacyDKCoinsMigration;
 import net.pretronic.dkcoins.minecraft.migration.TokenManagerMySQLMigration;
 import net.pretronic.dkcoins.minecraft.migration.TokenManagerYMLMigration;
-import net.pretronic.dkcoins.minecraft.user.MinecraftDKCoinsUser;
-import net.pretronic.dkcoins.minecraft.user.MinecraftDKCoinsUserManager;
+import net.pretronic.libraries.caching.Cache;
+import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.logging.level.LogLevel;
@@ -45,8 +49,10 @@ import net.pretronic.libraries.message.bml.variable.describer.VariableDescriberR
 import net.pretronic.libraries.plugin.lifecycle.Lifecycle;
 import net.pretronic.libraries.plugin.lifecycle.LifecycleState;
 import net.pretronic.libraries.synchronisation.UnconnectedSynchronisationCaller;
+import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.io.FileUtil;
 import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.player.MinecraftPlayer;
 import org.mcnative.runtime.api.plugin.MinecraftPlugin;
 import org.mcnative.runtime.api.serviceprovider.economy.EconomyProvider;
 import org.mcnative.runtime.api.serviceprovider.placeholder.PlaceholderHelper;
@@ -54,6 +60,7 @@ import org.mcnative.runtime.api.text.format.ColoredString;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class DKCoinsPlugin extends MinecraftPlugin {
 
@@ -65,7 +72,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         INSTANCE = this;
 
         loadConfig();
-        VariableDescriberRegistry.registerDescriber(MinecraftDKCoinsUser.class);
+        VariableDescriberRegistry.registerDescriber(DefaultDKCoinsUser.class);
         registerEconomyProvider();
         registerVariableDescribers();
         PlaceholderHelper.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
@@ -74,11 +81,12 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         DefaultDKCoins dkCoins = new DefaultDKCoins(getLogger(),
                 McNative.getInstance().getLocal().getEventBus(),
                 getDatabaseOrCreate(),
-                new MinecraftDKCoinsUserManager(),
+                new DefaultDKCoinsUserManager(),
                 builder,
                 new MinecraftDKCoinsFormatter());
 
         registerCommandsAndListeners();
+        registerUserManagerCacheQueries();
         registerPlayerAdapter();
 
         initAccountManager(dkCoins);
@@ -112,8 +120,11 @@ public class DKCoinsPlugin extends MinecraftPlugin {
     }
 
     private void registerPlayerAdapter() {
-        McNative.getInstance().getPlayerManager().registerPlayerAdapter(DKCoinsUser.class, minecraftPlayer
-                -> DKCoins.getInstance().getUserManager().getUser(minecraftPlayer.getUniqueId()));
+        McNative.getInstance().getPlayerManager().registerPlayerAdapter(DKCoinsUser.class, minecraftPlayer -> {
+            DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(minecraftPlayer.getUniqueId());
+            user.getDefaultAccount();
+            return user;
+        });
     }
 
     private void registerCommandsAndListeners() {
@@ -204,7 +215,74 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         dkCoins.createDefaults();
     }
 
+    private void registerUserManagerCacheQueries() {
+        Cache<DKCoinsUser> userCache = DefaultDKCoins.getInstance().getUserManager().getUserCache();
+        userCache.registerQuery("byUUIDAndName", new DKCoinsUserUUIDAndNameQuery())
+                .registerQuery("byUUID", new DKCoinsUserUUIDQuery())
+                .registerQuery("byName", new DKCoinsUserNameQuery());
+    }
+
     public static DKCoinsPlugin getInstance() {
         return INSTANCE;
+    }
+
+
+    public static class DKCoinsUserUUIDAndNameQuery implements CacheQuery<DKCoinsUser> {
+
+        @Override
+        public boolean check(DKCoinsUser user, Object[] identifiers) {
+            return user.getUniqueId().equals(identifiers[0]) && user.getName().equalsIgnoreCase((String) identifiers[1]);
+        }
+
+        @Override
+        public void validate(Object[] identifiers) {
+            Validate.isTrue(identifiers.length == 2 && identifiers[0] instanceof UUID && identifiers[1] instanceof String);
+        }
+
+        @Override
+        public DKCoinsUser load(Object[] identifiers) {
+            return new DefaultDKCoinsUser((UUID) identifiers[0], (String) identifiers[1]);
+        }
+    }
+
+    public static class DKCoinsUserUUIDQuery implements CacheQuery<DKCoinsUser> {
+
+        @Override
+        public boolean check(DKCoinsUser user, Object[] identifiers) {
+            return user.getUniqueId().equals(identifiers[0]);
+        }
+
+        @Override
+        public void validate(Object[] identifiers) {
+            Validate.isTrue(identifiers.length == 1 && identifiers[0] instanceof UUID);
+        }
+
+        @Override
+        public DKCoinsUser load(Object[] identifiers) {
+            UUID playerId = (UUID) identifiers[0];
+            String name = McNative.getInstance().getPlayerManager().getPlayer(playerId).getName();
+            return new DefaultDKCoinsUser(playerId, name);
+        }
+    }
+
+    public static class DKCoinsUserNameQuery implements CacheQuery<DKCoinsUser> {
+
+        @Override
+        public boolean check(DKCoinsUser user, Object[] identifiers) {
+            return user.getName().equalsIgnoreCase((String) identifiers[0]);
+        }
+
+        @Override
+        public void validate(Object[] identifiers) {
+            Validate.isTrue(identifiers.length == 1 && identifiers[0] instanceof String);
+        }
+
+        @Override
+        public DKCoinsUser load(Object[] identifiers) {
+            String name = (String) identifiers[0];
+            MinecraftPlayer player = McNative.getInstance().getPlayerManager().getPlayer(name);
+            if(player == null) return null;
+            return new DefaultDKCoinsUser(player.getUniqueId(), name);
+        }
     }
 }
