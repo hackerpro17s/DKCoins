@@ -147,7 +147,7 @@ public class UserBankCommand extends BasicCommand implements Completable {
 
     private Currency getCurrency() {
         Currency currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(this.creditAlias.getCurrency());
-        Validate.notNull(currency);
+        if(currency == null) throw new IllegalArgumentException("Configured currency "+this.creditAlias.getCurrency()+" is not available");
         return currency;
     }
 

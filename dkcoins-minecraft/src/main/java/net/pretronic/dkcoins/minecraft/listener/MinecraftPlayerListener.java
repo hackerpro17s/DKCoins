@@ -30,11 +30,11 @@ import org.mcnative.runtime.api.player.OnlineMinecraftPlayer;
 
 public class MinecraftPlayerListener {
 
-    @Listener
+    @Listener()
     public void onPlayerLogin(MinecraftPlayerPostLoginEvent event) {
-        OnlineMinecraftPlayer player = event.getOnlinePlayer();
+       // OnlineMinecraftPlayer player = event.getOnlinePlayer();
 
-        initUserAccount(player);
+      //  initUserAccount(player);
     }
 
     private void initUserAccount(OnlineMinecraftPlayer player) {
