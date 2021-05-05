@@ -30,6 +30,7 @@ public class MinecraftPlayerListener {
 
     @Listener
     public void onPlayerLogin(MinecraftPlayerPostLoginEvent event) {
+        /*
         OnlineMinecraftPlayer player = event.getOnlinePlayer();
         DKCoinsUser user = player.getAs(DKCoinsUser.class);
         BankAccount userAccount = user.getDefaultAccount();
@@ -37,5 +38,6 @@ public class MinecraftPlayerListener {
         if(!userAccount.getName().equalsIgnoreCase(player.getName())) {
             userAccount.setName(player.getName());
         }
+         */
     }
 }
