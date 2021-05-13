@@ -60,7 +60,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
             case "balance": {
                 Currency currency = parseCurrency(parameters,1);
                 DKCoinsUser user = player.getAs(DKCoinsUser.class);
-                return user.getDefaultAccount().getCredit(currency).getAmount();
+                return DKCoins.getInstance().getFormatter().formatCurrencyAmount(user.getDefaultAccount().getCredit(currency).getAmount());
             }
             case "player": {
                 if(parameter.length() > 2) {
@@ -68,7 +68,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                     if(user != null) {
                         if ("balance".equalsIgnoreCase(parameters[2])) {
                             Currency currency = parseCurrency(parameters, 3);
-                            return user.getDefaultAccount().getCredit(currency).getAmount();
+                            return DKCoins.getInstance().getFormatter().formatCurrencyAmount(user.getDefaultAccount().getCredit(currency).getAmount());
                         }
                     }
                 }
@@ -87,7 +87,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                             }
                             case "balance": {
                                 BankAccount account = DKCoins.getInstance().getAccountManager().getAccountByRank(currency, rank);
-                                return account.getCredit(currency).getAmount();
+                                return DKCoins.getInstance().getFormatter().formatCurrencyAmount(account.getCredit(currency).getAmount());
                             }
                         }
                     }
@@ -101,7 +101,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
                     if(account != null) {
                         if ("balance".equalsIgnoreCase(parameters[2])) {
                             Currency currency = parseCurrency(parameters, 3);
-                            return account.getCredit(currency).getAmount();
+                            return DKCoins.getInstance().getFormatter().formatCurrencyAmount(account.getCredit(currency).getAmount());
                         }
                     }
                 }
