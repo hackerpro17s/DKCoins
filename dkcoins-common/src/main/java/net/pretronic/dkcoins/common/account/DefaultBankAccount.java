@@ -141,7 +141,7 @@ public class DefaultBankAccount implements BankAccount, Synchronizable {
 
     @Override
     public AccountCredit getCredit(Currency currency) {
-        if(currency == null) return null;
+        if(currency == null) throw new IllegalArgumentException("Currency is not available");
         AccountCredit credit = Iterators.findOne(this.credits, credit0 -> credit0.getCurrency().getId() == currency.getId());
         if(credit == null) {
             credit = addCredit(currency, 0);
