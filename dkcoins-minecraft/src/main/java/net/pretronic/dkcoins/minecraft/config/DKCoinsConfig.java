@@ -165,6 +165,9 @@ public class DKCoinsConfig {
         }
 
         ECONOMY_PROVIDER_CURRENCY = DKCoins.getInstance().getCurrencyManager().searchCurrency(ECONOMY_PROVIDER_CURRENCY0);
+        if(ECONOMY_PROVIDER_CURRENCY == null){
+            DKCoins.getInstance().getLogger().error(ECONOMY_PROVIDER_CURRENCY0+" is not available as currency");
+        }
 
         DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT0);
 

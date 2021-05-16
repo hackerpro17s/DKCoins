@@ -14,6 +14,7 @@ import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 import net.pretronic.libraries.caching.ArrayCache;
 import net.pretronic.libraries.caching.Cache;
+import net.pretronic.libraries.caching.ShadowArrayCache;
 import net.pretronic.libraries.utility.annonations.Internal;
 
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class DefaultDKCoinsUserManager implements DKCoinsUserManager {
     private final Cache<DKCoinsUser> coinsUserCache;
 
     public DefaultDKCoinsUserManager() {
-        this.coinsUserCache = new ArrayCache<DKCoinsUser>()
+        this.coinsUserCache = new ShadowArrayCache<DKCoinsUser>()
                 .setExpireAfterAccess(30, TimeUnit.MINUTES)
                 .setMaxSize(500);
     }
@@ -36,7 +37,7 @@ public class DefaultDKCoinsUserManager implements DKCoinsUserManager {
 
     @Override
     public DKCoinsUser getUser(UUID uniqueId, String name) {
-        return this.coinsUserCache.get("byUUIDAndName", uniqueId);
+        return this.coinsUserCache.get("byUUIDAndName", uniqueId,name);
     }
 
     @Override
