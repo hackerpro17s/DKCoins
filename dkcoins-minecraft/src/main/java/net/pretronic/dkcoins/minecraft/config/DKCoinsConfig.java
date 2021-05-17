@@ -26,6 +26,7 @@ import net.pretronic.libraries.utility.map.Maps;
 import net.pretronic.libraries.utility.map.Pair;
 import org.mcnative.runtime.api.McNative;
 
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -81,7 +82,7 @@ public class DKCoinsConfig {
     public static byte ECONOMY_PROVIDER_PRIORITY = ServicePriority.HIGHEST;
 
     @DocumentKey("economyProvider.currency")
-    public static String ECONOMY_PROVIDER_CURRENCY0 = CURRENCY_DEFAULT0;
+    public static String ECONOMY_PROVIDER_CURRENCY0 = "Coins";
 
     @DocumentIgnored
     public static Currency ECONOMY_PROVIDER_CURRENCY = null;
@@ -102,13 +103,13 @@ public class DKCoinsConfig {
 
     public static boolean LABYMOD_BALANCE_CASH_ENABLED = true;
     @DocumentKey("labymod.balance.cash.currency")
-    private static String LABYMOD_BALANCE_CASH_CURRENCY0 = CURRENCY_DEFAULT0;
+    private static String LABYMOD_BALANCE_CASH_CURRENCY0 = "Coins";
     @DocumentIgnored
     public static Currency LABYMOD_BALANCE_CASH_CURRENCY = null;
 
     public static boolean LABYMOD_BALANCE_BANK_ENABLED = false;
     @DocumentKey("labymod.balance.bank.currency")
-    public static String LABYMOD_BALANCE_BANK_CURRENCY0 = CURRENCY_DEFAULT0;
+    public static String LABYMOD_BALANCE_BANK_CURRENCY0 = "Coins";
     @DocumentIgnored
     public static Currency LABYMOD_BALANCE_BANK_CURRENCY = null;
 
