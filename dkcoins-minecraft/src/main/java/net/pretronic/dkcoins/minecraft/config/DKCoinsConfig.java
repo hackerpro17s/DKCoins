@@ -138,6 +138,7 @@ public class DKCoinsConfig {
 
     public static void init() {
         CURRENCY_DEFAULT = DKCoins.getInstance().getCurrencyManager().searchCurrency(CURRENCY_DEFAULT0);
+        if(CURRENCY_DEFAULT == null) throw new IllegalArgumentException("Can't match default currency " + CURRENCY_DEFAULT0 + ". It may not exists");
         CURRENCY_FORMAT = new DecimalFormat(CURRENCY_FORMAT0);
 
         DecimalFormatSymbols formatSymbols = CURRENCY_FORMAT.getDecimalFormatSymbols();
