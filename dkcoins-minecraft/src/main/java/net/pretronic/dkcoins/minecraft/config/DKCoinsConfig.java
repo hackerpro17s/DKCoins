@@ -176,6 +176,7 @@ public class DKCoinsConfig {
         LABYMOD_BALANCE_BANK_CURRENCY = DKCoins.getInstance().getCurrencyManager().getCurrency(LABYMOD_BALANCE_BANK_CURRENCY0);
         LABYMOD_BALANCE_CASH_CURRENCY = DKCoins.getInstance().getCurrencyManager().getCurrency(LABYMOD_BALANCE_CASH_CURRENCY0);
 
+
         if(LABYMOD_BALANCE_BANK_ENABLED || LABYMOD_BALANCE_CASH_ENABLED) {
             McNative.getInstance().getLocal().getEventBus().subscribe(DKCoinsPlugin.getInstance(), new LabyModServiceListener());
         }
