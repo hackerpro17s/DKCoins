@@ -94,7 +94,9 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         setupMigration(dkCoins);
         DKCoinsConfig.init();
 
-        McNative.getInstance().getRegistry().getService(Messenger.class).registerChannel("general", this, new DKCoinsGeneralMessagingChannel());
+        if(McNative.getInstance().isNetworkAvailable()) {
+            McNative.getInstance().getRegistry().getService(Messenger.class).registerChannel("general", this, new DKCoinsGeneralMessagingChannel());
+        }
 
     }
 
