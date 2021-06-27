@@ -58,7 +58,7 @@ import java.util.UUID;
 public class DefaultBankAccount implements BankAccount, Synchronizable {
 
     public static final BankAccount DUMMY_ALL = new DefaultBankAccount(-1, "DUMMY_ALL", null, false, null);
-
+    public static final BankAccount DUMMY_ALL_OFFLINE = new DefaultBankAccount(-2, "DUMMY_ALL_OFFLINE", null, false, null);
 
     private final int id;
     private String name;
