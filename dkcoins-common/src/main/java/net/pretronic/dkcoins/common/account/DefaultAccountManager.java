@@ -183,7 +183,7 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public List<RankedAccountCredit> getTopAccountCredits(Currency currency, AccountType[] excludedAccountTypes, int entriesPerPage, int page) {
-        AtomicInteger rank = new AtomicInteger();
+        AtomicInteger rank = new AtomicInteger(entriesPerPage* (page - 1) + 1);
 
         List<RankedAccountCredit> accountCredits = new ArrayList<>();
         FindQuery query = DefaultDKCoins.getInstance().getStorage().getAccountCredit().find()
