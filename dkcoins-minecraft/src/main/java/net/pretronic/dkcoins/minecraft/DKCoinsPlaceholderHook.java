@@ -27,6 +27,7 @@ import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Validate;
 import org.mcnative.runtime.api.McNative;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
 import org.mcnative.runtime.api.serviceprovider.placeholder.PlaceholderHook;
@@ -60,11 +61,20 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
             case "balance": {
                 Currency currency = parseCurrency(parameters,1);
                 DKCoinsUser user = player.getAs(DKCoinsUser.class);
-                return DKCoins.getInstance().getFormatter().formatCurrencyAmount(user.getDefaultAccount().getCredit(currency).getAmount());
+
+                BankAccount defaultAccount = user.getDefaultAccount();
+                Validate.notNull(defaultAccount, "Default account for player " + player.getName() + " is not available");
+
+                AccountCredit credit = defaultAccount.getCredit(currency);
+                Validate.notNull(credit, "Account credit for player " + player.getName() + " with currency " + currency.getName() + " is not available");
+
+                return DKCoins.getInstance().getFormatter().formatCurrencyAmount(credit.getAmount());
             }
             case "player": {
                 if(parameter.length() > 2) {
-                    DKCoinsUser user = McNative.getInstance().getPlayerManager().getPlayer(parameters[1]).getAs(DKCoinsUser.class);
+                    MinecraftPlayer minecraftPlayer =  McNative.getInstance().getPlayerManager().getPlayer(parameters[1]);
+                    if(minecraftPlayer == null) return null;
+                    DKCoinsUser user = minecraftPlayer.getAs(DKCoinsUser.class);
                     if(user != null) {
                         if ("balance".equalsIgnoreCase(parameters[2])) {
                             Currency currency = parseCurrency(parameters, 3);
@@ -121,6 +131,7 @@ public class DKCoinsPlaceholderHook implements PlaceholderHook {
         if(parameters.length > currencyPlace) {
             String currency0 = parameters[currencyPlace];
             currency = DKCoins.getInstance().getCurrencyManager().searchCurrency(currency0);
+            Validate.notNull(currency, "Currency " + currency0 + " is not available");
         } else {
             currency = DKCoinsConfig.CURRENCY_DEFAULT;
         }
