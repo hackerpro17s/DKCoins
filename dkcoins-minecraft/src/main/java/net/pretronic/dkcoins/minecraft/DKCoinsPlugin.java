@@ -11,8 +11,6 @@
 package net.pretronic.dkcoins.minecraft;
 
 import net.pretronic.dkcoins.api.DKCoins;
-import net.pretronic.dkcoins.api.account.AccountType;
-import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.access.AccessRight;
 import net.pretronic.dkcoins.api.account.transaction.TransactionPropertyBuilder;
 import net.pretronic.dkcoins.api.user.DKCoinsUser;
@@ -52,6 +50,8 @@ import net.pretronic.libraries.synchronisation.UnconnectedSynchronisationCaller;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.io.FileUtil;
 import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.network.NetworkIdentifier;
+import org.mcnative.runtime.api.network.messaging.Messenger;
 import org.mcnative.runtime.api.player.MinecraftPlayer;
 import org.mcnative.runtime.api.plugin.MinecraftPlugin;
 import org.mcnative.runtime.api.serviceprovider.economy.EconomyProvider;
@@ -93,6 +93,11 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         initCurrencyManager(dkCoins);
         setupMigration(dkCoins);
         DKCoinsConfig.init();
+
+        if(McNative.getInstance().isNetworkAvailable()) {
+            McNative.getInstance().getRegistry().getService(Messenger.class).registerChannel("general", this, new DKCoinsGeneralMessagingChannel());
+        }
+
     }
 
     private void loadConfig() {
@@ -220,6 +225,17 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         userCache.registerQuery("byUUIDAndName", new DKCoinsUserUUIDAndNameQuery())
                 .registerQuery("byUUID", new DKCoinsUserUUIDQuery())
                 .registerQuery("byName", new DKCoinsUserNameQuery());
+    }
+
+    public void broadcastNetworkAction(String action, Document data) {
+        if(McNative.getInstance().isNetworkAvailable()) {
+            McNative.getInstance().getRegistry().getService(Messenger.class).sendMessage(NetworkIdentifier.BROADCAST, "general",
+                    Document.newDocument().add("action", action).add("data", data));
+        }
+    }
+
+    public void broadcastNetworkAction(String action) {
+        broadcastNetworkAction(action, Document.newDocument());
     }
 
     public static DKCoinsPlugin getInstance() {

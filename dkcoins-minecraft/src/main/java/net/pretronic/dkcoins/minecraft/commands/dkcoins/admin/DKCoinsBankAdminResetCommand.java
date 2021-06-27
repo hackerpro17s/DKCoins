@@ -5,8 +5,11 @@ import net.pretronic.dkcoins.api.account.BankAccount;
 import net.pretronic.dkcoins.api.account.member.AccountMember;
 import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.currency.Currency;
+import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.dkcoins.common.account.DefaultBankAccount;
 import net.pretronic.dkcoins.common.account.TransferCause;
+import net.pretronic.dkcoins.minecraft.DKCoinsMessagingChannelAction;
+import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.Messages;
 import net.pretronic.dkcoins.minecraft.commands.CommandUtil;
 import net.pretronic.libraries.command.Completable;
@@ -36,6 +39,13 @@ public class DKCoinsBankAdminResetCommand extends ObjectCommand<BankAccount> imp
             AccountMember member = account.getMember(CommandUtil.getUserByCommandSender(commandSender));
             if(account.equals(DefaultBankAccount.DUMMY_ALL)) {
                 CommandUtil.loopThroughUserBanks(null, target -> reset(commandSender, target, currency, member, reason));
+            } else if(account.equals(DefaultBankAccount.DUMMY_ALL_OFFLINE)) {
+                DefaultDKCoins.getInstance().getStorage().getAccountCredit().update()
+                        .set("Amount", 0)
+                        .execute();
+                DefaultDKCoins.getInstance().getAccountManager().clearCaches();
+                DKCoinsPlugin.getInstance().broadcastNetworkAction(DKCoinsMessagingChannelAction.CLEAR_CACHES);
+                commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_RESET);
             } else {
                 reset(commandSender, account, currency, member, reason);
             }
