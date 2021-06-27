@@ -228,8 +228,10 @@ public class DKCoinsPlugin extends MinecraftPlugin {
     }
 
     public void broadcastNetworkAction(String action, Document data) {
-        McNative.getInstance().getRegistry().getService(Messenger.class).sendMessage(NetworkIdentifier.BROADCAST, "general",
-                Document.newDocument().add("action", action).add("data", data));
+        if(McNative.getInstance().isNetworkAvailable()) {
+            McNative.getInstance().getRegistry().getService(Messenger.class).sendMessage(NetworkIdentifier.BROADCAST, "general",
+                    Document.newDocument().add("action", action).add("data", data));
+        }
     }
 
     public void broadcastNetworkAction(String action) {
