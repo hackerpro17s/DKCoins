@@ -94,7 +94,8 @@ public class DKCoinsConfig {
     @DocumentKey("account.payment.minimum.all")
     public static double MINIMUM_PAYMENT_ALL = 1;
 
-    public static String[] PAYMENT_ALL_ALIASES = new String[]{"*"};
+    public static String[] PAYMENT_ALL_ALIASES = new String[]{"@a"};
+    public static String[] PAYMENT_ALL_OFFLINE_ALIASES = new String[]{"*"};
 
 
     @DocumentKey("command.top.entriesPerPage")
@@ -200,6 +201,13 @@ public class DKCoinsConfig {
 
     public static boolean isPaymentAllAlias(String value) {
         for (String alias : PAYMENT_ALL_ALIASES) {
+            if(alias.equalsIgnoreCase(value)) return true;
+        }
+        return false;
+    }
+
+    public static boolean isPaymentAllOfflineAlias(String value) {
+        for (String alias : PAYMENT_ALL_OFFLINE_ALIASES) {
             if(alias.equalsIgnoreCase(value)) return true;
         }
         return false;

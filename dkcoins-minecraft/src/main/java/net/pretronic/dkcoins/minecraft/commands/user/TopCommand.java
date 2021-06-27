@@ -31,9 +31,12 @@ import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 public class TopCommand extends ObjectCommand<Currency> {
 
@@ -44,9 +47,9 @@ public class TopCommand extends ObjectCommand<Currency> {
     @Override
     public void execute(CommandSender sender, Currency currency, String[] args) {
         int page = 1;
-        if(args.length > 0) {
+        if (args.length > 0) {
             String page0 = args[0];
-            if(!GeneralUtil.isNaturalNumber(page0)) {
+            if (!GeneralUtil.isNaturalNumber(page0)) {
                 sender.sendMessage(Messages.ERROR_NOT_NUMBER, VariableSet.create().add("value", page0));
                 return;
             }
@@ -54,12 +57,14 @@ public class TopCommand extends ObjectCommand<Currency> {
         }
         List<RankedAccountCredit> ranks = DKCoins.getInstance().getAccountManager()
                 .getTopAccountCredits(currency, new AccountType[0], DKCoinsConfig.TOP_LIMIT_ENTRIES_PER_PAGE, page);
-        if(ranks.isEmpty()) {
+        if (ranks.isEmpty()) {
             sender.sendMessage(Messages.TOP_PAGE_NO_ENTRIES);
             return;
         }
+
         int start = DKCoinsConfig.TOP_LIMIT_ENTRIES_PER_PAGE * (page - 1) + 1;
         int end = page * DKCoinsConfig.TOP_LIMIT_ENTRIES_PER_PAGE;
+
         sender.sendMessage(Messages.TOP, VariableSet.create()
                 .add("start", start)
                 .add("end", end)
