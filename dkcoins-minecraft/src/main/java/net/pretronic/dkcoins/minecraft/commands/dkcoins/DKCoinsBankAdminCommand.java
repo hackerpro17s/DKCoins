@@ -45,6 +45,8 @@ public class DKCoinsBankAdminCommand extends MainObjectCommand<BankAccount> impl
     public BankAccount getObject(CommandSender commandSender, String name) {
         if(DKCoinsConfig.isPaymentAllAlias(name)) {
             return DefaultBankAccount.DUMMY_ALL;
+        } else if(DKCoinsConfig.isPaymentAllOfflineAlias(name)) {
+            return DefaultBankAccount.DUMMY_ALL_OFFLINE;
         } else {
             return DKCoins.getInstance().getAccountManager().searchAccount(name);
         }
