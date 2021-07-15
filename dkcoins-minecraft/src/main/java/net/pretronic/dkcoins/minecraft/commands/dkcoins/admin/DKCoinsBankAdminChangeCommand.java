@@ -7,6 +7,7 @@ import net.pretronic.dkcoins.api.account.transaction.AccountTransaction;
 import net.pretronic.dkcoins.api.currency.Currency;
 import net.pretronic.dkcoins.common.DefaultDKCoins;
 import net.pretronic.dkcoins.common.account.DefaultBankAccount;
+import net.pretronic.dkcoins.common.account.TransferCause;
 import net.pretronic.dkcoins.minecraft.DKCoinsMessagingChannelAction;
 import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.Messages;
@@ -52,10 +53,11 @@ public class DKCoinsBankAdminChangeCommand extends ObjectCommand<BankAccount> im
         if(amount >= 0) {
             Currency currency = CommandUtil.parseCurrency(commandSender, currency0);
             if(currency != null) {
-                String reason = CommandUtil.buildReason(args, 2);
+                String cause = args.length >= 3 ? args[2] : TransferCause.ADMIN;
+                String reason = CommandUtil.buildReason(args, 3);
                 AccountMember member = account.getMember(CommandUtil.getUserByCommandSender(commandSender));
                 if(account.equals(DefaultBankAccount.DUMMY_ALL)) {
-                    CommandUtil.loopThroughUserBanks(null, target -> change(commandSender, target, currency, member, amount, reason));
+                    CommandUtil.loopThroughUserBanks(null, target -> change(commandSender, target, currency, member, amount, cause, reason));
                 } else if(account.equals(DefaultBankAccount.DUMMY_ALL_OFFLINE)) {
                     switch (action) {
                         case "add": {
@@ -81,14 +83,14 @@ public class DKCoinsBankAdminChangeCommand extends ObjectCommand<BankAccount> im
                     DKCoinsPlugin.getInstance().broadcastNetworkAction(DKCoinsMessagingChannelAction.CLEAR_CACHES);
                     commandSender.sendMessage(this.message);
                 } else {
-                    change(commandSender, account, currency, member, amount, reason);
+                    change(commandSender, account, currency, member, amount, cause, reason);
                 }
             }
         }
     }
 
-    private void change(CommandSender commandSender, BankAccount account, Currency currency, AccountMember member, double amount, String reason) {
-        AccountTransaction transaction = this.execution.transfer(account, currency, member, amount, reason);
+    private void change(CommandSender commandSender, BankAccount account, Currency currency, AccountMember member, double amount, String cause, String reason) {
+        AccountTransaction transaction = this.execution.transfer(account, currency, member, amount, cause, reason);
         commandSender.sendMessage(this.message, VariableSet.create()
                 .addDescribed("transaction", transaction));
     }
@@ -105,6 +107,6 @@ public class DKCoinsBankAdminChangeCommand extends ObjectCommand<BankAccount> im
 
     public interface TransferExecution {
 
-        AccountTransaction transfer(BankAccount account, Currency currency, AccountMember member, double amount, String reason);
+        AccountTransaction transfer(BankAccount account, Currency currency, AccountMember member, double amount, String cause, String reason);
     }
 }

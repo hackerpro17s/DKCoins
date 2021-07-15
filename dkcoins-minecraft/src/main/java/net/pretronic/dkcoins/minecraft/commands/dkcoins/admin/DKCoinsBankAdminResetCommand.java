@@ -35,10 +35,11 @@ public class DKCoinsBankAdminResetCommand extends ObjectCommand<BankAccount> imp
 
         Currency currency = CommandUtil.parseCurrency(commandSender, currency0);
         if(currency != null) {
+            String cause = args.length >= 2 ? args[1] : TransferCause.ADMIN;
             String reason = CommandUtil.buildReason(args, 2);
             AccountMember member = account.getMember(CommandUtil.getUserByCommandSender(commandSender));
             if(account.equals(DefaultBankAccount.DUMMY_ALL)) {
-                CommandUtil.loopThroughUserBanks(null, target -> reset(commandSender, target, currency, member, reason));
+                CommandUtil.loopThroughUserBanks(null, target -> reset(commandSender, target, currency, member, reason, cause));
             } else if(account.equals(DefaultBankAccount.DUMMY_ALL_OFFLINE)) {
                 DefaultDKCoins.getInstance().getStorage().getAccountCredit().update()
                         .set("Amount", 0)
@@ -47,14 +48,14 @@ public class DKCoinsBankAdminResetCommand extends ObjectCommand<BankAccount> imp
                 DKCoinsPlugin.getInstance().broadcastNetworkAction(DKCoinsMessagingChannelAction.CLEAR_CACHES);
                 commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_RESET);
             } else {
-                reset(commandSender, account, currency, member, reason);
+                reset(commandSender, account, currency, member, reason, cause);
             }
         }
     }
 
-    private void reset(CommandSender commandSender, BankAccount account, Currency currency, AccountMember member, String reason) {
+    private void reset(CommandSender commandSender, BankAccount account, Currency currency, AccountMember member, String reason, String cause) {
         AccountTransaction transaction = account.getCredit(currency)
-                .setAmount(member, 0, reason, TransferCause.ADMIN, DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
+                .setAmount(member, 0, reason, cause, DKCoins.getInstance().getTransactionPropertyBuilder().build(member));
         commandSender.sendMessage(Messages.COMMAND_BANK_ADMIN_RESET, VariableSet.create()
                 .addDescribed("transaction", transaction));
     }
