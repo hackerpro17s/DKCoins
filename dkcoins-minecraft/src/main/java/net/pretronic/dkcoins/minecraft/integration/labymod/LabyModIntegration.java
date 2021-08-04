@@ -19,24 +19,19 @@
 
 package net.pretronic.dkcoins.minecraft.integration.labymod;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import net.pretronic.dkcoins.api.account.AccountCredit;
 import net.pretronic.dkcoins.api.account.AccountType;
-import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.document.type.DocumentFileType;
-import net.pretronic.libraries.utility.exception.OperationFailedException;
+import net.pretronic.libraries.utility.Convert;
 import org.mcnative.runtime.api.player.ConnectedMinecraftPlayer;
-import org.mcnative.runtime.api.protocol.MinecraftProtocolVersion;
-
-import java.nio.charset.StandardCharsets;
+import org.mcnative.runtime.api.player.client.CustomClient;
+import org.mcnative.runtime.api.player.client.LabyModClient;
 
 public class LabyModIntegration {
 
-    public static final String BALANCE_TYPE_BANK = "bank";
-    public static final String BALANCE_TYPE_CASH = "cash";
+    public static final LabyModClient.EnumBalanceType BALANCE_TYPE_BANK = LabyModClient.EnumBalanceType.BANK;
+    public static final LabyModClient.EnumBalanceType BALANCE_TYPE_CASH = LabyModClient.EnumBalanceType.CASH;
 
-    public static String getBalanceType(AccountType type) {
+    public static LabyModClient.EnumBalanceType getBalanceType(AccountType type) {
         if(type.getName().equalsIgnoreCase("user")) return BALANCE_TYPE_CASH;
         return BALANCE_TYPE_BANK;
     }
@@ -45,86 +40,10 @@ public class LabyModIntegration {
         sendPlayerBalance(player, getBalanceType(credit.getAccount().getType()), credit.getAmount());
     }
 
-    public static void sendPlayerBalance(ConnectedMinecraftPlayer player, String cashType, double balance) {
-        Document economyObject = Document.newDocument();
-        Document cashObject = Document.newDocument();
-
-        cashObject.set("visible", true);
-
-        cashObject.set("balance", balance);
-
-        economyObject.set(cashType, cashObject);
-
-        sendLabyModMessage(player, "economy", economyObject);
-    }
-
-
-    public static void sendLabyModMessage(ConnectedMinecraftPlayer player,String key, Document document){
-        String json = DocumentFileType.JSON.getWriter().write(document,false);
-        byte[] bytes = getBytesToSend( key, json);
-
-        if(player.getProtocolVersion() == MinecraftProtocolVersion.JE_1_8) player.sendData("LMC",bytes);
-    }
-
-    private static byte[] getBytesToSend(String messageKey, String messageContents ) {
-        ByteBuf byteBuf = Unpooled.buffer();
-        writeString( byteBuf, messageKey );
-        writeString( byteBuf, messageContents );
-        byte[] bytes = new byte[byteBuf.readableBytes()];
-        byteBuf.readBytes( bytes );
-        return bytes;
-    }
-
-    private static void writeVarIntToBuffer(ByteBuf buf,int input) {
-        while ( (input & -128) != 0 ) {
-            buf.writeByte( input & 127 | 128 );
-            input >>>= 7;
+    public static void sendPlayerBalance(ConnectedMinecraftPlayer player, LabyModClient.EnumBalanceType cashType, double balance) {
+        if(player.isCustomClient(CustomClient.LABYMOD)) {
+            player.getCustomClient(CustomClient.LABYMOD).updateBalanceDisplay(cashType, Convert.toInteger(balance));
         }
-        buf.writeByte( input );
-    }
 
-    private static void writeString(ByteBuf buf, String string) {
-        byte[] abyte = string.getBytes(StandardCharsets.UTF_8);
-
-        if ( abyte.length > Short.MAX_VALUE ) {
-            throw new OperationFailedException( "String too big (was " + string.length() + " bytes encoded, max " + Short.MAX_VALUE + ")" );
-        } else {
-            writeVarIntToBuffer( buf, abyte.length );
-            buf.writeBytes( abyte );
-        }
-    }
-
-    public static int readVarIntFromBuffer(ByteBuf buf) {
-        int i = 0;
-        int j = 0;
-
-        byte b0;
-        do {
-            b0 = buf.readByte();
-            i |= (b0 & 127) << j++ * 7;
-            if ( j > 5 )   throw new OperationFailedException( "VarInt too big" );
-        } while ( (b0 & 128) == 128 );
-
-        return i;
-    }
-
-    public static String readString(ByteBuf buf, int maxLength) {
-        int i = readVarIntFromBuffer( buf );
-
-        if ( i > maxLength * 4 ) {
-            throw new OperationFailedException( "The received encoded string buffer length is longer than maximum allowed (" + i + " > " + maxLength * 4 + ")" );
-        } else if ( i < 0 ) {
-            throw new OperationFailedException( "The received encoded string buffer length is less than zero! Weird string!" );
-        } else {
-            byte[] bytes = new byte[i];
-            buf.readBytes( bytes );
-
-            String s = new String( bytes, StandardCharsets.UTF_8);
-            if ( s.length() > maxLength ) {
-                throw new OperationFailedException( "The received string length is longer than maximum allowed (" + i + " > " + maxLength + ")" );
-            } else {
-                return s;
-            }
-        }
     }
 }
