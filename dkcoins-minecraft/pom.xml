@@ -137,12 +137,6 @@
             <version>${dependency.essentialsX}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>net.pretronic.dkcoins</groupId>
-            <artifactId>dkcoins-legacy</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
 </project>
