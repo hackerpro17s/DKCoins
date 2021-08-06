@@ -21,7 +21,6 @@
     <modules>
         <module>dkcoins-api</module>
         <module>dkcoins-common</module>
-        <module>dkcoins-legacy</module>
         <module>dkcoins-minecraft</module>
     </modules>
 
@@ -47,7 +46,6 @@
         <dependency.mcnative.buildtool>1.0.8.15-SNAPSHOT</dependency.mcnative.buildtool>
 
         <dependency.essentialsX>2.16.1</dependency.essentialsX>
-        <dependency.mongodb>3.8.0</dependency.mongodb>
     </properties>
 
     <repositories>
