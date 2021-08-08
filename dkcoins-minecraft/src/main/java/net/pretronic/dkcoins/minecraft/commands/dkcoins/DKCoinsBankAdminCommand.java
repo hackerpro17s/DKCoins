@@ -29,14 +29,14 @@ public class DKCoinsBankAdminCommand extends MainObjectCommand<BankAccount> impl
                 .name("admin").aliases("bankAdmin")
                 .create());
 
-        registerCommand(new DKCoinsBankAdminChangeCommand(owner, "add", Messages.COMMAND_BANK_ADMIN_ADD, (account, currency, member, amount, reason) ->
-                account.getCredit(currency).addAmount(member, amount, reason, TransferCause.ADMIN, DKCoins.getInstance().getTransactionPropertyBuilder().build(member))));
+        registerCommand(new DKCoinsBankAdminChangeCommand(owner, "add", Messages.COMMAND_BANK_ADMIN_ADD, (account, currency, member, amount, cause, reason) ->
+                account.getCredit(currency).addAmount(member, amount, reason, cause, DKCoins.getInstance().getTransactionPropertyBuilder().build(member))));
 
-        registerCommand(new DKCoinsBankAdminChangeCommand(owner, "remove", Messages.COMMAND_BANK_ADMIN_REMOVE, (account, currency, member, amount, reason) ->
-                account.getCredit(currency).removeAmount(member, amount, reason, TransferCause.ADMIN, DKCoins.getInstance().getTransactionPropertyBuilder().build(member))));
+        registerCommand(new DKCoinsBankAdminChangeCommand(owner, "remove", Messages.COMMAND_BANK_ADMIN_REMOVE, (account, currency, member, amount, cause, reason) ->
+                account.getCredit(currency).removeAmount(member, amount, reason, cause, DKCoins.getInstance().getTransactionPropertyBuilder().build(member))));
 
-        registerCommand(new DKCoinsBankAdminChangeCommand(owner, "set", Messages.COMMAND_BANK_ADMIN_SET, (account, currency, member, amount, reason) ->
-                account.getCredit(currency).setAmount(member, amount, reason, TransferCause.ADMIN, DKCoins.getInstance().getTransactionPropertyBuilder().build(member))));
+        registerCommand(new DKCoinsBankAdminChangeCommand(owner, "set", Messages.COMMAND_BANK_ADMIN_SET, (account, currency, member, amount, cause, reason) ->
+                account.getCredit(currency).setAmount(member, amount, reason, cause, DKCoins.getInstance().getTransactionPropertyBuilder().build(member))));
 
         registerCommand(new DKCoinsBankAdminResetCommand(owner));
     }

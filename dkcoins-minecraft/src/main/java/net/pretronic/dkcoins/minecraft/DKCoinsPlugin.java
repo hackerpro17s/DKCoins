@@ -34,7 +34,6 @@ import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.dkcoins.minecraft.listener.InternalListener;
 import net.pretronic.dkcoins.minecraft.listener.MinecraftPlayerListener;
 import net.pretronic.dkcoins.minecraft.migration.EssentialsXMigration;
-import net.pretronic.dkcoins.minecraft.migration.LegacyDKCoinsMigration;
 import net.pretronic.dkcoins.minecraft.migration.TokenManagerMySQLMigration;
 import net.pretronic.dkcoins.minecraft.migration.TokenManagerYMLMigration;
 import net.pretronic.libraries.caching.Cache;
@@ -101,25 +100,6 @@ public class DKCoinsPlugin extends MinecraftPlugin {
     }
 
     private void loadConfig() {
-        File configLocation = new File("plugins/DKCoins/config.yml");
-
-        if(configLocation.exists()) {
-            Document oldConfig = DocumentFileType.YAML.getReader().read(configLocation);
-
-            if(oldConfig.contains("storage.mongodb")) {
-                getLogger().info("DKCoins Legacy detected");
-
-                File legacyConfigLocation = new File("plugins/DKCoins/legacy-config.yml");
-                FileUtil.copyFile(configLocation, legacyConfigLocation);
-
-                boolean success = configLocation.delete();
-                if(success) {
-                    getLogger().info("DKCoins Legacy config successful copied to legacy-config.yml");
-                } else {
-                    getLogger().error("DKCoins Legacy config can't be copied to legacy-config.yml");
-                }
-            }
-        }
         getConfiguration().load(DKCoinsConfig.class);
         getLogger().info("DKCoins config loaded");
     }
@@ -174,7 +154,6 @@ public class DKCoinsPlugin extends MinecraftPlugin {
 
 
     private void setupMigration(DKCoins dkCoins) {
-        dkCoins.registerMigration(new LegacyDKCoinsMigration());
         dkCoins.registerMigration(new EssentialsXMigration());
         dkCoins.registerMigration(new TokenManagerYMLMigration());
         dkCoins.registerMigration(new TokenManagerMySQLMigration());
