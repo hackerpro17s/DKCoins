@@ -17,11 +17,10 @@
     <groupId>net.pretronic.dkcoins</groupId>
     <artifactId>DKCoins</artifactId>
     <packaging>pom</packaging>
-    <version>1.17.1.254-BETA</version>
+    <version>1.18.6.264-SNAPSHOT</version>
     <modules>
         <module>dkcoins-api</module>
         <module>dkcoins-common</module>
-        <module>dkcoins-legacy</module>
         <module>dkcoins-minecraft</module>
     </modules>
 
@@ -41,13 +40,12 @@
 
         <dependency.pretronic.libraries>1.2.69.208-SNAPSHOT</dependency.pretronic.libraries>
         <dependency.pretronic.databasequery>1.2.38.65-SNAPSHOT</dependency.pretronic.databasequery>
-        <dependency.mcnative.api>1.2.25.83-SNAPSHOT</dependency.mcnative.api>
-        <dependency.mcnative.runtime>1.10.25.92-SNAPSHOT</dependency.mcnative.runtime>
+        <dependency.mcnative.api>1.6.21.207</dependency.mcnative.api>
+        <dependency.mcnative.runtime>1.15.2.197-SNAPSHOT</dependency.mcnative.runtime>
         <dependency.mcnative.loader>1.7.75.53</dependency.mcnative.loader>
         <dependency.mcnative.buildtool>1.0.8.15-SNAPSHOT</dependency.mcnative.buildtool>
 
         <dependency.essentialsX>2.16.1</dependency.essentialsX>
-        <dependency.mongodb>3.8.0</dependency.mongodb>
     </properties>
 
     <repositories>

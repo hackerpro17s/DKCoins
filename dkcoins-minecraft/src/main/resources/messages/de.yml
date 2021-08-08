@@ -202,10 +202,10 @@ messages:
   dkcoins.command.dkcoins.help: '${dkcoins.prefix} &cFalsche Verwendung vom dkcoins Befehl&8:
   &7/dkcoins info
   &7/dkcoins migrate <name> [currency]
-  &7/dkcoins admin <bank> set <amount> [currency]
-  &7/dkcoins admin <bank> add <amount> [currency]
-  &7/dkcoins admin <bank> remove <amount> [currency]
-  &7/dkcoins admin <bank> reset [currency]'
+  &7/dkcoins admin <bank> set <amount> [currency] [cause] [reason]
+  &7/dkcoins admin <bank> add <amount> [currency] [cause] [reason]
+  &7/dkcoins admin <bank> remove <amount> [currency] [cause] [reason]
+  &7/dkcoins admin <bank> reset [currency] [cause] [reason]'
 
   dkcoins.error.account.limitation.interval.notValid: '${dkcoins.prefix} &cDas Intervall &e{value} &cexistiert nicht
   &7

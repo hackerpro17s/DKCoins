@@ -330,8 +330,9 @@ public class DefaultAccountManager implements AccountManager {
     private AccountType getAccountTypeInternal(Object identifier) {
         QueryResultEntry result = DefaultDKCoins.getInstance().getStorage().getAccountType().find()
                 .or(query -> {
-                    query.where("Name", identifier).where("Symbol", identifier);
-                    if(identifier instanceof Integer) query.where("Id", identifier);
+                    if(identifier instanceof String) query.where("Name", identifier).where("Symbol", identifier);
+                    else if(identifier instanceof Integer) query.where("Id", identifier);
+                    else throw new IllegalArgumentException("Can't match identifier " + identifier + " for account type query");
                 }).execute().firstOrNull();
         if(result == null) return null;
         return new DefaultAccountType(result.getInt("Id"), result.getString("Name"), result.getString("Symbol"));
