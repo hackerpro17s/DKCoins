@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class LabyModServiceListener {
 
     @Listener(priority = 100)
-    public void onPlayerLogin(MinecraftPlayerCustomClientLoginEvent event){
+    public void onPlayerCustomClientLogin(MinecraftPlayerCustomClientLoginEvent event) {
         if(!(event.getClient() instanceof LabyModClient)) return;
         DKCoinsUser user = event.getOnlinePlayer().getAs(DKCoinsUser.class);
 
