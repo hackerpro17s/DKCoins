@@ -15,6 +15,7 @@ import net.pretronic.dkcoins.api.user.DKCoinsUserManager;
 import net.pretronic.libraries.caching.ArrayCache;
 import net.pretronic.libraries.caching.Cache;
 import net.pretronic.libraries.caching.ShadowArrayCache;
+import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
 
 import java.util.UUID;
@@ -37,16 +38,19 @@ public class DefaultDKCoinsUserManager implements DKCoinsUserManager {
 
     @Override
     public DKCoinsUser getUser(UUID uniqueId, String name) {
+        Validate.notNull(uniqueId,name);
         return this.coinsUserCache.get("byUUIDAndName", uniqueId,name);
     }
 
     @Override
     public DKCoinsUser getUser(UUID uniqueId) {
+        Validate.notNull(uniqueId);
         return this.coinsUserCache.get("byUUID", uniqueId);
     }
 
     @Override
     public DKCoinsUser getUser(String name) {
+        Validate.notNull(name);
         return this.coinsUserCache.get("byName", name);
     }
 

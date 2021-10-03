@@ -10,28 +10,27 @@ import net.pretronic.dkcoins.minecraft.DKCoinsPlugin;
 import net.pretronic.dkcoins.minecraft.config.DKCoinsConfig;
 import net.pretronic.libraries.event.Listener;
 import org.mcnative.runtime.api.McNative;
+import org.mcnative.runtime.api.event.player.login.MinecraftPlayerCustomClientLoginEvent;
 import org.mcnative.runtime.api.event.player.login.MinecraftPlayerPostLoginEvent;
 import org.mcnative.runtime.api.player.ConnectedMinecraftPlayer;
+import org.mcnative.runtime.api.player.client.LabyModClient;
 
 import java.util.concurrent.TimeUnit;
 
 public class LabyModServiceListener {
 
     @Listener(priority = 100)
-    public void onPlayerLogin(MinecraftPlayerPostLoginEvent event){
-        McNative.getInstance().getScheduler().createTask(DKCoinsPlugin.getInstance())
-                .delay(1, TimeUnit.SECONDS)
-                .execute(()-> {
-                    DKCoinsUser user = event.getOnlinePlayer().getAs(DKCoinsUser.class);
+    public void onPlayerCustomClientLogin(MinecraftPlayerCustomClientLoginEvent event) {
+        if(!(event.getClient() instanceof LabyModClient)) return;
+        DKCoinsUser user = event.getOnlinePlayer().getAs(DKCoinsUser.class);
 
-                    LabyModIntegration.sendPlayerBalance(event.getPlayer().getAsConnectedPlayer(), user.getDefaultAccount().getCredit(DKCoinsConfig.LABYMOD_BALANCE_CASH_CURRENCY));
+        LabyModIntegration.sendPlayerBalance(event.getPlayer().getAsConnectedPlayer(), user.getDefaultAccount().getCredit(DKCoinsConfig.LABYMOD_BALANCE_CASH_CURRENCY));
 
-                    for (BankAccount account : user.getAccounts()) {
-                        if(account.getType().getName().equalsIgnoreCase("user")) continue;
-                        LabyModIntegration.sendPlayerBalance(event.getPlayer().getAsConnectedPlayer(), account.getCredit(DKCoinsConfig.LABYMOD_BALANCE_BANK_CURRENCY));
-                        break;
-                    }
-                });
+        for (BankAccount account : user.getAccounts()) {
+            if(account.getType().getName().equalsIgnoreCase("user")) continue;
+            LabyModIntegration.sendPlayerBalance(event.getPlayer().getAsConnectedPlayer(), account.getCredit(DKCoinsConfig.LABYMOD_BALANCE_BANK_CURRENCY));
+            break;
+        }
     }
 
     @Listener
