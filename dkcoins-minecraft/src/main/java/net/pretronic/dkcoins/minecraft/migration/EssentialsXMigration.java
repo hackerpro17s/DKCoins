@@ -78,7 +78,7 @@ public class EssentialsXMigration implements Migration {
 
                 DKCoinsUser user = DKCoins.getInstance().getUserManager().getUser(uniqueId);
 
-                if(user.getName() == null) {
+                if(user == null || user.getName() == null) {
                     DKCoins.getInstance().getLogger().warn("Skipped migration for user with uuid [{}] and name [{}]", uniqueId, name);
                     skipped.incrementAndGet();
                 } else {
