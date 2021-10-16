@@ -76,6 +76,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         registerVariableDescribers();
         PlaceholderHelper.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
 
+
         TransactionPropertyBuilder builder = member -> new ArrayList<>();
         DefaultDKCoins dkCoins = new DefaultDKCoins(getLogger(),
                 McNative.getInstance().getLocal().getEventBus(),
