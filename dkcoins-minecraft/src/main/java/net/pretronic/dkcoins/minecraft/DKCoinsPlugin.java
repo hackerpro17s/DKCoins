@@ -76,6 +76,7 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         registerVariableDescribers();
         PlaceholderHelper.registerPlaceHolders(DKCoinsPlugin.getInstance(), "dkcoins", new DKCoinsPlaceholderHook());
 
+
         TransactionPropertyBuilder builder = member -> new ArrayList<>();
         DefaultDKCoins dkCoins = new DefaultDKCoins(getLogger(),
                 McNative.getInstance().getLocal().getEventBus(),
@@ -255,8 +256,9 @@ public class DKCoinsPlugin extends MinecraftPlugin {
         @Override
         public DKCoinsUser load(Object[] identifiers) {
             UUID playerId = (UUID) identifiers[0];
-            String name = McNative.getInstance().getPlayerManager().getPlayer(playerId).getName();
-            return new DefaultDKCoinsUser(playerId, name);
+            MinecraftPlayer player = McNative.getInstance().getPlayerManager().getPlayer(playerId);
+            if(player == null) return null;
+            return new DefaultDKCoinsUser(playerId, player.getName());
         }
     }
 
